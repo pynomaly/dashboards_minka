@@ -1,0 +1,17 @@
+*.ipynb
+biomarato/__pycache__
+international23
+guarden/__pycache__
+fecdas/__pycache__
+*.pyc
+__pycache__/
+*.xlsx
+guarden
+*/data
+*.yaml
+excluded
+.vscode
+.env_servidor
+.venv
+bioplatgesmet/.env
+*.log

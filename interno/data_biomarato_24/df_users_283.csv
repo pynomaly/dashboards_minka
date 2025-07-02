@@ -1,0 +1,481 @@
+user_id,observation_count,species_count,user.id,user.login,user.spam,user.suspended,user.created_at,user.login_autocomplete,user.login_exact,user.name,user.name_autocomplete,user.orcid,user.icon,user.observations_count,user.identifications_count,user.journal_posts_count,user.activity_count,user.species_count,user.universal_search_rank,user.roles,user.site_id,user.icon_url
+92,7177,331,92,josepdegea,False,False,2022-06-04T12:32:14+00:00,josepdegea,josepdegea,Josep,Josep,,/attachments/users/icons/92-thumb.png?1654346033,13220,18,0,13238,539,13220,[],1,/attachments/users/icons/92-medium.png?1654346033
+219,6561,263,219,ealcaniz,False,False,2022-08-27T15:52:52+00:00,ealcaniz,ealcaniz,Edu Alcaniz,Edu Alcaniz,,/attachments/users/icons/219-thumb.jpg?1661766708,15095,3190,0,18285,934,15095,[],1,/attachments/users/icons/219-medium.jpg?1661766708
+502,5674,367,502,jastals,False,False,2023-04-21T20:05:35+00:00,jastals,jastals,,,,/attachments/users/icons/502-thumb.jpg?1697385918,9202,39,0,9241,579,9202,[],1,/attachments/users/icons/502-medium.jpg?1697385918
+16,5220,512,16,guillermoalvarez_fecdas,False,False,2022-04-25T14:00:37+00:00,guillermoalvarez_fecdas,guillermoalvarez_fecdas,Guillermo Alvarez Lerma,Guillermo Alvarez Lerma,,/attachments/users/icons/16-thumb.png?1650895603,11872,7392,0,19264,792,11872,[],1,/attachments/users/icons/16-medium.png?1650895603
+4,5069,927,4,xasalva,False,False,2021-04-16T10:44:11+00:00,xasalva,xasalva,xavi salvador costa,xavi salvador costa,,/attachments/users/icons/4-thumb.png?1650105975,59937,229176,0,289113,2908,59937,"['admin', 'curator']",1,/attachments/users/icons/4-medium.png?1650105975
+175,3716,266,175,eloi_sanz,False,False,2022-07-31T07:26:47+00:00,eloi_sanz,eloi_sanz,Eloi Sanz,Eloi Sanz,,/attachments/users/icons/175-thumb.jpg?1717525681,4655,66,0,4721,306,4655,[],1,/attachments/users/icons/175-medium.jpg?1717525681
+732,3542,316,732,mpontes,False,False,2023-06-15T09:24:13+00:00,mpontes,mpontes,Miquel Pontes,Miquel Pontes,,/attachments/users/icons/732-thumb.jpg?1687925768,13159,402,0,13561,567,13159,[],1,/attachments/users/icons/732-medium.jpg?1687925768
+55,3407,267,55,yespi,False,False,2022-05-11T07:37:43+00:00,yespi,yespi,Gustavo Zafra,Gustavo Zafra,,/attachments/users/icons/55-thumb.png?1698648976,5675,2521,0,8196,454,5675,[],1,/attachments/users/icons/55-medium.png?1698648976
+1732,2821,290,1732,manelor,False,False,2024-04-04T17:26:44+00:00,manelor,manelor,,,,/attachments/users/icons/1732-thumb.jpeg?1725559640,3242,0,0,3242,327,3242,[],1,/attachments/users/icons/1732-medium.jpeg?1725559640
+51,2798,399,51,bertinhaco,False,False,2022-05-07T18:28:52+00:00,bertinhaco,bertinhaco,Berta Companys Oliva,Berta Companys Oliva,,/attachments/users/icons/51-thumb.jpg?1687417372,9996,12238,0,22234,1127,9996,[],1,/attachments/users/icons/51-medium.jpg?1687417372
+197,2428,268,197,peixderoca24,False,False,2022-08-08T12:58:18+00:00,peixderoca24,peixderoca24,Guillem Mayor Samarra,Guillem Mayor Samarra,,/attachments/users/icons/197-thumb.jpg?1689285538,3299,245,0,3544,317,3299,[],1,/attachments/users/icons/197-medium.jpg?1689285538
+275,1979,196,275,miquel17300,False,False,2022-09-27T05:15:13+00:00,miquel17300,miquel17300,Miquel Figueras,Miquel Figueras,,/attachments/users/icons/275-thumb.jpg?1672577252,3400,79,0,3479,290,3400,[],1,/attachments/users/icons/275-medium.jpg?1672577252
+691,1920,263,691,virginia_canet,False,False,2023-06-07T18:32:15+00:00,virginia_canet,virginia_canet,,,,/attachments/users/icons/691-thumb.jpg?1691058498,3955,636,0,4591,390,3955,[],1,/attachments/users/icons/691-medium.jpg?1691058498
+83,1906,130,83,nuriasireni,False,False,2022-05-28T12:14:24+00:00,nuriasireni,nuriasireni,NÚRIA,NÚRIA,,/attachments/users/icons/83-thumb.jpg?1653740446,4601,0,0,4601,233,4601,[],1,/attachments/users/icons/83-medium.jpg?1653740446
+540,1885,117,540,lauracoro,False,False,2023-04-28T14:37:59+00:00,lauracoro,lauracoro,Laura Colom,Laura Colom,,/attachments/users/icons/540-thumb.jpeg?1715694497,2171,6,0,2177,129,2171,[],1,/attachments/users/icons/540-medium.jpeg?1715694497
+211,1843,158,211,adriacompte,False,False,2022-08-23T15:08:39+00:00,adriacompte,adriacompte,,,,/attachments/users/icons/211-thumb.jpg?1661599655,2802,721,0,3523,180,2802,[],1,/attachments/users/icons/211-medium.jpg?1661599655
+859,1587,202,859,conxi,False,False,2023-07-29T18:03:40+00:00,conxi,conxi,,,,,2769,0,0,2769,229,2769,[],1,
+72,1536,314,72,badosa,False,False,2022-05-21T05:33:37+00:00,badosa,badosa,Enric Badosa,Enric Badosa,,/attachments/users/icons/72-thumb.jpg?1656579073,7072,19069,0,26141,754,7072,[],1,/attachments/users/icons/72-medium.jpg?1656579073
+804,1436,154,804,martanp,False,False,2023-07-07T22:47:09+00:00,martanp,martanp,Marta,Marta,,/attachments/users/icons/804-thumb.jpg?1692625983,2597,684,0,3281,379,2597,[],1,/attachments/users/icons/804-medium.jpg?1692625983
+908,1412,178,908,annacanela,False,False,2023-08-22T17:20:19+00:00,annacanela,annacanela,Anna Canela Badrinas,Anna Canela Badrinas,,/attachments/users/icons/908-thumb.jpg?1693587371,1506,3,0,1509,217,1506,[],1,/attachments/users/icons/908-medium.jpg?1693587371
+543,1333,176,543,evararo,False,False,2023-04-29T05:45:43+00:00,evararo,evararo,Eva,Eva,,/attachments/users/icons/543-thumb.jpg?1690058645,2277,1,0,2278,209,2277,[],1,/attachments/users/icons/543-medium.jpg?1690058645
+806,1322,319,806,david_marco,False,False,2023-07-08T21:01:53+00:00,david_marco,david_marco,David Marco,David Marco,,/attachments/users/icons/806-thumb.jpg?1688883942,2844,0,0,2844,423,2844,[],1,/attachments/users/icons/806-medium.jpg?1688883942
+11,1187,103,11,jaume-piera,False,False,2022-04-18T15:45:37+00:00,jaume-piera,jaume-piera,Jaume Piera,Jaume Piera,,/attachments/users/icons/11-thumb.png?1650298752,6480,36338,0,42818,999,6480,['curator'],1,/attachments/users/icons/11-medium.png?1650298752
+372,1011,150,372,fecdas_mediambient,False,False,2022-11-22T15:10:19+00:00,fecdas_mediambient,fecdas_mediambient,FECDAS MEDI AMBIENT,FECDAS MEDI AMBIENT,,/attachments/users/icons/372-thumb.png?1669130125,11739,231,0,11970,561,11739,[],1,/attachments/users/icons/372-medium.png?1669130125
+9,1005,131,9,andrea,False,False,2022-04-18T08:57:16+00:00,andrea,andrea,Andrea Comaposada,Andrea Comaposada,,/attachments/users/icons/9-thumb.png?1650272616,4070,299,0,4369,316,4070,[],1,/attachments/users/icons/9-medium.png?1650272616
+759,961,138,759,monyant,False,False,2023-06-22T10:28:41+00:00,monyant,monyant,Monique Mendoza,Monique Mendoza,,/attachments/users/icons/759-thumb.jpg?1687430589,2615,1,0,2616,228,2615,[],1,/attachments/users/icons/759-medium.jpg?1687430589
+938,959,208,938,jmturon,False,False,2023-09-02T20:34:04+00:00,jmturon,jmturon,,,,/attachments/users/icons/938-thumb.jpeg?1693766133,2134,35,0,2169,536,2134,[],1,/attachments/users/icons/938-medium.jpeg?1693766133
+5214,949,127,5214,urti,False,False,2024-07-21T06:54:18+00:00,urti,urti,Jaime,Jaime,,/attachments/users/icons/5214-thumb.png?1721545863,1010,5,0,1015,81,1010,[],1,/attachments/users/icons/5214-medium.png?1721545863
+180,948,76,180,ngoncubells,False,False,2022-08-01T09:51:29+00:00,ngoncubells,ngoncubells,Núria Cubells,Núria Cubells,,/attachments/users/icons/180-thumb.jpeg?1659348225,2194,39,0,2233,185,2194,[],1,/attachments/users/icons/180-medium.jpeg?1659348225
+746,913,83,746,martinacm,False,False,2023-06-19T11:34:52+00:00,martinacm,martinacm,Martina Cholbi,Martina Cholbi,,/attachments/users/icons/746-thumb.jpg?1714330610,950,0,0,950,88,950,[],1,/attachments/users/icons/746-medium.jpg?1714330610
+1038,748,137,1038,rickydiving,False,False,2023-09-25T10:25:49+00:00,rickydiving,rickydiving,Ricard Domingo,Ricard Domingo,,/attachments/users/icons/1038-thumb.jpg?1695637787,949,605,0,1554,174,949,[],1,/attachments/users/icons/1038-medium.jpg?1695637787
+15,738,238,15,mediambient_ajelprat,False,False,2022-04-25T10:52:59+00:00,mediambient_ajelprat,mediambient_ajelprat,,,,/attachments/users/icons/15-thumb.png?1650886030,13614,357,0,13971,1018,13614,[],1,/attachments/users/icons/15-medium.png?1650886030
+988,734,176,988,elibonfill,False,False,2023-09-14T08:57:24+00:00,elibonfill,elibonfill,Elisabet Bonfill i Molina,Elisabet Bonfill i Molina,,/attachments/users/icons/988-thumb.jpg?1714250314,1001,385,0,1386,276,1001,[],1,/attachments/users/icons/988-medium.jpg?1714250314
+224,713,172,224,manelsalvador,False,False,2022-09-01T09:30:59+00:00,manelsalvador,manelsalvador,,,,/attachments/users/icons/224-thumb.jpg?1662026990,3443,936,0,4379,405,3443,[],1,/attachments/users/icons/224-medium.jpg?1662026990
+1030,698,157,1030,mingokt,False,False,2023-09-24T10:40:25+00:00,mingokt,mingokt,,,,/attachments/users/icons/1030-thumb.jpg?1695933574,1175,21,0,1196,299,1175,[],1,/attachments/users/icons/1030-medium.jpg?1695933574
+910,661,144,910,mar_avelles,False,False,2023-08-23T09:00:19+00:00,mar_avelles,mar_avelles,Sofía,Sofía,,/attachments/users/icons/910-thumb.jpg?1702676145,755,0,0,755,163,755,[],1,/attachments/users/icons/910-medium.jpg?1702676145
+359,569,158,359,oceanicos,False,False,2022-11-03T10:30:53+00:00,oceanicos,oceanicos,,,,/attachments/users/icons/359-thumb.png?1667471598,756,56,0,812,208,756,[],1,/attachments/users/icons/359-medium.png?1667471598
+1081,499,133,1081,francesc_f,False,False,2023-10-09T20:44:37+00:00,francesc_f,francesc_f,Francesc_F,Francesc_F,,/attachments/users/icons/1081-thumb.jpg?1699826429,589,850,0,1439,156,589,[],1,/attachments/users/icons/1081-medium.jpg?1699826429
+653,488,103,653,ura4dive,False,False,2023-05-23T16:07:24+00:00,ura4dive,ura4dive,@ura4dive,@ura4dive,,/attachments/users/icons/653-thumb.jpeg?1695281694,802,11,0,813,149,802,[],1,/attachments/users/icons/653-medium.jpeg?1695281694
+622,462,129,622,joaquibote,False,False,2023-05-16T08:43:11+00:00,joaquibote,joaquibote,,,,,1034,1,0,1035,197,1034,[],1,
+623,437,110,623,jalaball,False,False,2023-05-16T11:24:57+00:00,jalaball,jalaball,jalaball,jalaball,,/attachments/users/icons/623-thumb.png?1713464435,1325,1,0,1326,233,1325,[],1,/attachments/users/icons/623-medium.png?1713464435
+2493,431,182,2493,pauperrim,False,False,2024-05-09T17:19:05+00:00,pauperrim,pauperrim,Pau Pagès Jaén,Pau Pagès Jaén,,/attachments/users/icons/2493-thumb.jpg?1718726626,469,10,0,479,210,469,[],1,/attachments/users/icons/2493-medium.jpg?1718726626
+54,407,116,54,loreto_rodriguez,False,False,2022-05-11T07:28:17+00:00,loreto_rodriguez,loreto_rodriguez,,,,/attachments/users/icons/54-thumb.jpg?1658308685,1974,52735,0,54709,411,1974,[],1,/attachments/users/icons/54-medium.jpg?1658308685
+801,400,132,801,sergio_zafra,False,False,2023-07-07T10:33:36+00:00,sergio_zafra,sergio_zafra,Sergio Zafra,Sergio Zafra,,/attachments/users/icons/801-thumb.jpeg?1689703052,723,163,0,886,194,723,[],1,/attachments/users/icons/801-medium.jpeg?1689703052
+27,349,123,27,romu_freediving_photography,False,False,2022-04-28T11:49:45+00:00,romu_freediving_photography,romu_freediving_photography,Romu,Romu,,/attachments/users/icons/27-thumb.png?1651146874,4004,0,0,4004,503,4004,[],1,/attachments/users/icons/27-medium.png?1651146874
+769,317,101,769,raulcalella,False,False,2023-06-25T15:17:56+00:00,raulcalella,raulcalella,Raul Arcos,Raul Arcos,,/attachments/users/icons/769-thumb.jpg?1693148726,593,3,0,596,217,593,[],1,/attachments/users/icons/769-medium.jpg?1693148726
+147,306,161,147,gregoribdn,False,False,2022-07-07T12:33:50+00:00,gregoribdn,gregoribdn,,,,,434,0,0,434,209,434,[],1,
+892,298,128,892,eloi_alcaide,False,False,2023-08-12T08:07:56+00:00,eloi_alcaide,eloi_alcaide,,,,/attachments/users/icons/892-thumb.jpeg?1692804683,835,114,0,949,235,835,[],1,/attachments/users/icons/892-medium.jpeg?1692804683
+1057,293,54,1057,bertamari,False,False,2023-09-30T21:37:52+00:00,bertamari,bertamari,,,,,346,0,0,346,49,346,[],1,
+1244,291,41,1244,meri,False,False,2023-11-22T14:47:31+00:00,meri,meri,,,,/attachments/users/icons/1244-thumb.jpeg?1714137486,444,25,0,469,91,444,[],1,/attachments/users/icons/1244-medium.jpeg?1714137486
+1712,289,107,1712,seathevish,False,False,2024-04-03T13:31:02+00:00,seathevish,seathevish,Lisa DC,Lisa DC,,/attachments/users/icons/1712-thumb.jpeg?1724401615,294,0,0,294,113,294,[],1,/attachments/users/icons/1712-medium.jpeg?1724401615
+2659,276,104,2659,saragasull,False,False,2024-05-12T10:55:26+00:00,saragasull,saragasull,,,,/attachments/users/icons/2659-thumb.jpg?1722777225,284,0,0,284,110,284,[],1,/attachments/users/icons/2659-medium.jpg?1722777225
+828,270,102,828,nerea,False,False,2023-07-19T15:32:18+00:00,nerea,nerea,nsanchisc,nsanchisc,,,408,0,0,408,49,408,[],1,
+866,265,212,866,biosub,False,False,2023-07-31T10:10:59+00:00,biosub,biosub,Gregorio Marco Naya,Gregorio Marco Naya,,/attachments/users/icons/866-thumb.jpg?1693327916,445,58,0,503,367,445,[],1,/attachments/users/icons/866-medium.jpg?1693327916
+857,252,145,857,xavibou,False,False,2023-07-28T13:27:50+00:00,xavibou,xavibou,Xavi Bou,Xavi Bou,,/attachments/users/icons/857-thumb.jpg?1690551819,491,0,0,491,207,491,[],1,/attachments/users/icons/857-medium.jpg?1690551819
+822,244,114,822,prema,False,False,2023-07-15T15:49:48+00:00,prema,prema,Estrella Ribo Salietti,Estrella Ribo Salietti,,,869,0,0,869,228,869,[],1,
+758,239,77,758,francesca,False,False,2023-06-22T08:31:56+00:00,francesca,francesca,,,,,278,0,0,278,83,278,[],1,
+12,225,45,12,sonialinan,False,False,2022-04-19T12:53:18+00:00,sonialinan,sonialinan,,,,/attachments/users/icons/12-thumb.jpeg?1659019563,401,12,0,413,115,401,[],1,/attachments/users/icons/12-medium.jpeg?1659019563
+488,222,98,488,uriborrajo,False,False,2023-04-18T13:12:45+00:00,uriborrajo,uriborrajo,,,,/attachments/users/icons/488-thumb.jpeg?1724925868,298,483,0,781,120,298,[],1,/attachments/users/icons/488-medium.jpeg?1724925868
+487,219,140,487,max,False,False,2023-04-17T09:23:51+00:00,max,max,Max Zuna-Kratky Torres,Max Zuna-Kratky Torres,,/attachments/users/icons/487-thumb.jpg?1689679437,904,1543,0,2447,444,904,[],1,/attachments/users/icons/487-medium.jpg?1689679437
+1178,212,88,1178,xparellada,False,False,2023-10-31T09:07:52+00:00,xparellada,xparellada,Xavier Parellada,Xavier Parellada,,/attachments/users/icons/1178-thumb.jpg?1724342547,213,63,0,276,76,213,[],1,/attachments/users/icons/1178-medium.jpg?1724342547
+998,211,76,998,andreu,False,False,2023-09-15T08:55:40+00:00,andreu,andreu,Andreu Gutiérrez Gallardo,Andreu Gutiérrez Gallardo,,/attachments/users/icons/998-thumb.jpg?1694768834,288,8,0,296,109,288,[],1,/attachments/users/icons/998-medium.jpg?1694768834
+688,209,53,688,irenebernabeu,False,False,2023-06-06T16:54:02+00:00,irenebernabeu,irenebernabeu,Irene Bernabeu,Irene Bernabeu,,/attachments/users/icons/688-thumb.jpg?1720443854,319,0,0,319,70,319,[],1,/attachments/users/icons/688-medium.jpg?1720443854
+1239,208,67,1239,amb_platges,False,False,2023-11-21T09:30:19+00:00,amb_platges,amb_platges,AMB Platges,AMB Platges,,/attachments/users/icons/1239-thumb.jpg?1700651660,909,90,0,999,177,909,[],1,/attachments/users/icons/1239-medium.jpg?1700651660
+545,201,66,545,sara_riera,False,False,2023-05-02T11:38:24+00:00,sara_riera,sara_riera,,,,/attachments/users/icons/545-thumb.jpeg?1685451569,1010,2,0,1012,179,1010,[],1,/attachments/users/icons/545-medium.jpeg?1685451569
+59,198,94,59,oscarcg31,False,False,2022-05-16T17:45:01+00:00,oscarcg31,oscarcg31,Óscar Comellas Garcia,Óscar Comellas Garcia,,/attachments/users/icons/59-thumb.jpg?1652767591,499,14,0,513,159,499,[],1,/attachments/users/icons/59-medium.jpg?1652767591
+782,191,102,782,asters,False,False,2023-07-04T06:45:48+00:00,asters,asters,Clara Herranz Fuero,Clara Herranz Fuero,,/attachments/users/icons/782-thumb.png?1689259654,340,0,0,340,80,340,[],1,/attachments/users/icons/782-medium.png?1689259654
+2656,189,60,2656,wolfsms,False,False,2024-05-12T10:44:27+00:00,wolfsms,wolfsms,,,,,207,0,0,207,0,207,[],1,
+1012,174,37,1012,jlarnau,False,False,2023-09-19T11:29:43+00:00,jlarnau,jlarnau,,,,/attachments/users/icons/1012-thumb.jpg?1695222603,272,0,0,272,62,272,[],1,/attachments/users/icons/1012-medium.jpg?1695222603
+4622,169,65,4622,lidiu0,False,False,2024-07-04T12:32:44+00:00,lidiu0,lidiu0,,,,/attachments/users/icons/4622-thumb.jpg?1720512420,169,0,0,169,43,169,[],1,/attachments/users/icons/4622-medium.jpg?1720512420
+839,158,100,839,cocolotus,False,False,2023-07-22T10:16:06+00:00,cocolotus,cocolotus,,,,/attachments/users/icons/839-thumb.jpg?1722681261,183,4,0,187,114,183,[],1,/attachments/users/icons/839-medium.jpg?1722681261
+141,153,55,141,uri11rodri,False,False,2022-07-04T10:30:22+00:00,uri11rodri,uri11rodri,Oriol Rodríguez Martínez,Oriol Rodríguez Martínez,,/attachments/users/icons/141-thumb.jpg?1692298894,835,23,0,858,158,835,[],1,/attachments/users/icons/141-medium.jpg?1692298894
+132,151,38,132,maria,False,False,2022-06-29T21:18:23+00:00,maria,maria,,,,,724,0,0,724,0,724,[],1,
+2362,141,58,2362,ricard,False,False,2024-05-01T12:27:46+00:00,ricard,ricard,Ricard Florensa Pijuan,Ricard Florensa Pijuan,,,152,1,0,153,0,152,[],1,
+2388,140,67,2388,elisenda_casabona,False,False,2024-05-03T14:49:29+00:00,elisenda_casabona,elisenda_casabona,,,,/attachments/users/icons/2388-thumb.jpg?1718449445,145,0,0,145,69,145,[],1,/attachments/users/icons/2388-medium.jpg?1718449445
+740,138,71,740,manuelmesa,False,False,2023-06-17T17:28:46+00:00,manuelmesa,manuelmesa,,,,/attachments/users/icons/740-thumb.jpg?1690228427,383,0,0,383,139,383,[],1,/attachments/users/icons/740-medium.jpg?1690228427
+7,137,60,7,planctondiving,False,False,2022-04-16T16:18:51+00:00,planctondiving,planctondiving,,,,/attachments/users/icons/7-thumb.png?1650126018,1937,36,0,1973,251,1937,[],1,/attachments/users/icons/7-medium.png?1650126018
+894,134,27,894,sos_loreina,False,False,2023-08-14T11:23:16+00:00,sos_loreina,sos_loreina,,,,,362,0,0,362,40,362,[],1,
+451,132,87,451,eduardmarques,False,False,2023-03-07T12:23:00+00:00,eduardmarques,eduardmarques,,,,,461,0,0,461,256,461,[],1,
+218,132,42,218,bernatgel,False,False,2022-08-27T14:34:53+00:00,bernatgel,bernatgel,,,,/attachments/users/icons/218-thumb.jpg?1729553490,211,1,0,212,57,211,[],1,/attachments/users/icons/218-medium.jpg?1729553490
+5938,130,73,5938,anabel_salmeron,False,False,2024-08-10T17:01:55+00:00,anabel_salmeron,anabel_salmeron,Anabel,Anabel,,/attachments/users/icons/5938-thumb.jpg?1723547967,140,3,0,143,88,140,[],1,/attachments/users/icons/5938-medium.jpg?1723547967
+4879,125,72,4879,neuscdm,False,False,2024-07-09T21:56:00+00:00,neuscdm,neuscdm,Neus Abad Soler,Neus Abad Soler,,/attachments/users/icons/4879-thumb.jpg?1726433828,129,0,0,129,79,129,[],1,/attachments/users/icons/4879-medium.jpg?1726433828
+556,123,45,556,nereavieitez,False,False,2023-05-03T21:09:43+00:00,nereavieitez,nereavieitez,,,,/attachments/users/icons/556-thumb.jpeg?1715773286,355,12,0,367,73,355,[],1,/attachments/users/icons/556-medium.jpeg?1715773286
+2888,121,56,2888,tonihillaalos,False,False,2024-05-21T15:51:40+00:00,tonihillaalos,tonihillaalos,Toni Hilla Alòs,Toni Hilla Alòs,,/attachments/users/icons/2888-thumb.jpg?1716307367,122,0,0,122,55,122,[],1,/attachments/users/icons/2888-medium.jpg?1716307367
+6043,118,77,6043,albertvim,False,False,2024-08-18T18:09:21+00:00,albertvim,albertvim,Albert Vim Quintana,Albert Vim Quintana,,/attachments/users/icons/6043-thumb.jpeg?1724349348,1067,64,0,1131,385,1067,[],1,/attachments/users/icons/6043-medium.jpeg?1724349348
+1714,118,44,1714,jordisanjuanr,False,False,2024-04-03T14:50:40+00:00,jordisanjuanr,jordisanjuanr,,,,,127,66,0,193,55,127,[],1,
+906,116,65,906,singuermorning,False,False,2023-08-21T05:42:56+00:00,singuermorning,singuermorning,Iñaki Díez Tendero,Iñaki Díez Tendero,,/attachments/users/icons/906-thumb.jpg?1692883733,186,127,0,313,89,186,[],1,/attachments/users/icons/906-medium.jpg?1692883733
+2477,115,32,2477,estherip,False,False,2024-05-08T17:29:04+00:00,estherip,estherip,Esther Inglada,Esther Inglada,,,115,36,0,151,35,115,[],1,
+7381,113,31,7381,susanna,False,False,2024-10-17T12:49:00+00:00,susanna,susanna,Susanna Reigada Sanz,Susanna Reigada Sanz,,,115,0,0,115,0,115,[],1,
+888,111,48,888,cloedelgado,False,False,2023-08-09T19:56:55+00:00,cloedelgado,cloedelgado,,,,,141,0,0,141,61,141,[],1,
+918,110,37,918,davidtsh,False,False,2023-08-26T05:05:03+00:00,davidtsh,davidtsh,David Alandí,David Alandí,,/attachments/users/icons/918-thumb.jpg?1694242509,239,0,0,239,0,239,[],1,/attachments/users/icons/918-medium.jpg?1694242509
+4753,98,50,4753,calypsobcn,False,False,2024-07-06T17:01:15+00:00,calypsobcn,calypsobcn,Elena,Elena,,/attachments/users/icons/4753-thumb.jpg?1723321649,208,14,0,222,86,208,[],1,/attachments/users/icons/4753-medium.jpg?1723321649
+45,98,45,45,anna_olive_abello,False,False,2022-05-03T11:18:52+00:00,anna_olive_abello,anna_olive_abello,,,,/attachments/users/icons/45-thumb.jpg?1651580956,184,0,0,184,104,184,[],1,/attachments/users/icons/45-medium.jpg?1651580956
+6191,96,48,6191,mik_peixos,False,False,2024-09-02T20:02:46+00:00,mik_peixos,mik_peixos,,,,/attachments/users/icons/6191-thumb.jpeg?1725308764,122,0,0,122,69,122,[],1,/attachments/users/icons/6191-medium.jpeg?1725308764
+202,96,50,202,mllarch,False,False,2022-08-15T08:48:41+00:00,mllarch,mllarch,mllarch,mllarch,,/attachments/users/icons/202-thumb.jpg?1660553841,100,1,0,101,56,100,[],1,/attachments/users/icons/202-medium.jpg?1660553841
+3393,89,32,3393,nigelbax,False,False,2024-06-01T11:08:05+00:00,nigelbax,nigelbax,,,,,98,0,0,98,1,98,[],1,
+2500,88,46,2500,jordi2000,False,False,2024-05-10T07:38:52+00:00,jordi2000,jordi2000,Jordi Vivancos,Jordi Vivancos,,/attachments/users/icons/2500-thumb.jpg?1716906904,100,0,0,100,0,100,[],1,/attachments/users/icons/2500-medium.jpg?1716906904
+877,86,2,877,pauladelmar,False,False,2023-08-05T09:31:48+00:00,pauladelmar,pauladelmar,Paula Catasús,Paula Catasús,,/attachments/users/icons/877-thumb.jpg?1691228109,90,24,0,114,29,90,[],1,/attachments/users/icons/877-medium.jpg?1691228109
+760,84,59,760,alexander_odf,False,False,2023-06-22T19:08:50+00:00,alexander_odf,alexander_odf,Alexander Lehnen,Alexander Lehnen,,/attachments/users/icons/760-thumb.jpg?1687461158,1197,102,0,1299,420,1197,[],1,/attachments/users/icons/760-medium.jpg?1687461158
+5556,82,22,5556,max_andreu,False,False,2024-07-31T09:25:45+00:00,max_andreu,max_andreu,,,,,82,0,0,82,24,82,[],1,
+6022,81,48,6022,e-submarinismo,False,False,2024-08-16T13:54:05+00:00,e-submarinismo,e-submarinismo,Sergio Raul Gonzalez Patiño,Sergio Raul Gonzalez Patiño,,/attachments/users/icons/6022-thumb.jpg?1723816554,112,0,0,112,30,112,[],1,/attachments/users/icons/6022-medium.jpg?1723816554
+1053,80,31,1053,lydia,False,False,2023-09-29T08:49:51+00:00,lydia,lydia,LydiaCh,LydiaCh,,/attachments/users/icons/1053-thumb.jpg?1702391073,396,348,0,744,172,396,[],1,/attachments/users/icons/1053-medium.jpg?1702391073
+2105,79,50,2105,davilo2011,False,False,2024-04-20T16:45:07+00:00,davilo2011,davilo2011,davilo,davilo,,,89,10,0,99,51,89,[],1,
+306,76,32,306,jaume,False,False,2022-10-19T16:37:43+00:00,jaume,jaume,,,,,222,217,0,439,72,222,[],1,
+7046,72,21,7046,agatals,False,False,2024-10-06T14:58:55+00:00,agatals,agatals,Àgata Lasheras Saiz,Àgata Lasheras Saiz,,/attachments/users/icons/7046-thumb.jpg?1728226857,82,0,0,82,3,82,[],1,/attachments/users/icons/7046-medium.jpg?1728226857
+5976,72,24,5976,portu,False,False,2024-08-13T14:41:37+00:00,portu,portu,,,,,106,0,0,106,37,106,[],1,
+1659,72,46,1659,jordifors,False,False,2024-03-16T18:47:35+00:00,jordifors,jordifors,Jordi Jordi,Jordi Jordi,,/attachments/users/icons/1659-thumb.png?1718041257,83,1,0,84,51,83,[],1,/attachments/users/icons/1659-medium.png?1718041257
+3755,71,46,3755,hectorserranocereijo,False,False,2024-06-08T07:13:32+00:00,hectorserranocereijo,hectorserranocereijo,Hector Serrano Cereijo,Hector Serrano Cereijo,,/attachments/users/icons/3755-thumb.jpg?1717862317,126,0,0,126,90,126,[],1,/attachments/users/icons/3755-medium.jpg?1717862317
+2495,70,45,2495,albagarri,False,False,2024-05-09T18:14:28+00:00,albagarri,albagarri,Alba Garriga Costa,Alba Garriga Costa,,,84,0,0,84,54,84,[],1,
+971,69,32,971,juancarlosdiez,False,False,2023-09-09T13:30:42+00:00,juancarlosdiez,juancarlosdiez,,,,,105,0,0,105,33,105,[],1,
+739,69,47,739,jean-pierre,False,False,2023-06-17T14:44:24+00:00,jean-pierre,jean-pierre,Jean-Pierre Giroudon,Jean-Pierre Giroudon,,,144,0,0,144,71,144,[],1,
+4442,68,46,4442,a_carulla,False,False,2024-07-01T13:31:25+00:00,a_carulla,a_carulla,Anna Carulla,Anna Carulla,,/attachments/users/icons/4442-thumb.jpg?1726395149,68,0,0,68,46,68,[],1,/attachments/users/icons/4442-medium.jpg?1726395149
+113,68,30,113,saita_diving,False,False,2022-06-25T13:36:15+00:00,saita_diving,saita_diving,,,,/attachments/users/icons/113-thumb.png?1658138594,291,0,0,291,101,291,[],1,/attachments/users/icons/113-medium.png?1658138594
+143,67,25,143,carlos88,False,False,2022-07-05T09:23:22+00:00,carlos88,carlos88,,,,,564,0,0,564,0,564,[],1,
+4750,65,38,4750,bieldpl,False,False,2024-07-06T11:50:58+00:00,bieldpl,bieldpl,,,,/attachments/users/icons/4750-thumb.jpg?1720270632,85,76,0,161,45,85,[],1,/attachments/users/icons/4750-medium.jpg?1720270632
+783,64,47,783,francismpp,False,False,2023-07-04T12:56:14+00:00,francismpp,francismpp,Francis,Francis,,,178,21,0,199,127,178,[],1,
+2276,63,41,2276,alicate_cr,False,False,2024-04-26T17:17:19+00:00,alicate_cr,alicate_cr,Ali,Ali,,/attachments/users/icons/2276-thumb.jpg?1714152418,66,4,0,70,18,66,[],1,/attachments/users/icons/2276-medium.jpg?1714152418
+217,63,38,217,eminguez,False,False,2022-08-25T06:34:21+00:00,eminguez,eminguez,Ernesto Minguez,Ernesto Minguez,,/attachments/users/icons/217-thumb.jpg?1661409582,281,0,0,281,86,281,[],1,/attachments/users/icons/217-medium.jpg?1661409582
+1645,62,22,1645,clarab,False,False,2024-03-12T11:55:02+00:00,clarab,clarab,Clara,Clara,,/attachments/users/icons/1645-thumb.png?1710687299,65,2,0,67,26,65,[],1,/attachments/users/icons/1645-medium.png?1710687299
+6866,59,20,6866,jaumegardelacdm,False,False,2024-09-14T06:06:12+00:00,jaumegardelacdm,jaumegardelacdm,Jaume Gardela Santacruz,Jaume Gardela Santacruz,,,59,0,0,59,23,59,[],1,
+2772,57,44,2772,alexdesagarra,False,False,2024-05-13T09:07:42+00:00,alexdesagarra,alexdesagarra,,,,/attachments/users/icons/2772-thumb.jpg?1716883052,112,2,0,114,79,112,[],1,/attachments/users/icons/2772-medium.jpg?1716883052
+785,57,22,785,marccornellas97,False,False,2023-07-04T17:08:46+00:00,marccornellas97,marccornellas97,Marc Cornellas,Marc Cornellas,,/attachments/users/icons/785-thumb.jpg?1724314912,57,0,0,57,20,57,[],1,/attachments/users/icons/785-medium.jpg?1724314912
+7538,55,25,7538,sergisoldevila,False,False,2024-10-20T18:05:16+00:00,sergisoldevila,sergisoldevila,,,,,56,0,0,56,18,56,[],1,
+3682,55,33,3682,pirotte_,False,False,2024-06-06T11:44:00+00:00,pirotte_,pirotte_,Dídac Pirotte Soler,Dídac Pirotte Soler,,/attachments/users/icons/3682-thumb.jpg?1717925668,58,0,0,58,45,58,[],1,/attachments/users/icons/3682-medium.jpg?1717925668
+6463,54,42,6463,jcaos,False,False,2024-09-06T23:46:51+00:00,jcaos,jcaos,jcaos,jcaos,,,54,4,0,58,44,54,[],1,
+715,54,42,715,asalva1,False,False,2023-06-12T14:01:58+00:00,asalva1,asalva1,Antoni_Salvà,Antoni_Salvà,,/attachments/users/icons/715-thumb.jpg?1686579742,85,0,0,85,59,85,[],1,/attachments/users/icons/715-medium.jpg?1686579742
+4630,52,43,4630,itziardiving,False,False,2024-07-04T14:42:30+00:00,itziardiving,itziardiving,Itziar Burgues,Itziar Burgues,,/attachments/users/icons/4630-thumb.jpg?1720104615,68,0,0,68,55,68,[],1,/attachments/users/icons/4630-medium.jpg?1720104615
+356,51,29,356,bernatperalta,False,False,2022-10-27T08:02:35+00:00,bernatperalta,bernatperalta,,,,,288,0,0,288,105,288,[],1,
+2259,49,30,2259,davidtarrason,False,False,2024-04-26T09:26:35+00:00,davidtarrason,davidtarrason,Alumnes BI Voramar,Alumnes BI Voramar,,,51,0,0,51,5,51,[],1,
+817,48,28,817,marinatorresgi,False,False,2023-07-13T15:14:25+00:00,marinatorresgi,marinatorresgi,Marina Torres Gibert,Marina Torres Gibert,,/attachments/users/icons/817-thumb.jpg?1701248464,200,2,0,202,143,200,[],1,/attachments/users/icons/817-medium.jpg?1701248464
+4775,47,19,4775,maror,False,False,2024-07-08T16:07:56+00:00,maror,maror,,,,/attachments/users/icons/4775-thumb.jpg?1720541084,55,0,0,55,0,55,[],1,/attachments/users/icons/4775-medium.jpg?1720541084
+887,47,22,887,gusgonzalezh,False,False,2023-08-09T14:04:18+00:00,gusgonzalezh,gusgonzalezh,Gustavo González,Gustavo González,,/attachments/users/icons/887-thumb.jpeg?1693930089,119,0,0,119,41,119,[],1,/attachments/users/icons/887-medium.jpeg?1693930089
+273,47,27,273,ariadnap,False,False,2022-09-26T10:36:19+00:00,ariadnap,ariadnap,,,,/attachments/users/icons/273-thumb.jpeg?1722595186,57,0,0,57,32,57,[],1,/attachments/users/icons/273-medium.jpeg?1722595186
+7061,46,34,7061,superlopes,False,False,2024-10-09T06:25:24+00:00,superlopes,superlopes,,,,,47,0,0,47,35,47,[],1,
+5856,45,11,5856,ninala,False,False,2024-08-05T15:56:26+00:00,ninala,ninala,,,,/attachments/users/icons/5856-thumb.jpg?1722873661,48,7,0,55,10,48,[],1,/attachments/users/icons/5856-medium.jpg?1722873661
+1207,45,27,1207,arisoler,False,False,2023-11-11T15:04:19+00:00,arisoler,arisoler,Ari,Ari,,/attachments/users/icons/1207-thumb.jpeg?1699715485,148,26,0,174,68,148,[],1,/attachments/users/icons/1207-medium.jpeg?1699715485
+1066,45,20,1066,edurneabaigarcrespo,False,False,2023-10-03T12:44:35+00:00,edurneabaigarcrespo,edurneabaigarcrespo,,,,/attachments/users/icons/1066-thumb.jpg?1728315965,45,0,0,45,25,45,[],1,/attachments/users/icons/1066-medium.jpg?1728315965
+834,45,14,834,xavimarimon8,False,False,2023-07-20T18:50:32+00:00,xavimarimon8,xavimarimon8,Xavimarimon8,Xavimarimon8,,/attachments/users/icons/834-thumb.jpg?1691713430,179,3,0,182,44,179,[],1,/attachments/users/icons/834-medium.jpg?1691713430
+5369,43,30,5369,joanbb,False,False,2024-07-25T15:57:02+00:00,joanbb,joanbb,Joan Busquets Biarnes,Joan Busquets Biarnes,,/attachments/users/icons/5369-thumb.jpg?1722063227,61,0,0,61,41,61,[],1,/attachments/users/icons/5369-medium.jpg?1722063227
+584,43,24,584,alexm,False,False,2023-05-15T19:14:15+00:00,alexm,alexm,,,,,109,0,0,109,36,109,[],1,
+164,43,36,164,mvilabel,False,False,2022-07-18T14:16:43+00:00,mvilabel,mvilabel,Mar Vila Belmonte,Mar Vila Belmonte,,/attachments/users/icons/164-thumb.jpeg?1659712477,82,0,0,82,59,82,[],1,/attachments/users/icons/164-medium.jpeg?1659712477
+1263,42,35,1263,mcomerma,False,False,2023-12-05T13:11:49+00:00,mcomerma,mcomerma,Marta Comerma,Marta Comerma,,,261,25,0,286,154,261,[],1,
+989,41,20,989,tuitionis,False,False,2023-09-14T15:43:52+00:00,tuitionis,tuitionis,Amparo Asensi López,Amparo Asensi López,,,50,0,0,50,27,50,[],1,
+5787,40,31,5787,hughs,False,False,2024-08-04T05:14:06+00:00,hughs,hughs,Hugo,Hugo,,,45,1,0,46,0,45,[],1,
+832,40,27,832,eul_a_liarc,False,False,2023-07-20T17:05:03+00:00,eul_a_liarc,eul_a_liarc,,,,,553,0,0,553,139,553,[],1,
+6877,39,28,6877,xococdm,False,False,2024-09-15T20:10:14+00:00,xococdm,xococdm,Ferran Garcia Lozano,Ferran Garcia Lozano,,,40,0,0,40,28,40,[],1,
+5366,39,34,5366,maperez79,False,False,2024-07-25T14:38:40+00:00,maperez79,maperez79,Miguel Perez,Miguel Perez,,,39,0,0,39,28,39,[],1,
+3216,39,24,3216,xevisan,False,False,2024-05-26T17:20:41+00:00,xevisan,xevisan,,,,,39,0,0,39,23,39,[],1,
+1193,39,30,1193,labatalladealbert,False,False,2023-11-04T11:52:03+00:00,labatalladealbert,labatalladealbert,Albert Batalla,Albert Batalla,,,78,1,0,79,48,78,[],1,
+974,39,25,974,xavi_ventura,False,False,2023-09-10T09:09:41+00:00,xavi_ventura,xavi_ventura,Xavier Ventura,Xavier Ventura,,/attachments/users/icons/974-thumb.jpg?1696363509,148,0,0,148,64,148,[],1,/attachments/users/icons/974-medium.jpg?1696363509
+551,39,27,551,vazquez_diego,False,False,2023-05-03T09:50:01+00:00,vazquez_diego,vazquez_diego,,,,,39,0,0,39,28,39,[],1,
+2494,38,22,2494,fflorens,False,False,2024-05-09T17:21:40+00:00,fflorens,fflorens,Fidel Florensa,Fidel Florensa,,,38,0,0,38,8,38,[],1,
+2106,38,32,2106,patriciabesem,False,False,2024-04-20T16:59:50+00:00,patriciabesem,patriciabesem,,,,,59,0,0,59,45,59,[],1,
+821,38,18,821,ariana,False,False,2023-07-14T19:43:05+00:00,ariana,ariana,,,,,120,0,0,120,36,120,[],1,
+6,38,35,6,ramonservitje,False,False,2022-04-16T15:47:14+00:00,ramonservitje,ramonservitje,,,,/attachments/users/icons/6-thumb.jpg?1658326226,1065,56,0,1121,295,1065,[],1,/attachments/users/icons/6-medium.jpg?1658326226
+4818,37,18,4818,jordimares,False,False,2024-07-09T10:11:53+00:00,jordimares,jordimares,,,,,39,0,0,39,0,39,[],1,
+3221,37,29,3221,mariav,False,False,2024-05-26T18:14:35+00:00,mariav,mariav,,,,,37,0,0,37,21,37,[],1,
+3763,36,20,3763,psoler,False,False,2024-06-08T18:40:22+00:00,psoler,psoler,,,,,39,0,0,39,0,39,[],1,
+2657,36,34,2657,aquamani,False,False,2024-05-12T10:52:50+00:00,aquamani,aquamani,,,,,42,0,0,42,38,42,[],1,
+1060,36,29,1060,manelnoe,False,False,2023-10-01T14:04:34+00:00,manelnoe,manelnoe,,,,,92,0,0,92,54,92,[],1,
+2660,35,17,2660,xavillabot,False,False,2024-05-12T10:57:28+00:00,xavillabot,xavillabot,,,,/attachments/users/icons/2660-thumb.jpg?1728042982,35,0,0,35,19,35,[],1,/attachments/users/icons/2660-medium.jpg?1728042982
+1112,35,27,1112,mjvergotti,False,False,2023-10-18T15:23:38+00:00,mjvergotti,mjvergotti,mjvergotti,mjvergotti,,/attachments/users/icons/1112-thumb.jpg?1697643292,150,182,0,332,92,150,[],1,/attachments/users/icons/1112-medium.jpg?1697643292
+2456,34,15,2456,francesc_fg,False,False,2024-05-07T20:33:37+00:00,francesc_fg,francesc_fg,Francesc Farriols,Francesc Farriols,,,34,0,0,34,13,34,[],1,
+1754,34,19,1754,carladc,False,False,2024-04-10T11:02:09+00:00,carladc,carladc,Carla Duran Castella,Carla Duran Castella,,/attachments/users/icons/1754-thumb.jpg?1712748445,81,0,0,81,21,81,[],1,/attachments/users/icons/1754-medium.jpg?1712748445
+580,34,25,580,nancy_unisub,False,False,2023-05-15T17:19:26+00:00,nancy_unisub,nancy_unisub,Nancy_Unisub,Nancy_Unisub,,/attachments/users/icons/580-thumb.jpg?1684251032,343,0,0,343,114,343,[],1,/attachments/users/icons/580-medium.jpg?1684251032
+1214,32,22,1214,monsblaus,False,False,2023-11-14T13:53:24+00:00,monsblaus,monsblaus,Xavier Llopis,Xavier Llopis,,/attachments/users/icons/1214-thumb.png?1700016045,136,1,0,137,99,136,[],1,/attachments/users/icons/1214-medium.png?1700016045
+921,32,24,921,pedrogono,False,False,2023-08-27T15:55:38+00:00,pedrogono,pedrogono,Pedro González,Pedro González,,/attachments/users/icons/921-thumb.jpeg?1693151975,82,0,0,82,44,82,[],1,/attachments/users/icons/921-medium.jpeg?1693151975
+3469,31,24,3469,aff,False,False,2024-06-03T07:37:15+00:00,aff,aff,Àngels Folch,Àngels Folch,,/attachments/users/icons/3469-thumb.png?1717400547,69,19,0,88,53,69,[],1,/attachments/users/icons/3469-medium.png?1717400547
+2832,31,19,2832,josjavier,False,False,2024-05-18T06:46:10+00:00,josjavier,josjavier,Jose Javier Rodriguez Subiza,Jose Javier Rodriguez Subiza,,,38,0,0,38,1,38,[],1,
+570,31,24,570,nuriamkuin,False,False,2023-05-11T10:39:35+00:00,nuriamkuin,nuriamkuin,,,,/attachments/users/icons/570-thumb.jpg?1687190677,260,0,0,260,77,260,[],1,/attachments/users/icons/570-medium.jpg?1687190677
+3045,30,9,3045,congres-indians,False,False,2024-05-23T20:47:40+00:00,congres-indians,congres-indians,,,,,31,0,0,31,8,31,[],1,
+5872,29,21,5872,andres_oa,False,False,2024-08-06T14:32:48+00:00,andres_oa,andres_oa,,,,/attachments/users/icons/5872-thumb.jpg?1722955602,29,0,0,29,23,29,[],1,/attachments/users/icons/5872-medium.jpg?1722955602
+2437,29,14,2437,paula_ell,False,False,2024-05-06T16:39:55+00:00,paula_ell,paula_ell,,,,/attachments/users/icons/2437-thumb.jpg?1724085341,85,9,0,94,51,85,[],1,/attachments/users/icons/2437-medium.jpg?1724085341
+1047,29,22,1047,laiamanyer,False,False,2023-09-27T15:11:08+00:00,laiamanyer,laiamanyer,Laia Manyer,Laia Manyer,,/attachments/users/icons/1047-thumb.jpeg?1714326192,115,0,0,115,87,115,[],1,/attachments/users/icons/1047-medium.jpeg?1714326192
+5968,28,23,5968,cejulapu,False,False,2024-08-12T21:03:24+00:00,cejulapu,cejulapu,Albert Cejudo Lapuyade,Albert Cejudo Lapuyade,,/attachments/users/icons/5968-thumb.jpg?1723497061,28,0,0,28,0,28,[],1,/attachments/users/icons/5968-medium.jpg?1723497061
+2782,28,20,2782,thais,False,False,2024-05-13T18:26:33+00:00,thais,thais,,,,,51,0,0,51,0,51,[],1,
+1192,28,21,1192,divemike,False,False,2023-11-04T11:39:31+00:00,divemike,divemike,,,,/attachments/users/icons/1192-thumb.jpg?1729099090,97,64,0,161,59,97,[],1,/attachments/users/icons/1192-medium.jpg?1729099090
+424,28,21,424,danisantiago,False,False,2023-01-27T18:56:06+00:00,danisantiago,danisantiago,Dani Santiago,Dani Santiago,,/attachments/users/icons/424-thumb.jpg?1674846845,130,4,0,134,86,130,[],1,/attachments/users/icons/424-medium.jpg?1674846845
+6916,27,12,6916,montgatalmar,False,False,2024-09-21T20:35:19+00:00,montgatalmar,montgatalmar,Emilio Aibar,Emilio Aibar,,/attachments/users/icons/6916-thumb.jpg?1727126762,65,0,0,65,28,65,[],1,/attachments/users/icons/6916-medium.jpg?1727126762
+4671,27,21,4671,raquelnm,False,False,2024-07-05T06:30:37+00:00,raquelnm,raquelnm,Raquel,Raquel,,,27,0,0,27,6,27,[],1,
+4457,27,16,4457,lioba,False,False,2024-07-01T18:36:49+00:00,lioba,lioba,,,,/attachments/users/icons/4457-thumb.jpg?1723193910,154,0,0,154,60,154,[],1,/attachments/users/icons/4457-medium.jpg?1723193910
+2799,27,11,2799,denisemarrero3,False,False,2024-05-15T08:35:05+00:00,denisemarrero3,denisemarrero3,,,,,27,0,0,27,13,27,[],1,
+1458,26,21,1458,alexdot,False,False,2024-02-11T09:08:45+00:00,alexdot,alexdot,,,,,40,4,0,44,33,40,[],1,
+683,26,20,683,virtu,False,False,2023-06-05T17:55:57+00:00,virtu,virtu,Virtu,Virtu,,/attachments/users/icons/683-thumb.jpg?1723708194,26,0,0,26,0,26,[],1,/attachments/users/icons/683-medium.jpg?1723708194
+6023,25,17,6023,rosamarivs,False,False,2024-08-16T14:05:07+00:00,rosamarivs,rosamarivs,Rosa Maria Vilella,Rosa Maria Vilella,,,25,0,0,25,18,25,[],1,
+5277,25,15,5277,evaborreguero,False,False,2024-07-23T17:59:06+00:00,evaborreguero,evaborreguero,Eva Borreguero Peroliu,Eva Borreguero Peroliu,,/attachments/users/icons/5277-thumb.jpg?1725388163,368,0,0,368,98,368,[],1,/attachments/users/icons/5277-medium.jpg?1725388163
+4081,25,24,4081,berta03,False,False,2024-06-22T08:45:46+00:00,berta03,berta03,,,,,25,0,0,25,24,25,[],1,
+2774,25,23,2774,candrito,False,False,2024-05-13T09:44:56+00:00,candrito,candrito,,,,,25,0,0,25,25,25,[],1,
+663,25,19,663,adria_elias,False,False,2023-05-25T05:59:17+00:00,adria_elias,adria_elias,Adrià Elías,Adrià Elías,,/attachments/users/icons/663-thumb.jpg?1690037647,265,0,0,265,69,265,[],1,/attachments/users/icons/663-medium.jpg?1690037647
+652,25,17,652,elena,False,False,2023-05-23T12:29:29+00:00,elena,elena,Elena P.,Elena P.,,/attachments/users/icons/652-thumb.jpg?1684845448,146,0,0,146,86,146,[],1,/attachments/users/icons/652-medium.jpg?1684845448
+26,25,14,26,carlosrodero,False,False,2022-04-28T10:58:08+00:00,carlosrodero,carlosrodero,Carlos Rodero,Carlos Rodero,,/attachments/users/icons/26-thumb.png?1651143605,277,25,0,302,175,277,['curator'],1,/attachments/users/icons/26-medium.png?1651143605
+2232,24,23,2232,alancardedeu,False,False,2024-04-25T09:20:47+00:00,alancardedeu,alancardedeu,Alan Tejedor Garcia,Alan Tejedor Garcia,,/attachments/users/icons/2232-thumb.jpg?1714037022,24,0,0,24,23,24,[],1,/attachments/users/icons/2232-medium.jpg?1714037022
+42,24,19,42,olivencia88,False,False,2022-05-02T15:42:11+00:00,olivencia88,olivencia88,Olivia Álvarez,Olivia Álvarez,,/attachments/users/icons/42-thumb.jpeg?1651506784,215,0,0,215,101,215,[],1,/attachments/users/icons/42-medium.jpeg?1651506784
+6994,23,11,6994,enzo_vilar,False,False,2024-09-29T16:29:33+00:00,enzo_vilar,enzo_vilar,,,,,23,0,0,23,4,23,[],1,
+4424,23,23,4424,n1jol,False,False,2024-06-30T16:40:01+00:00,n1jol,n1jol,David Avila,David Avila,,,28,0,0,28,6,28,[],1,
+4415,22,12,4415,ivanesence,False,False,2024-06-29T16:15:26+00:00,ivanesence,ivanesence,,,,,24,0,0,24,12,24,[],1,
+582,22,17,582,toni,False,False,2023-05-15T18:02:51+00:00,toni,toni,Rovira Jareño,Rovira Jareño,,/attachments/users/icons/582-thumb.jpg?1684439080,52,5,0,57,44,52,[],1,/attachments/users/icons/582-medium.jpg?1684439080
+3391,21,14,3391,sergimartin,False,False,2024-06-01T10:55:17+00:00,sergimartin,sergimartin,,,,,25,0,0,25,1,25,[],1,
+2405,21,18,2405,jordidiver,False,False,2024-05-04T11:37:14+00:00,jordidiver,jordidiver,,,,/attachments/users/icons/2405-thumb.png?1715847549,34,0,0,34,25,34,[],1,/attachments/users/icons/2405-medium.png?1715847549
+6099,20,14,6099,adriadeepsea,False,False,2024-08-21T13:41:04+00:00,adriadeepsea,adriadeepsea,Adrià Lamúa Bombí,Adrià Lamúa Bombí,,,20,0,0,20,0,20,[],1,
+1674,20,14,1674,cescarrer,False,False,2024-03-21T20:51:50+00:00,cescarrer,cescarrer,,,,,43,0,0,43,32,43,[],1,
+903,20,10,903,eliavivesgadea,False,False,2023-08-18T19:30:18+00:00,eliavivesgadea,eliavivesgadea,Èlia Vives Gadea,Èlia Vives Gadea,,/attachments/users/icons/903-thumb.jpg?1713013128,21,2,0,23,10,21,[],1,/attachments/users/icons/903-medium.jpg?1713013128
+679,20,16,679,borisweitzmann,False,False,2023-06-01T13:20:47+00:00,borisweitzmann,borisweitzmann,Boris Weitzmann,Boris Weitzmann,,/attachments/users/icons/679-thumb.jpg?1693424668,163,17,0,180,100,163,[],1,/attachments/users/icons/679-medium.jpg?1693424668
+6049,19,11,6049,strombus,False,False,2024-08-19T09:00:19+00:00,strombus,strombus,Eric,Eric,,/attachments/users/icons/6049-thumb.jpg?1724063047,19,0,0,19,11,19,[],1,/attachments/users/icons/6049-medium.jpg?1724063047
+6997,18,14,6997,pepijn,False,False,2024-09-30T12:14:02+00:00,pepijn,pepijn,,,,,18,0,0,18,13,18,[],1,
+6980,18,15,6980,fergascod,False,False,2024-09-28T09:48:22+00:00,fergascod,fergascod,Fernando Gastón Codony,Fernando Gastón Codony,,/attachments/users/icons/6980-thumb.png?1728848197,18,0,0,18,15,18,[],1,/attachments/users/icons/6980-medium.png?1728848197
+5928,18,15,5928,rroviraf,False,False,2024-08-09T13:37:28+00:00,rroviraf,rroviraf,Roger Rovira,Roger Rovira,,/attachments/users/icons/5928-thumb.jpg?1723462889,19,0,0,19,14,19,[],1,/attachments/users/icons/5928-medium.jpg?1723462889
+4253,18,13,4253,julizansca,False,False,2024-06-26T10:41:52+00:00,julizansca,julizansca,,,,/attachments/users/icons/4253-thumb.jpg?1719920793,19,0,0,19,0,19,[],1,/attachments/users/icons/4253-medium.jpg?1719920793
+3983,17,6,3983,eso2a,False,False,2024-06-18T08:47:18+00:00,eso2a,eso2a,,,,,20,0,0,20,7,20,[],1,
+557,17,16,557,divers,False,False,2023-05-04T15:23:20+00:00,divers,divers,Divers Platja d'Aro,Divers Platja d'Aro,,/attachments/users/icons/557-thumb.jpg?1683214739,117,0,0,117,0,117,[],1,/attachments/users/icons/557-medium.jpg?1683214739
+6377,16,14,6377,magdagavalda,False,False,2024-09-06T10:07:34+00:00,magdagavalda,magdagavalda,,,,,16,0,0,16,12,16,[],1,
+5915,16,14,5915,jordigs,False,False,2024-08-09T08:18:55+00:00,jordigs,jordigs,,,,,18,44,0,62,15,18,[],1,
+4913,16,15,4913,estadesmarines24,False,False,2024-07-10T14:40:27+00:00,estadesmarines24,estadesmarines24,,,,,19,0,0,19,17,19,[],1,
+1685,16,15,1685,adriana,False,False,2024-03-23T16:34:54+00:00,adriana,adriana,Adriana Pacheco Casas,Adriana Pacheco Casas,,,34,0,0,34,8,34,[],1,
+941,16,7,941,lola_mata_harroue,False,False,2023-09-04T07:30:29+00:00,lola_mata_harroue,lola_mata_harroue,Lola Mata Harroué,Lola Mata Harroué,,,16,0,0,16,7,16,[],1,
+856,16,13,856,peli,False,False,2023-07-26T15:47:34+00:00,peli,peli,Oscar Vidal Guixé,Oscar Vidal Guixé,,,34,0,0,34,23,34,[],1,
+743,16,15,743,mariah_fecdas,False,False,2023-06-18T12:49:45+00:00,mariah_fecdas,mariah_fecdas,,,,,17,0,0,17,14,17,[],1,
+6988,15,13,6988,blancsport04,False,False,2024-09-28T17:00:59+00:00,blancsport04,blancsport04,,,,,15,0,0,15,0,15,[],1,
+6053,15,13,6053,jordigalbany,False,False,2024-08-19T11:23:38+00:00,jordigalbany,jordigalbany,,,,,15,0,0,15,13,15,[],1,
+4758,15,14,4758,centreimmersiocapdecreus,False,False,2024-07-07T06:57:39+00:00,centreimmersiocapdecreus,centreimmersiocapdecreus,centreimmersiocapdecreus,centreimmersiocapdecreus,,/attachments/users/icons/4758-thumb.jpg?1720339904,19,0,0,19,17,19,[],1,/attachments/users/icons/4758-medium.jpg?1720339904
+2800,15,10,2800,marionaclaramunt,False,False,2024-05-15T10:50:15+00:00,marionaclaramunt,marionaclaramunt,Mariona Claramunt,Mariona Claramunt,,,15,0,0,15,13,15,[],1,
+1098,15,15,1098,jordi_noemi,False,False,2023-10-16T12:56:37+00:00,jordi_noemi,jordi_noemi,,,,/attachments/users/icons/1098-thumb.jpeg?1697462140,23,0,0,23,6,23,[],1,/attachments/users/icons/1098-medium.jpeg?1697462140
+6526,14,9,6526,jaumetorner,False,False,2024-09-07T17:30:30+00:00,jaumetorner,jaumetorner,,,,,14,0,0,14,10,14,[],1,
+6235,14,5,6235,lluis,False,False,2024-09-05T11:31:18+00:00,lluis,lluis,,,,,16,0,0,16,5,16,[],1,
+5246,14,14,5246,irenelopezmoreno,False,False,2024-07-22T17:21:15+00:00,irenelopezmoreno,irenelopezmoreno,,,,,16,0,0,16,15,16,[],1,
+4749,14,12,4749,saradpl,False,False,2024-07-06T11:46:56+00:00,saradpl,saradpl,,,,/attachments/users/icons/4749-thumb.jpg?1720270546,23,0,0,23,17,23,[],1,/attachments/users/icons/4749-medium.jpg?1720270546
+4746,14,11,4746,manuel,False,False,2024-07-06T10:41:38+00:00,manuel,manuel,Manuel Ardila Arroyo,Manuel Ardila Arroyo,,,14,0,0,14,12,14,[],1,
+4684,14,13,4684,batdibu,False,False,2024-07-05T07:10:47+00:00,batdibu,batdibu,Alexandra Estopà Blanch,Alexandra Estopà Blanch,,,19,0,0,19,15,19,[],1,
+2375,14,12,2375,mathildelpef,False,False,2024-05-02T12:47:31+00:00,mathildelpef,mathildelpef,Mathilde Lepoivre-Ferry,Mathilde Lepoivre-Ferry,,/attachments/users/icons/2375-thumb.png?1714654538,52,2,0,54,33,52,[],1,/attachments/users/icons/2375-medium.png?1714654538
+1311,14,5,1311,srolivella,False,False,2023-12-16T10:30:17+00:00,srolivella,srolivella,Santi,Santi,,,34,0,0,34,25,34,[],1,
+176,14,12,176,arnau,False,False,2022-07-31T12:49:13+00:00,arnau,arnau,,,,/attachments/users/icons/176-thumb.jpg?1659277667,155,0,0,155,41,155,[],1,/attachments/users/icons/176-medium.jpg?1659277667
+6174,13,5,6174,aran,False,False,2024-08-31T18:23:18+00:00,aran,aran,,,,/attachments/users/icons/6174-thumb.jpg?1728317025,13,0,0,13,5,13,[],1,/attachments/users/icons/6174-medium.jpg?1728317025
+5969,13,12,5969,joseplluis,False,False,2024-08-13T08:17:21+00:00,joseplluis,joseplluis,,,,/attachments/users/icons/5969-thumb.jpg?1723541602,15,0,0,15,15,15,[],1,/attachments/users/icons/5969-medium.jpg?1723541602
+5922,13,11,5922,marmarih,False,False,2024-08-09T11:44:50+00:00,marmarih,marmarih,,,,,13,0,0,13,11,13,[],1,
+5669,13,8,5669,ruthescodaguerra,False,False,2024-08-02T08:57:07+00:00,ruthescodaguerra,ruthescodaguerra,,,,/attachments/users/icons/5669-thumb.jpg?1722593275,13,0,0,13,8,13,[],1,/attachments/users/icons/5669-medium.jpg?1722593275
+2890,13,12,2890,roberto,False,False,2024-05-21T18:31:54+00:00,roberto,roberto,Roberto madurga,Roberto madurga,,/attachments/users/icons/2890-thumb.jpg?1716583024,14,0,0,14,4,14,[],1,/attachments/users/icons/2890-medium.jpg?1716583024
+2434,13,12,2434,pvives,False,False,2024-05-06T11:40:43+00:00,pvives,pvives,Pere Vives,Pere Vives,,,14,0,0,14,12,14,[],1,
+1807,13,8,1807,mire,False,False,2024-04-13T09:29:57+00:00,mire,mire,,,,,19,0,0,19,10,19,[],1,
+60,13,13,60,okeanoslife,False,False,2022-05-17T07:44:01+00:00,okeanoslife,okeanoslife,Mónica Franco Maimir,Mónica Franco Maimir,,/attachments/users/icons/60-thumb.png?1652773633,548,0,0,548,201,548,[],1,/attachments/users/icons/60-medium.png?1652773633
+6983,12,5,6983,irena909,False,False,2024-09-28T11:18:04+00:00,irena909,irena909,Irena Bonin,Irena Bonin,,,13,0,0,13,8,13,[],1,
+6240,12,6,6240,lisap,False,False,2024-09-05T16:24:17+00:00,lisap,lisap,,,,/attachments/users/icons/6240-thumb.jpeg?1725557933,12,0,0,12,8,12,[],1,/attachments/users/icons/6240-medium.jpeg?1725557933
+5903,12,11,5903,scubadiva,False,False,2024-08-08T10:25:57+00:00,scubadiva,scubadiva,,,,,12,0,0,12,11,12,[],1,
+5420,12,12,5420,michaschoerri,False,False,2024-07-26T20:54:46+00:00,michaschoerri,michaschoerri,,,,,19,0,0,19,18,19,[],1,
+5413,12,11,5413,indi84,False,False,2024-07-26T16:38:46+00:00,indi84,indi84,Joan Peralta Saguer,Joan Peralta Saguer,,,12,0,0,12,11,12,[],1,
+5396,12,11,5396,nudibranqui,False,False,2024-07-26T07:51:22+00:00,nudibranqui,nudibranqui,Pere Figuerola,Pere Figuerola,,,12,0,0,12,11,12,[],1,
+5155,12,4,5155,albita511,False,False,2024-07-17T14:18:31+00:00,albita511,albita511,,,,/attachments/users/icons/5155-thumb.png?1721226053,14,0,0,14,0,14,[],1,/attachments/users/icons/5155-medium.png?1721226053
+4598,12,6,4598,campus2024,False,False,2024-07-04T08:04:02+00:00,campus2024,campus2024,,,,,22,0,0,22,13,22,[],1,
+3948,12,10,3948,ggn,False,False,2024-06-15T10:09:16+00:00,ggn,ggn,Germán García Navarro,Germán García Navarro,,,13,0,0,13,7,13,[],1,
+3367,12,12,3367,yherla,False,False,2024-05-30T08:06:04+00:00,yherla,yherla,Èric Yherla,Èric Yherla,,,12,0,0,12,11,12,[],1,
+1820,12,8,1820,lauraaa,False,False,2024-04-15T13:40:18+00:00,lauraaa,lauraaa,,,,,16,0,0,16,11,16,[],1,
+1101,12,11,1101,tonijims,False,False,2023-10-17T16:06:50+00:00,tonijims,tonijims,Tonijims,Tonijims,,/attachments/users/icons/1101-thumb.jpg?1697561642,19,4,0,23,15,19,[],1,/attachments/users/icons/1101-medium.jpg?1697561642
+798,12,10,798,xavidp,False,False,2023-07-06T16:43:21+00:00,xavidp,xavidp,Xavier de Pedro Puente,Xavier de Pedro Puente,,/attachments/users/icons/798-thumb.jpg?1691601303,298,11,0,309,84,298,[],1,/attachments/users/icons/798-medium.jpg?1691601303
+7007,11,8,7007,mionze,False,False,2024-10-02T10:15:50+00:00,mionze,mionze,,,,,11,0,0,11,7,11,[],1,
+6998,11,10,6998,isaac_susi,False,False,2024-09-30T13:21:12+00:00,isaac_susi,isaac_susi,,,,,11,0,0,11,8,11,[],1,
+5162,11,9,5162,arnau225,False,False,2024-07-18T07:33:21+00:00,arnau225,arnau225,Arnau TM.,Arnau TM.,,,13,3,2,18,11,13,[],1,
+4497,11,11,4497,laiaalc,False,False,2024-07-02T10:35:20+00:00,laiaalc,laiaalc,Laia Lopez Colom,Laia Lopez Colom,,/attachments/users/icons/4497-thumb.jpg?1719995358,11,0,0,11,11,11,[],1,/attachments/users/icons/4497-medium.jpg?1719995358
+3909,11,9,3909,elultimocoral,False,False,2024-06-13T15:48:29+00:00,elultimocoral,elultimocoral,El último Coral,El último Coral,,/attachments/users/icons/3909-thumb.jpg?1718302445,11,0,0,11,10,11,[],1,/attachments/users/icons/3909-medium.jpg?1718302445
+1799,11,7,1799,alexiaaa,False,False,2024-04-12T14:35:52+00:00,alexiaaa,alexiaaa,,,,,16,0,0,16,9,16,[],1,
+1656,11,8,1656,angelarroyes,False,False,2024-03-15T17:48:56+00:00,angelarroyes,angelarroyes,Àngel Arroyes Martínez,Àngel Arroyes Martínez,,,11,0,0,11,9,11,[],1,
+741,11,10,741,marcfotosub,False,False,2023-06-17T21:15:56+00:00,marcfotosub,marcfotosub,,,,,68,1,0,69,27,68,[],1,
+162,11,10,162,miguel_angel_fuentes,False,False,2022-07-18T09:40:41+00:00,miguel_angel_fuentes,miguel_angel_fuentes,Miguel Angel Fuentes,Miguel Angel Fuentes,,/attachments/users/icons/162-thumb.jpg?1697626616,32,0,0,32,29,32,[],1,/attachments/users/icons/162-medium.jpg?1697626616
+6079,10,10,6079,jmestras,False,False,2024-08-20T06:59:21+00:00,jmestras,jmestras,jmestras,jmestras,,/attachments/users/icons/6079-thumb.jpg?1724225761,12,0,0,12,11,12,[],1,/attachments/users/icons/6079-medium.jpg?1724225761
+5643,10,6,5643,fabiopillon,False,False,2024-08-01T20:27:26+00:00,fabiopillon,fabiopillon,Fabio Pillon,Fabio Pillon,,,12,0,0,12,1,12,[],1,
+4827,10,6,4827,stefbroszeit,False,False,2024-07-09T12:02:21+00:00,stefbroszeit,stefbroszeit,Stefanie broszeit-judge,Stefanie broszeit-judge,,,15,0,0,15,0,15,[],1,
+3198,10,3,3198,iago,False,False,2024-05-26T10:05:54+00:00,iago,iago,,,,,11,0,0,11,1,11,[],1,
+931,10,10,931,jennifer,False,False,2023-08-29T14:43:29+00:00,jennifer,jennifer,,,,,11,0,0,11,3,11,[],1,
+318,10,9,318,amaliacardenas,False,False,2022-10-21T11:09:44+00:00,amaliacardenas,amaliacardenas,amalia,amalia,,/attachments/users/icons/318-thumb.jpg?1691592194,1132,7,0,1139,181,1132,[],1,/attachments/users/icons/318-medium.jpg?1691592194
+6818,9,7,6818,adriasolep,False,False,2024-09-12T14:28:40+00:00,adriasolep,adriasolep,,,,,9,0,0,9,0,9,[],1,
+6249,9,8,6249,iliasyab,False,False,2024-09-05T17:19:39+00:00,iliasyab,iliasyab,Ilias AB,Ilias AB,,/attachments/users/icons/6249-thumb.png?1725557964,15,0,0,15,9,15,[],1,/attachments/users/icons/6249-medium.png?1725557964
+5971,9,7,5971,elsafc,False,False,2024-08-13T10:27:13+00:00,elsafc,elsafc,,,,/attachments/users/icons/5971-thumb.jpg?1723548083,9,0,0,9,5,9,[],1,/attachments/users/icons/5971-medium.jpg?1723548083
+5052,9,8,5052,cmita,False,False,2024-07-14T09:37:41+00:00,cmita,cmita,Clara Mirabent Talegón,Clara Mirabent Talegón,,,9,0,0,9,6,9,[],1,
+3403,9,5,3403,jarderiu,False,False,2024-06-01T14:28:45+00:00,jarderiu,jarderiu,Jordi Arderiu,Jordi Arderiu,,,10,0,0,10,5,10,[],1,
+2885,9,9,2885,calypso,False,False,2024-05-21T12:50:28+00:00,calypso,calypso,Edu,Edu,,/attachments/users/icons/2885-thumb.jpg?1717581396,9,0,0,9,9,9,[],1,/attachments/users/icons/2885-medium.jpg?1717581396
+1818,9,3,1818,juligmez,False,False,2024-04-15T13:36:32+00:00,juligmez,juligmez,,,,/attachments/users/icons/1818-thumb.jpg?1714982280,10,0,0,10,5,10,[],1,/attachments/users/icons/1818-medium.jpg?1714982280
+981,9,6,981,juanvi,False,False,2023-09-13T06:41:13+00:00,juanvi,juanvi,Juanvi,Juanvi,,/attachments/users/icons/981-thumb.png?1697278031,82,74,0,156,47,82,[],1,/attachments/users/icons/981-medium.png?1697278031
+911,9,9,911,longibanda,False,False,2023-08-23T11:37:31+00:00,longibanda,longibanda,Josep Reviriego Garcia,Josep Reviriego Garcia,,,9,0,0,9,9,9,[],1,
+881,9,9,881,laia,False,False,2023-08-08T11:50:36+00:00,laia,laia,Solà,Solà,,/attachments/users/icons/881-thumb.jpg?1691498816,14,0,0,14,13,14,[],1,/attachments/users/icons/881-medium.jpg?1691498816
+68,9,4,68,jcoines,False,False,2022-05-19T07:55:02+00:00,jcoines,jcoines,Jesús Coines,Jesús Coines,,/attachments/users/icons/68-thumb.jpg?1652949345,291,0,0,291,122,291,[],1,/attachments/users/icons/68-medium.jpg?1652949345
+6995,8,8,6995,ricard_vilar,False,False,2024-09-29T17:03:55+00:00,ricard_vilar,ricard_vilar,,,,,8,0,0,8,8,8,[],1,
+5965,8,8,5965,sosonacho,False,False,2024-08-12T16:35:11+00:00,sosonacho,sosonacho,Nacho López Campos,Nacho López Campos,,/attachments/users/icons/5965-thumb.jpg?1723480635,8,1,0,9,8,8,[],1,/attachments/users/icons/5965-medium.jpg?1723480635
+5024,8,8,5024,kike,False,False,2024-07-13T18:03:40+00:00,kike,kike,,,,,12,0,0,12,5,12,[],1,
+4367,8,5,4367,rosadelsvents,False,False,2024-06-28T08:03:51+00:00,rosadelsvents,rosadelsvents,Cases de colònies Rosa dels Vents,Cases de colònies Rosa dels Vents,,/attachments/users/icons/4367-thumb.jpg?1719848606,26,0,0,26,12,26,[],1,/attachments/users/icons/4367-medium.jpg?1719848606
+3970,8,3,3970,luabgra,False,False,2024-06-17T07:53:06+00:00,luabgra,luabgra,,,,,21,0,0,21,6,21,[],1,
+3369,8,4,3369,supergava,False,False,2024-05-30T08:30:24+00:00,supergava,supergava,,,,,11,0,0,11,8,11,[],1,
+671,8,7,671,suky,False,False,2023-05-27T08:13:55+00:00,suky,suky,Arancha,Arancha,,,31,0,0,31,8,31,[],1,
+7006,7,3,7006,joseramon_gil,False,False,2024-10-02T08:28:25+00:00,joseramon_gil,joseramon_gil,,,,,7,0,0,7,0,7,[],1,
+5887,7,5,5887,panixirri,False,False,2024-08-07T11:46:34+00:00,panixirri,panixirri,,,,/attachments/users/icons/5887-thumb.jpg?1723031326,28,6,0,34,17,28,[],1,/attachments/users/icons/5887-medium.jpg?1723031326
+5748,7,5,5748,nurialaroca,False,False,2024-08-03T16:22:32+00:00,nurialaroca,nurialaroca,nurialaroca,nurialaroca,,/attachments/users/icons/5748-thumb.jpg?1722702294,30,0,0,30,21,30,[],1,/attachments/users/icons/5748-medium.jpg?1722702294
+5453,7,6,5453,asarola,False,False,2024-07-28T19:21:31+00:00,asarola,asarola,,,,,7,0,0,7,4,7,[],1,
+5342,7,7,5342,vile7,False,False,2024-07-24T22:54:38+00:00,vile7,vile7,Albert Vilella Sementé,Albert Vilella Sementé,,/attachments/users/icons/5342-thumb.jpg?1721915017,8,2,0,10,4,8,[],1,/attachments/users/icons/5342-medium.jpg?1721915017
+5181,7,7,5181,grigri,False,False,2024-07-19T12:16:30+00:00,grigri,grigri,Júlia Grinyó,Júlia Grinyó,,,7,0,0,7,7,7,[],1,
+4899,7,7,4899,iviflow,False,False,2024-07-10T10:41:00+00:00,iviflow,iviflow,Irene Flores Niubó,Irene Flores Niubó,,/attachments/users/icons/4899-thumb.jpg?1720947016,9,0,0,9,9,9,[],1,/attachments/users/icons/4899-medium.jpg?1720947016
+4840,7,7,4840,arturo,False,False,2024-07-09T15:12:30+00:00,arturo,arturo,Arturo Ardila Garcia,Arturo Ardila Garcia,,,7,0,0,7,5,7,[],1,
+3779,7,4,3779,cecilius,False,False,2024-06-09T10:07:26+00:00,cecilius,cecilius,Cecilia Helenius,Cecilia Helenius,,,13,0,0,13,0,13,[],1,
+3245,7,5,3245,victorblanco,False,False,2024-05-27T11:36:17+00:00,victorblanco,victorblanco,,,,,10,0,0,10,3,10,[],1,
+2867,7,6,2867,javiergg,False,False,2024-05-20T13:29:29+00:00,javiergg,javiergg,Javier Garcia Gallardo,Javier Garcia Gallardo,,,7,0,0,7,5,7,[],1,
+369,7,6,369,j_simic,False,False,2022-11-20T11:10:30+00:00,j_simic,j_simic,,,,,99,7,0,106,59,99,[],1,
+95,7,7,95,pepe_molero,False,False,2022-06-09T18:11:09+00:00,pepe_molero,pepe_molero,Pepe,Pepe,,,49,0,0,49,34,49,[],1,
+8,7,4,8,lausanchezvila,False,False,2022-04-16T16:37:22+00:00,lausanchezvila,lausanchezvila,Laura Sánchez,Laura Sánchez,,/attachments/users/icons/8-thumb.jpg?1690904370,2776,121,0,2897,281,2776,[],1,/attachments/users/icons/8-medium.jpg?1690904370
+7083,6,4,7083,joan_ramon,False,False,2024-10-12T16:12:16+00:00,joan_ramon,joan_ramon,,,,/attachments/users/icons/7083-thumb.jpg?1728750616,6,0,0,6,1,6,[],1,/attachments/users/icons/7083-medium.jpg?1728750616
+6991,6,5,6991,giuliponcee,False,False,2024-09-28T21:13:55+00:00,giuliponcee,giuliponcee,giuliana ponce,giuliana ponce,,,6,0,0,6,5,6,[],1,
+6944,6,4,6944,alexisjoly,False,False,2024-09-25T10:06:58+00:00,alexisjoly,alexisjoly,Alexis Joly,Alexis Joly,,,8,0,0,8,6,8,[],1,
+6367,6,6,6367,mgalouye,False,False,2024-09-06T08:58:56+00:00,mgalouye,mgalouye,,,,,6,0,0,6,6,6,[],1,
+5673,6,6,5673,silviallorente,False,False,2024-08-02T11:24:29+00:00,silviallorente,silviallorente,,,,,6,0,0,6,0,6,[],1,
+5238,6,0,5238,pablor,False,False,2024-07-22T14:06:29+00:00,pablor,pablor,Pablo,Pablo,,/attachments/users/icons/5238-thumb.jpg?1723325559,14,0,0,14,1,14,[],1,/attachments/users/icons/5238-medium.jpg?1723325559
+4755,6,5,4755,jbonany,False,False,2024-07-06T19:23:09+00:00,jbonany,jbonany,Joan Bonany Coll,Joan Bonany Coll,,,8,0,0,8,7,8,[],1,
+3192,6,2,3192,miriam,False,False,2024-05-26T09:26:38+00:00,miriam,miriam,Laguna,Laguna,,,6,0,0,6,3,6,[],1,
+2853,6,5,2853,oli8,False,False,2024-05-19T09:55:40+00:00,oli8,oli8,Oliver González,Oliver González,,,7,0,0,7,4,7,[],1,
+2771,6,6,2771,mayi,False,False,2024-05-13T09:04:06+00:00,mayi,mayi,,,,,6,0,0,6,6,6,[],1,
+1833,6,4,1833,saritaaaa,False,False,2024-04-15T16:38:11+00:00,saritaaaa,saritaaaa,,,,,13,0,0,13,5,13,[],1,
+1824,6,3,1824,pauruizmartinez,False,False,2024-04-15T13:45:25+00:00,pauruizmartinez,pauruizmartinez,,,,,6,0,0,6,2,6,[],1,
+1795,6,3,1795,iollalle,False,False,2024-04-12T14:34:24+00:00,iollalle,iollalle,,,,,6,0,0,6,2,6,[],1,
+987,6,5,987,alex_bdl,False,False,2023-09-14T08:36:11+00:00,alex_bdl,alex_bdl,,,,,8,0,0,8,7,8,[],1,
+7078,5,5,7078,egle-bazarovaite,False,False,2024-10-12T11:22:47+00:00,egle-bazarovaite,egle-bazarovaite,Eglė,Eglė,,/attachments/users/icons/7078-thumb.jpeg?1728734868,6,0,0,6,0,6,[],1,/attachments/users/icons/7078-medium.jpeg?1728734868
+6946,5,4,6946,vanessahequet,False,False,2024-09-25T10:07:34+00:00,vanessahequet,vanessahequet,Vanessa hequet,Vanessa hequet,,,7,0,0,7,5,7,[],1,
+6824,5,5,6824,albert_g,False,False,2024-09-12T16:01:52+00:00,albert_g,albert_g,Albert Grau,Albert Grau,,,10,0,0,10,8,10,[],1,
+6716,5,0,6716,bcnllum,False,False,2024-09-10T14:40:15+00:00,bcnllum,bcnllum,,,,,5,0,0,5,1,5,[],1,
+6201,5,4,6201,ferrangallo,False,False,2024-09-03T19:48:46+00:00,ferrangallo,ferrangallo,Ferran Gallo Pérez,Ferran Gallo Pérez,,,11,0,0,11,10,11,[],1,
+5978,5,5,5978,tpines,False,False,2024-08-13T15:47:43+00:00,tpines,tpines,,,,,9,0,0,9,8,9,[],1,
+5167,5,4,5167,eroci,False,False,2024-07-18T07:42:21+00:00,eroci,eroci,,,,/attachments/users/icons/5167-thumb.jpg?1721289547,5,0,0,5,4,5,[],1,/attachments/users/icons/5167-medium.jpg?1721289547
+4972,5,3,4972,fraortsco,False,False,2024-07-12T09:06:18+00:00,fraortsco,fraortsco,,,,,31,81,0,112,27,31,[],1,
+4739,5,5,4739,mjulia,False,False,2024-07-05T18:44:02+00:00,mjulia,mjulia,Marc,Marc,,,5,0,0,5,5,5,[],1,
+3980,5,4,3980,grupb_miquel,False,False,2024-06-18T07:46:27+00:00,grupb_miquel,grupb_miquel,,,,,5,0,0,5,5,5,[],1,
+2836,5,4,2836,martoledo,False,False,2024-05-18T09:52:32+00:00,martoledo,martoledo,Mar Toledo Carreras,Mar Toledo Carreras,,,5,0,0,5,5,5,[],1,
+2365,5,3,2365,proyectovelella,False,False,2024-05-01T15:08:12+00:00,proyectovelella,proyectovelella,Associació Proyecto Velella,Associació Proyecto Velella,,/attachments/users/icons/2365-thumb.png?1722425668,26,2,0,28,10,26,[],1,/attachments/users/icons/2365-medium.png?1722425668
+1094,5,5,1094,packa,False,False,2023-10-15T07:17:34+00:00,packa,packa,,,,,7,0,0,7,6,7,[],1,
+1008,5,5,1008,alex_melich,False,False,2023-09-18T10:48:37+00:00,alex_melich,alex_melich,,,,,21,26,0,47,19,21,[],1,
+231,5,4,231,mochilo75,False,False,2022-09-11T13:58:41+00:00,mochilo75,mochilo75,,,,,37,0,0,37,28,37,[],1,
+62,5,4,62,mestralet,False,False,2022-05-17T08:49:37+00:00,mestralet,mestralet,,,,/attachments/users/icons/62-thumb.png?1652777427,2199,0,0,2199,396,2199,[],1,/attachments/users/icons/62-medium.png?1652777427
+22,5,3,22,rogerpuig,False,False,2022-04-27T14:20:46+00:00,rogerpuig,rogerpuig,Roger Puig,Roger Puig,,/attachments/users/icons/22-thumb.jpg?1651300983,872,189,0,1061,199,872,[],1,/attachments/users/icons/22-medium.jpg?1651300983
+7020,4,3,7020,joana_oliver,False,False,2024-10-03T14:08:34+00:00,joana_oliver,joana_oliver,,,,,4,0,0,4,2,4,[],1,
+6960,4,1,6960,roblemmens,False,False,2024-09-25T14:00:23+00:00,roblemmens,roblemmens,Rob Lemmens,Rob Lemmens,,,9,0,0,9,3,9,[],1,
+6942,4,3,6942,maxthethug,False,False,2024-09-25T10:06:32+00:00,maxthethug,maxthethug,Maxime Fromholtz,Maxime Fromholtz,,,5,0,0,5,3,5,[],1,
+6134,4,3,6134,wingkul,False,False,2024-08-25T07:33:48+00:00,wingkul,wingkul,Gonzalo,Gonzalo,,,4,0,0,4,0,4,[],1,
+5902,4,4,5902,jordiporquet,False,False,2024-08-08T09:16:33+00:00,jordiporquet,jordiporquet,Jordi,Jordi,,/attachments/users/icons/5902-thumb.jpg?1723620348,8,0,0,8,5,8,[],1,/attachments/users/icons/5902-medium.jpg?1723620348
+5764,4,4,5764,said10,False,False,2024-08-03T19:38:19+00:00,said10,said10,Said el Mamouni Bachiri,Said el Mamouni Bachiri,,/attachments/users/icons/5764-thumb.jpg?1722715107,4,1,0,5,4,4,[],1,/attachments/users/icons/5764-medium.jpg?1722715107
+5731,4,3,5731,lauroneta,False,False,2024-08-03T07:39:58+00:00,lauroneta,lauroneta,Laura Vicente Cabrerizo,Laura Vicente Cabrerizo,,/attachments/users/icons/5731-thumb.jpg?1722670929,4,0,0,4,2,4,[],1,/attachments/users/icons/5731-medium.jpg?1722670929
+5524,4,4,5524,snorkeland,False,False,2024-07-30T16:56:45+00:00,snorkeland,snorkeland,,,,,4,0,0,4,4,4,[],1,
+5494,4,4,5494,jeffreyabbot,False,False,2024-07-29T20:50:02+00:00,jeffreyabbot,jeffreyabbot,Jeffrey Abbot,Jeffrey Abbot,,/attachments/users/icons/5494-thumb.jpg?1722288632,5,12,0,17,3,5,[],1,/attachments/users/icons/5494-medium.jpg?1722288632
+5441,4,4,5441,michellecabral,False,False,2024-07-27T18:33:42+00:00,michellecabral,michellecabral,Michelle Cabral,Michelle Cabral,,,4,0,0,4,2,4,[],1,
+5232,4,2,5232,sergiov,False,False,2024-07-22T10:18:13+00:00,sergiov,sergiov,sergio vega,sergio vega,,/attachments/users/icons/5232-thumb.jpg?1721644510,9,1,0,10,8,9,[],1,/attachments/users/icons/5232-medium.jpg?1721644510
+5218,4,3,5218,jordialtimiras,False,False,2024-07-21T11:40:02+00:00,jordialtimiras,jordialtimiras,,,,,4,0,0,4,3,4,[],1,
+4811,4,2,4811,eulalia_busquets,False,False,2024-07-09T05:55:36+00:00,eulalia_busquets,eulalia_busquets,,,,,4,0,0,4,0,4,[],1,
+4368,4,3,4368,merialorda,False,False,2024-06-28T10:11:49+00:00,merialorda,merialorda,,,,,4,0,0,4,3,4,[],1,
+4335,4,2,4335,silvilein,False,False,2024-06-27T14:46:51+00:00,silvilein,silvilein,,,,/attachments/users/icons/4335-thumb.jpg?1720087568,19,2,0,21,2,19,[],1,/attachments/users/icons/4335-medium.jpg?1720087568
+3775,4,3,3775,iria_apr7,False,False,2024-06-09T06:25:10+00:00,iria_apr7,iria_apr7,,,,,4,0,0,4,2,4,[],1,
+2859,4,4,2859,ordejon,False,False,2024-05-19T16:29:26+00:00,ordejon,ordejon,Pablo Ordejon,Pablo Ordejon,,,4,0,0,4,3,4,[],1,
+2684,4,4,2684,mvinola,False,False,2024-05-12T17:36:32+00:00,mvinola,mvinola,Vinyoles colomer,Vinyoles colomer,,/attachments/users/icons/2684-thumb.jpg?1715541389,4,0,0,4,4,4,[],1,/attachments/users/icons/2684-medium.jpg?1715541389
+1830,4,3,1830,holapoma,False,False,2024-04-15T14:20:47+00:00,holapoma,holapoma,,,,,4,1,0,5,0,4,[],1,
+1817,4,3,1817,miro,False,False,2024-04-15T13:36:23+00:00,miro,miro,Marc,Marc,,,4,0,0,4,0,4,[],1,
+1804,4,1,1804,madesa,False,False,2024-04-12T14:39:51+00:00,madesa,madesa,,,,,4,0,0,4,1,4,[],1,
+1794,4,2,1794,joanet2011,False,False,2024-04-12T14:34:20+00:00,joanet2011,joanet2011,,,,,4,0,0,4,0,4,[],1,
+844,4,2,844,ineram,False,False,2023-07-23T11:29:05+00:00,ineram,ineram,Ine Ramaekers,Ine Ramaekers,,/attachments/users/icons/844-thumb.jpg?1690113118,19,1,0,20,15,19,[],1,/attachments/users/icons/844-medium.jpg?1690113118
+778,4,4,778,emilioaibar,False,False,2023-06-29T08:00:54+00:00,emilioaibar,emilioaibar,Emilio Aibar,Emilio Aibar,,/attachments/users/icons/778-thumb.jpg?1689023479,97,0,0,97,66,97,[],1,/attachments/users/icons/778-medium.jpg?1689023479
+7120,3,1,7120,blondie,False,False,2024-10-13T10:28:56+00:00,blondie,blondie,Mar Vega,Mar Vega,,,3,0,0,3,2,3,[],1,
+7032,3,2,7032,estherjr99,False,False,2024-10-05T12:13:22+00:00,estherjr99,estherjr99,esther jimenez,esther jimenez,,,5,0,0,5,0,5,[],1,
+6993,3,0,6993,gemasa,False,False,2024-09-29T14:50:11+00:00,gemasa,gemasa,Gerard Martinez,Gerard Martinez,,,4,0,0,4,0,4,[],1,
+6989,3,3,6989,anacanudas,False,False,2024-09-28T19:24:07+00:00,anacanudas,anacanudas,Alícia Gili Abad,Alícia Gili Abad,,,5,1,0,6,0,5,[],1,
+6963,3,2,6963,cvanneste,False,False,2024-09-25T14:02:25+00:00,cvanneste,cvanneste,Christophe Van Neste,Christophe Van Neste,,,4,0,0,4,0,4,[],1,
+6949,3,3,6949,qgroom,False,False,2024-09-25T10:08:55+00:00,qgroom,qgroom,Quentin Groom,Quentin Groom,,,5,4,0,9,0,5,[],1,
+6865,3,3,6865,carloscdm,False,False,2024-09-14T00:39:57+00:00,carloscdm,carloscdm,Carlos tejedor escribano,Carlos tejedor escribano,,,3,0,0,3,2,3,[],1,
+6863,3,1,6863,ecovivencias,False,False,2024-09-13T20:00:37+00:00,ecovivencias,ecovivencias,Toni,Toni,,,8,0,0,8,4,8,[],1,
+6181,3,2,6181,crismc,False,False,2024-09-01T20:04:41+00:00,crismc,crismc,,,,,3,3,0,6,2,3,[],1,
+6073,3,1,6073,gzap,False,False,2024-08-19T20:32:04+00:00,gzap,gzap,Graciela Zapatta,Graciela Zapatta,,,3,0,0,3,1,3,[],1,
+6032,3,1,6032,jveguzki,False,False,2024-08-17T09:29:20+00:00,jveguzki,jveguzki,Jav,Jav,,,4,0,0,4,2,4,[],1,
+5983,3,3,5983,angeleta,False,False,2024-08-14T01:04:19+00:00,angeleta,angeleta,Àngels Torrens,Àngels Torrens,,,3,0,0,3,1,3,[],1,
+5982,3,3,5982,sargantano,False,False,2024-08-13T23:37:46+00:00,sargantano,sargantano,Jordi Fernández,Jordi Fernández,,/attachments/users/icons/5982-thumb.png?1723726549,6,25,0,31,5,6,[],1,/attachments/users/icons/5982-medium.png?1723726549
+5941,3,3,5941,cristii22,False,False,2024-08-10T22:02:35+00:00,cristii22,cristii22,Cristina,Cristina,,/attachments/users/icons/5941-thumb.jpg?1723378118,5,0,0,5,0,5,[],1,/attachments/users/icons/5941-medium.jpg?1723378118
+5911,3,3,5911,darkbard,False,False,2024-08-08T19:50:48+00:00,darkbard,darkbard,,,,,3,0,0,3,2,3,[],1,
+5831,3,3,5831,anna7,False,False,2024-08-04T22:17:54+00:00,anna7,anna7,Anna Herrera,Anna Herrera,,/attachments/users/icons/5831-thumb.jpg?1722811430,3,0,0,3,0,3,[],1,/attachments/users/icons/5831-medium.jpg?1722811430
+5368,3,1,5368,albalopezpalli,False,False,2024-07-25T15:26:26+00:00,albalopezpalli,albalopezpalli,Alba López Palli,Alba López Palli,,/attachments/users/icons/5368-thumb.jpg?1721922144,4,0,0,4,1,4,[],1,/attachments/users/icons/5368-medium.jpg?1721922144
+4425,3,3,4425,migui,False,False,2024-06-30T18:20:39+00:00,migui,migui,miguel,miguel,,,5,0,0,5,0,5,[],1,
+4087,3,3,4087,hydronauta,False,False,2024-06-22T13:54:03+00:00,hydronauta,hydronauta,Pere Relea Ventura,Pere Relea Ventura,,/attachments/users/icons/4087-thumb.jpeg?1723102141,3,0,0,3,3,3,[],1,/attachments/users/icons/4087-medium.jpeg?1723102141
+3992,3,2,3992,emilymartin,False,False,2024-06-19T09:20:18+00:00,emilymartin,emilymartin,Emily Martin,Emily Martin,,,4,0,0,4,0,4,[],1,
+3753,3,3,3753,aina,False,False,2024-06-08T07:12:00+00:00,aina,aina,aina gispert,aina gispert,,,3,0,0,3,3,3,[],1,
+3680,3,3,3680,leoalrom,False,False,2024-06-06T09:52:17+00:00,leoalrom,leoalrom,Leonor Alvarez Romano,Leonor Alvarez Romano,,,3,0,0,3,2,3,[],1,
+3199,3,3,3199,domenica,False,False,2024-05-26T10:11:58+00:00,domenica,domenica,domenica,domenica,,,3,0,0,3,0,3,[],1,
+3197,3,0,3197,sergito,False,False,2024-05-26T10:02:24+00:00,sergito,sergito,Sergi diaz marzo,Sergi diaz marzo,,,5,0,0,5,0,5,[],1,
+2506,3,2,2506,encmontse,False,False,2024-05-10T10:06:24+00:00,encmontse,encmontse,Montse Masclans,Montse Masclans,,,141,0,0,141,97,141,[],1,
+2473,3,3,2473,maviedro,False,False,2024-05-08T13:35:25+00:00,maviedro,maviedro,María Viedma,María Viedma,,,10,0,0,10,8,10,[],1,
+1816,3,3,1816,danieelaa,False,False,2024-04-14T19:05:07+00:00,danieelaa,danieelaa,danieelaa,danieelaa,,,3,0,0,3,3,3,[],1,
+1803,3,2,1803,darube,False,False,2024-04-12T14:38:57+00:00,darube,darube,,,,,7,0,0,7,3,7,[],1,
+1797,3,2,1797,ainoaa,False,False,2024-04-12T14:35:01+00:00,ainoaa,ainoaa,,,,/attachments/users/icons/1797-thumb.jpg?1712933682,8,0,0,8,6,8,[],1,/attachments/users/icons/1797-medium.jpg?1712933682
+1708,3,3,1708,tosafre,False,False,2024-04-02T15:32:26+00:00,tosafre,tosafre,Toni Santos Fresquet,Toni Santos Fresquet,,,3,0,0,3,0,3,[],1,
+795,3,1,795,nachogomez-belinchon,False,False,2023-07-06T07:28:07+00:00,nachogomez-belinchon,nachogomez-belinchon,,,,,3,0,0,3,1,3,[],1,
+681,3,2,681,betty,False,False,2023-06-03T19:26:43+00:00,betty,betty,,,,/attachments/users/icons/681-thumb.jpg?1716405874,25,0,0,25,17,25,[],1,/attachments/users/icons/681-medium.jpg?1716405874
+7323,2,2,7323,jordi_balague,False,False,2024-10-16T10:36:23+00:00,jordi_balague,jordi_balague,,,,/attachments/users/icons/7323-thumb.jpg?1729083672,15,0,0,15,13,15,[],1,/attachments/users/icons/7323-medium.jpg?1729083672
+7012,2,2,7012,annacdq,False,False,2024-10-02T21:11:09+00:00,annacdq,annacdq,Anna Giro,Anna Giro,,,2,0,0,2,0,2,[],1,
+6968,2,1,6968,mik,False,False,2024-09-26T11:38:24+00:00,mik,mik,Mar,Mar,,,2,0,0,2,2,2,[],1,
+6959,2,2,6959,pierrebonnet,False,False,2024-09-25T13:59:59+00:00,pierrebonnet,pierrebonnet,Pierre Bonnet,Pierre Bonnet,,,3,0,0,3,3,3,[],1,
+6950,2,1,6950,jducrettet,False,False,2024-09-25T10:09:17+00:00,jducrettet,jducrettet,j.ducrettet,j.ducrettet,,,3,0,0,3,1,3,[],1,
+6139,2,2,6139,lidiacaba,False,False,2024-08-25T16:27:47+00:00,lidiacaba,lidiacaba,,,,,2,0,0,2,2,2,[],1,
+5950,2,2,5950,mercee8,False,False,2024-08-11T17:46:04+00:00,mercee8,mercee8,,,,,2,0,0,2,0,2,[],1,
+5940,2,2,5940,chister,False,False,2024-08-10T21:46:56+00:00,chister,chister,,,,,2,0,0,2,2,2,[],1,
+5182,2,0,5182,polok9v,False,False,2024-07-19T13:49:58+00:00,polok9v,polok9v,juan valle,juan valle,,,3,0,0,3,0,3,[],1,
+4639,2,2,4639,joanpuigbomoll,False,False,2024-07-04T17:19:16+00:00,joanpuigbomoll,joanpuigbomoll,Joan Puigbó Moll,Joan Puigbó Moll,,/attachments/users/icons/4639-thumb.jpg?1720114944,7,0,0,7,7,7,[],1,/attachments/users/icons/4639-medium.jpg?1720114944
+4621,2,1,4621,biel_tapia,False,False,2024-07-04T12:31:09+00:00,biel_tapia,biel_tapia,,,,,3,3,0,6,0,3,[],1,
+4521,2,1,4521,martanbl,False,False,2024-07-02T19:50:12+00:00,martanbl,martanbl,Marta Navarro,Marta Navarro,,/attachments/users/icons/4521-thumb.jpg?1719950185,2,0,0,2,2,2,[],1,/attachments/users/icons/4521-medium.jpg?1719950185
+3862,2,0,3862,mireia_tor-09,False,False,2024-06-11T09:10:15+00:00,mireia_tor-09,mireia_tor-09,,,,,2,0,0,2,2,2,[],1,
+3860,2,0,3860,clara_tor-09,False,False,2024-06-11T09:08:29+00:00,clara_tor-09,clara_tor-09,,,,,2,0,0,2,2,2,[],1,
+3784,2,2,3784,ponto,False,False,2024-06-09T13:58:31+00:00,ponto,ponto,José Benito,José Benito,,,3,0,0,3,0,3,[],1,
+3196,2,2,3196,vmitjans,False,False,2024-05-26T10:00:05+00:00,vmitjans,vmitjans,Víctor Mitjans,Víctor Mitjans,,,2,0,0,2,2,2,[],1,
+2858,2,2,2858,aritz,False,False,2024-05-19T15:13:42+00:00,aritz,aritz,ariadna,ariadna,,/attachments/users/icons/2858-thumb.jpg?1717876703,2,0,0,2,1,2,[],1,/attachments/users/icons/2858-medium.jpg?1717876703
+2432,2,1,2432,manel419,False,False,2024-05-06T09:30:41+00:00,manel419,manel419,Manel Caamaño Bonet,Manel Caamaño Bonet,,,26,0,0,26,19,26,[],1,
+1839,2,1,1839,ericgomez,False,False,2024-04-16T06:40:43+00:00,ericgomez,ericgomez,Eric Gomez,Eric Gomez,,,2,0,0,2,1,2,[],1,
+1801,2,2,1801,tony,False,False,2024-04-12T14:37:24+00:00,tony,tony,,,,/attachments/users/icons/1801-thumb.png?1713188244,2,0,0,2,2,2,[],1,/attachments/users/icons/1801-medium.png?1713188244
+1798,2,1,1798,janbenedicto,False,False,2024-04-12T14:35:14+00:00,janbenedicto,janbenedicto,,,,,5,0,0,5,3,5,[],1,
+1740,2,1,1740,valiad,False,False,2024-04-08T08:22:12+00:00,valiad,valiad,valia drakou,valia drakou,,,3,0,0,3,1,3,[],1,
+1179,2,2,1179,cesarlorenzo,False,False,2023-10-31T10:05:19+00:00,cesarlorenzo,cesarlorenzo,César Lorenzo,César Lorenzo,,/attachments/users/icons/1179-thumb.jpg?1698749224,22,0,0,22,10,22,[],1,/attachments/users/icons/1179-medium.jpg?1698749224
+975,2,2,975,jolumase,False,False,2023-09-10T10:26:26+00:00,jolumase,jolumase,José Luis Martin,José Luis Martin,,/attachments/users/icons/975-thumb.jpg?1694511533,20,0,0,20,17,20,[],1,/attachments/users/icons/975-medium.jpg?1694511533
+813,2,1,813,andreurocamora,False,False,2023-07-11T15:27:44+00:00,andreurocamora,andreurocamora,Andreu Rocamora Martorell,Andreu Rocamora Martorell,,/attachments/users/icons/813-thumb.jpg?1689176430,34,13,0,47,27,34,[],1,/attachments/users/icons/813-medium.jpg?1689176430
+13,2,2,13,adrisoacha,False,False,2022-04-21T09:40:57+00:00,adrisoacha,adrisoacha,Karen Soacha,Karen Soacha,,/attachments/users/icons/13-thumb.png?1653311726,520,2,0,522,149,520,[],1,/attachments/users/icons/13-medium.png?1653311726
+7130,1,1,7130,dianahsc,False,False,2024-10-13T14:55:01+00:00,dianahsc,dianahsc,Diana Hernández Sánchez,Diana Hernández Sánchez,,,2,0,0,2,2,2,[],1,
+7121,1,0,7121,ferranxavi,False,False,2024-10-13T10:36:35+00:00,ferranxavi,ferranxavi,Arderiu,Arderiu,,,4,0,0,4,2,4,[],1,
+6984,1,1,6984,dpl_bcasa,False,False,2024-09-28T11:18:50+00:00,dpl_bcasa,dpl_bcasa,,,,,1,0,0,1,1,1,[],1,
+6951,1,0,6951,danstowell,False,False,2024-09-25T10:11:12+00:00,danstowell,danstowell,Dan Stowell,Dan Stowell,,,4,0,0,4,3,4,[],1,
+6948,1,1,6948,dimitris,False,False,2024-09-25T10:08:06+00:00,dimitris,dimitris,tassopoulos,tassopoulos,,,1,0,0,1,0,1,[],1,
+6874,1,1,6874,cientilocas,False,False,2024-09-15T09:40:50+00:00,cientilocas,cientilocas,Paqui Martínez López,Paqui Martínez López,,,1,0,0,1,1,1,[],1,
+6719,1,1,6719,jbr,False,False,2024-09-10T18:06:19+00:00,jbr,jbr,Jesús,Jesús,,,1,0,0,1,1,1,[],1,
+6718,1,0,6718,elizabeth,False,False,2024-09-10T16:10:10+00:00,elizabeth,elizabeth,,,,/attachments/users/icons/6718-thumb.jpg?1725985737,6,0,0,6,0,6,[],1,/attachments/users/icons/6718-medium.jpg?1725985737
+6620,1,1,6620,esclo,False,False,2024-09-09T09:34:58+00:00,esclo,esclo,Pau,Pau,,,1,0,0,1,1,1,[],1,
+6175,1,1,6175,mica,False,False,2024-08-31T18:57:10+00:00,mica,mica,,,,,3,0,0,3,1,3,[],1,
+6173,1,1,6173,raquelmc,False,False,2024-08-31T16:03:42+00:00,raquelmc,raquelmc,,,,,1,0,0,1,1,1,[],1,
+6172,1,1,6172,juanjogp,False,False,2024-08-31T14:24:06+00:00,juanjogp,juanjogp,,,,,1,0,0,1,0,1,[],1,
+6109,1,1,6109,asia,False,False,2024-08-22T10:28:16+00:00,asia,asia,janeth karina soldevila exposito,janeth karina soldevila exposito,,,19,0,0,19,13,19,[],1,
+5993,1,1,5993,diri-llorens,False,False,2024-08-14T15:54:48+00:00,diri-llorens,diri-llorens,Diri Llorens,Diri Llorens,,/attachments/users/icons/5993-thumb.jpg?1723652968,1,0,0,1,1,1,[],1,/attachments/users/icons/5993-medium.jpg?1723652968
+5987,1,1,5987,merinus,False,False,2024-08-14T08:24:07+00:00,merinus,merinus,Josep Joan Cano,Josep Joan Cano,,,1,0,0,1,0,1,[],1,
+5975,1,1,5975,lucasbg,False,False,2024-08-13T12:47:42+00:00,lucasbg,lucasbg,Lucas Bartolomé Grosso,Lucas Bartolomé Grosso,,,1,0,0,1,1,1,[],1,
+5930,1,1,5930,insideh2o,False,False,2024-08-09T17:23:30+00:00,insideh2o,insideh2o,Javi Chamizo,Javi Chamizo,,/attachments/users/icons/5930-thumb.jpeg?1723224411,1,0,0,1,1,1,[],1,/attachments/users/icons/5930-medium.jpeg?1723224411
+5894,1,1,5894,villi7,False,False,2024-08-07T15:47:58+00:00,villi7,villi7,David,David,,/attachments/users/icons/5894-thumb.jpg?1723045705,1,0,0,1,1,1,[],1,/attachments/users/icons/5894-medium.jpg?1723045705
+5791,1,1,5791,padi,False,False,2024-08-04T09:21:01+00:00,padi,padi,Elena Padilla Morales,Elena Padilla Morales,,/attachments/users/icons/5791-thumb.jpg?1722763794,1,0,0,1,0,1,[],1,/attachments/users/icons/5791-medium.jpg?1722763794
+5651,1,1,5651,amor,False,False,2024-08-01T21:51:08+00:00,amor,amor,,,,,1,0,0,1,1,1,[],1,
+5507,1,1,5507,polinfp,False,False,2024-07-30T07:05:57+00:00,polinfp,polinfp,Polina Frigole,Polina Frigole,,/attachments/users/icons/5507-thumb.jpg?1722323209,5,0,0,5,5,5,[],1,/attachments/users/icons/5507-medium.jpg?1722323209
+5497,1,1,5497,sergimgz,False,False,2024-07-29T21:32:24+00:00,sergimgz,sergimgz,Sergi Macias,Sergi Macias,,,1,1,0,2,0,1,[],1,
+5476,1,1,5476,andreagc93,False,False,2024-07-29T16:13:06+00:00,andreagc93,andreagc93,andrea gomez castillo,andrea gomez castillo,,,1,0,0,1,1,1,[],1,
+5452,1,1,5452,olgaannu,False,False,2024-07-28T19:12:46+00:00,olgaannu,olgaannu,Olga Annunziata,Olga Annunziata,,,1,0,0,1,1,1,[],1,
+5444,1,1,5444,sergiswim,False,False,2024-07-28T06:02:37+00:00,sergiswim,sergiswim,Sergi Sierra,Sergi Sierra,,,1,0,0,1,1,1,[],1,
+5439,1,1,5439,marcel_calero,False,False,2024-07-27T14:39:14+00:00,marcel_calero,marcel_calero,,,,,1,0,0,1,0,1,[],1,
+5373,1,1,5373,climentjo,False,False,2024-07-25T16:59:28+00:00,climentjo,climentjo,,,,,1,0,0,1,1,1,[],1,
+5359,1,1,5359,mbresoli,False,False,2024-07-25T10:35:56+00:00,mbresoli,mbresoli,,,,/attachments/users/icons/5359-thumb.jpeg?1721904143,1,0,0,1,1,1,[],1,/attachments/users/icons/5359-medium.jpeg?1721904143
+5352,1,1,5352,farners,False,False,2024-07-25T06:48:50+00:00,farners,farners,Farners Pol,Farners Pol,,,2,0,0,2,1,2,[],1,
+5243,1,1,5243,momo,False,False,2024-07-22T16:36:32+00:00,momo,momo,Rosa Roses Simo,Rosa Roses Simo,,,1,0,0,1,0,1,[],1,
+5125,1,1,5125,rickysando,False,False,2024-07-15T16:59:57+00:00,rickysando,rickysando,Ricard de Sandoval Gesti,Ricard de Sandoval Gesti,,,1,0,0,1,1,1,[],1,
+4971,1,0,4971,antoniosubira,False,False,2024-07-12T08:20:34+00:00,antoniosubira,antoniosubira,,,,,30,0,0,30,0,30,[],1,
+4391,1,0,4391,karenrkts1,False,False,2024-06-28T17:15:50+00:00,karenrkts1,karenrkts1,karen,karen,,,1,0,0,1,1,1,[],1,
+3979,1,1,3979,eso2c,False,False,2024-06-18T07:45:29+00:00,eso2c,eso2c,,,,,8,0,0,8,7,8,[],1,
+3964,1,1,3964,tonicases,False,False,2024-06-16T08:09:52+00:00,tonicases,tonicases,Antoni Cases,Antoni Cases,,,1,0,0,1,0,1,[],1,
+3880,1,1,3880,robert,False,False,2024-06-11T16:17:54+00:00,robert,robert,,,,,2,0,0,2,1,2,[],1,
+3852,1,0,3852,luciathalassa,False,False,2024-06-11T09:00:56+00:00,luciathalassa,luciathalassa,,,,,6,0,0,6,0,6,[],1,
+3848,1,0,3848,lidia_pellicer-09,False,False,2024-06-11T09:00:04+00:00,lidia_pellicer-09,lidia_pellicer-09,,,,,1,0,0,1,0,1,[],1,
+3799,1,0,3799,joel_ruz_mengual,False,False,2024-06-10T08:57:15+00:00,joel_ruz_mengual,joel_ruz_mengual,,,,,1,0,0,1,0,1,[],1,
+3780,1,0,3780,alexia123,False,False,2024-06-09T10:10:29+00:00,alexia123,alexia123,alexia becerra,alexia becerra,,,2,0,0,2,1,2,[],1,
+3754,1,0,3754,rele,False,False,2024-06-08T07:12:13+00:00,rele,rele,Manel jerez,Manel jerez,,,2,0,0,2,0,2,[],1,
+3720,1,0,3720,kiko,False,False,2024-06-07T11:16:40+00:00,kiko,kiko,,,,,7,0,0,7,0,7,[],1,
+3395,1,1,3395,javiermendez,False,False,2024-06-01T11:14:39+00:00,javiermendez,javiermendez,,,,,1,0,0,1,1,1,[],1,
+3200,1,0,3200,marki,False,False,2024-05-26T10:17:32+00:00,marki,marki,Marc Castillo Marin,Marc Castillo Marin,,,1,0,0,1,0,1,[],1,
+2886,1,1,2886,albertolr88,False,False,2024-05-21T14:09:01+00:00,albertolr88,albertolr88,Albert López Rasal,Albert López Rasal,,,1,0,0,1,1,1,[],1,
+2842,1,1,2842,oldhippie,False,False,2024-05-18T13:58:04+00:00,oldhippie,oldhippie,Old Hippie,Old Hippie,,,11,0,0,11,10,11,[],1,
+2841,1,0,2841,manel,False,False,2024-05-18T13:48:24+00:00,manel,manel,ruera vidal,ruera vidal,,,33,0,0,33,27,33,[],1,
+2676,1,1,2676,audgardr,False,False,2024-05-12T15:50:50+00:00,audgardr,audgardr,Edgard Mestre,Edgard Mestre,,,1,0,0,1,0,1,[],1,
+2658,1,1,2658,korsario,False,False,2024-05-12T10:53:38+00:00,korsario,korsario,,,,,34,0,0,34,6,34,[],1,
+2322,1,1,2322,heura_cardona,False,False,2024-04-28T20:31:05+00:00,heura_cardona,heura_cardona,Heura Cardona,Heura Cardona,,,4,0,0,4,2,4,[],1,
+1677,1,1,1677,owen,False,False,2024-03-22T17:11:03+00:00,owen,owen,Owen S. Wangensteen,Owen S. Wangensteen,,/attachments/users/icons/1677-thumb.jpg?1711127878,44,0,0,44,41,44,[],1,/attachments/users/icons/1677-medium.jpg?1711127878
+1675,1,0,1675,cfustermaria,False,False,2024-03-22T08:22:34+00:00,cfustermaria,cfustermaria,Maria Campos,Maria Campos,,,1,0,0,1,0,1,[],1,
+1573,1,1,1573,shey,False,False,2024-03-03T10:47:12+00:00,shey,shey,Sheila Llorens Garcia,Sheila Llorens Garcia,,/attachments/users/icons/1573-thumb.jpg?1720956292,1,0,0,1,1,1,[],1,/attachments/users/icons/1573-medium.jpg?1720956292
+1423,1,1,1423,asc,False,False,2024-01-31T06:39:48+00:00,asc,asc,Antonio Sánchez,Antonio Sánchez,,,4,0,0,4,2,4,[],1,
+1359,1,1,1359,joliva,False,False,2024-01-05T15:13:34+00:00,joliva,joliva,,,,,5,0,0,5,3,5,[],1,
+1307,1,1,1307,sgrossog,False,False,2023-12-15T13:23:55+00:00,sgrossog,sgrossog,,,,,3,0,0,3,0,3,[],1,
+1251,1,0,1251,abril,False,False,2023-11-27T12:36:11+00:00,abril,abril,,,,,12,0,0,12,2,12,[],1,
+1201,1,1,1201,canboetjardi,False,False,2023-11-09T14:12:07+00:00,canboetjardi,canboetjardi,Jardí mediterrani de Can Boet (Mataró),Jardí mediterrani de Can Boet (Mataró),,/attachments/users/icons/1201-thumb.jpg?1701426994,85,0,0,85,50,85,[],1,/attachments/users/icons/1201-medium.jpg?1701426994
+1090,1,0,1090,irena,False,False,2023-10-13T12:18:46+00:00,irena,irena,Irene Cumplido Gavaldà,Irene Cumplido Gavaldà,,/attachments/users/icons/1090-thumb.jpg?1697200673,8,6,0,14,1,8,[],1,/attachments/users/icons/1090-medium.jpg?1697200673
+1070,1,1,1070,guillemdavila,False,False,2023-10-06T09:30:06+00:00,guillemdavila,guillemdavila,Guillem Dávila Monsech,Guillem Dávila Monsech,,/attachments/users/icons/1070-thumb.jpg?1697618628,106,3657,0,3763,83,106,[],1,/attachments/users/icons/1070-medium.jpg?1697618628
+851,1,1,851,davidpiquer,False,False,2023-07-26T10:35:33+00:00,davidpiquer,davidpiquer,,,,/attachments/users/icons/851-thumb.jpg?1690805673,22,0,0,22,19,22,[],1,/attachments/users/icons/851-medium.jpg?1690805673
+755,1,1,755,itziarburgues,False,False,2023-06-20T16:39:28+00:00,itziarburgues,itziarburgues,ItziarDiving,ItziarDiving,,/attachments/users/icons/755-thumb.jpg?1716887221,1,0,0,1,1,1,[],1,/attachments/users/icons/755-medium.jpg?1716887221
+742,1,1,742,gatpanxamunt,False,False,2023-06-18T11:16:13+00:00,gatpanxamunt,gatpanxamunt,,,,,30,0,0,30,23,30,[],1,
+573,1,0,573,marimuntanya,False,False,2023-05-12T04:47:48+00:00,marimuntanya,marimuntanya,Magda,Magda,,/attachments/users/icons/573-thumb.jpg?1720007459,12,0,0,12,1,12,[],1,/attachments/users/icons/573-medium.jpg?1720007459
+446,1,1,446,ivan_freeandivers,False,False,2023-02-22T09:42:47+00:00,ivan_freeandivers,ivan_freeandivers,,,,,1,0,0,1,1,1,[],1,
+225,1,1,225,juanatural,False,False,2022-09-01T15:00:20+00:00,juanatural,juanatural,Juanitapujana,Juanitapujana,,/attachments/users/icons/225-thumb.png?1716393020,471,3,0,474,140,471,[],1,/attachments/users/icons/225-medium.png?1716393020
+85,1,1,85,jmmora04,False,False,2022-05-30T17:36:08+00:00,jmmora04,jmmora04,,,,,302,0,0,302,0,302,[],1,
+81,1,1,81,cem,False,False,2022-05-26T11:45:03+00:00,cem,cem,Centre d'Estudis del Mar,Centre d'Estudis del Mar,,/attachments/users/icons/81-thumb.jpg?1653565683,233,0,0,233,71,233,[],1,/attachments/users/icons/81-medium.jpg?1653565683

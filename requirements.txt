@@ -1,0 +1,12 @@
+streamlit
+plotly
+mecoda_minka>=1.5.1
+streamlit_folium
+streamlit_extras
+pandas
+requests
+folium
+markdownlit
+geopy
+urllib3>=1.26.8
+geopandas

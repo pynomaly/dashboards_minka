@@ -1,0 +1,9 @@
+pandas
+requests
+plotly
+streamlit
+markdownlit
+validators
+streamlit_folium
+geopandas
+mecoda_minka

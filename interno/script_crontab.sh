@@ -1,0 +1,7 @@
+#!/bin/bash
+echo 
+echo 
+date
+source /home/pynomaly/dashboards_minka/.env/bin/activate 
+export DASHBOARDS="/home/pynomaly/dashboards_minka"
+python /home/pynomaly/dashboards_minka/interno/data_marines/script_update_taxon_tree.py
