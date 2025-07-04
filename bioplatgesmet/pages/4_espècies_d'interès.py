@@ -26,12 +26,14 @@ st.set_page_config(
     page_title="Dashboard Bioplatgesmet",
 )
 st.markdown(
-    """
+    f"""
     <style>
-        body {
-            background-color: white !important;
-            color: black !important;
-        }
+        [data-testid="stSidebar"] {{
+            width: 220px !important;
+        }}
+        [data-testid="stSidebar"] > div:first-child {{
+            width: 220px !important;
+        }}
     </style>
     """,
     unsafe_allow_html=True,

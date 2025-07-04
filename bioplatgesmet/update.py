@@ -342,6 +342,44 @@ def get_participation_df(main_project, session=None):
     return pt_users
 
 
+# Parcelas
+def get_obs_by_place(place_id):
+    observations = "https://api.minka-sdg.org/v1/observations?"
+    url3 = f"{observations}&project_id={main_project}&place_id={place_id}"
+    total_obs = requests.get(url3).json()["total_results"]
+    return total_obs
+
+
+def get_species_by_place(place_id):
+    species = "https://api.minka-sdg.org/v1/observations/species_counts?"
+    url3 = f"{species}&project_id={main_project}&place_id={place_id}"
+    total_obs = requests.get(url3).json()["total_results"]
+    return total_obs
+
+
+main_project = 264
+grupos_biologicos = {
+    "Plantes": 12,
+    "Mamífers": 8,
+    "Ocells": 5,  # aves
+    "Mol·luscs": 15,
+    "Insectes": 11,
+    "Lepidòpters": 325,  # mariposas
+    "Himenòpter": 326,  # abejas
+    "Aràcnid": 9,
+    "Rèptils": 6,
+    "Fongs i Líquens": 13,
+}
+
+
+# observaciones de cada grupo biológico por parcela
+def get_obs_by_place_taxon(place_id, taxon_id):
+    observations = "https://api.minka-sdg.org/v1/observations?"
+    url3 = f"{observations}&project_id={main_project}&place_id={place_id}&taxon_id={taxon_id}"
+    total_obs = requests.get(url3).json()["total_results"]
+    return total_obs
+
+
 if __name__ == "__main__":
     start_time = time.time()
 
@@ -401,6 +439,20 @@ if __name__ == "__main__":
     print("Descargando tabla de participantes")
     pt_users = get_participation_df(main_project)
     pt_users.to_csv(f"{directory}/data/{main_project}_participants.csv", index=False)
+
+    # update de parcelas
+    print("Actualizando datos de parcelas")
+    df_parcelas = pd.read_csv(f"{directory}/data/parcelas.csv")
+    # Observaciones por parcela
+    df_parcelas["num_obs"] = df_parcelas["place_id"].apply(get_obs_by_place)
+    df_parcelas["num_species"] = df_parcelas["place_id"].apply(get_species_by_place)
+
+    for k, v in grupos_biologicos.items():
+        df_parcelas[k] = df_parcelas["place_id"].apply(
+            lambda x: get_obs_by_place_taxon(x, v)
+        )
+
+    df_parcelas.to_csv(f"{directory}/data/parcelas.csv", index=False)
 
     end_time = time.time()
     execution_time = end_time - start_time

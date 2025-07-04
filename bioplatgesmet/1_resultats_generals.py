@@ -49,7 +49,19 @@ st.set_page_config(
     page_icon=f"{directory}/images/minka-logo.png",
     page_title="Dashboard Bioplatgesmet",
 )
-
+st.markdown(
+    f"""
+    <style>
+        [data-testid="stSidebar"] {{
+            width: 240px !important;
+        }}
+        [data-testid="stSidebar"] > div:first-child {{
+            width: 240px !important;
+        }}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 base_url = "https://minka-sdg.org"
 api_path = "https://api.minka-sdg.org/v1"
