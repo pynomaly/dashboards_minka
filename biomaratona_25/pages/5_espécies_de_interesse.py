@@ -72,7 +72,7 @@ project_id_2025 = next(
 )
 
 
-grupos_especies = ["exoticas", "protegidas"]
+grupos_especies = ["exoticas", "protegidas", "amenazadas"]
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -176,6 +176,7 @@ for tab in st.tabs(
     [
         "**Espécies exóticas**",
         "**Espécies protegidas**",
+        "**Espécies ameaçadas**",
     ]
 ):
 
