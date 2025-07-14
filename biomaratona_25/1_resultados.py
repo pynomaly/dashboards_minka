@@ -101,7 +101,7 @@ api_path = "https://api.minka-sdg.org/v1"
 
 
 projects = [
-    {"id": 424, "name": "Biomaratona Norte"},
+    {"id": 424, "name": "Biomaratona"},
 ]
 
 main_project = 424
@@ -378,7 +378,7 @@ with st.container():
         st.image(f"{directory}/images/Biomarato_logo_100.png")
     with col2:
         st.header(":orange[Agradecimentos]")
-    st.markdown("Participaram da Biomaratona Norte 2025:")
+    st.markdown("Participaram da Biomaratona 2025:")
     try:
         df_total = pd.read_csv(f"{directory}/data/{main_project}_df_obs.csv")
         list_participants = df_total.user_login.unique()
