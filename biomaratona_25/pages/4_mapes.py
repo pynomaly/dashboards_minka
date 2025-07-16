@@ -73,7 +73,7 @@ with st.container():
 
 # Project selection
 project_name = st.selectbox(
-    label="Projecte per mostrar al mapa",
+    label="Projecto a mostrar no mapa",
     options=("BioMARatona 2025", "BioMARatona 2024"),
     key="project_selector",  # Add a key for the selectbox
 )
