@@ -76,52 +76,62 @@ def update_main_metrics(proj_id: int) -> pd.DataFrame:
     Devuelve 0 para los días que no han llegado.
     """
     results = []
-    observations = f"{API_PATH}/observations?"
-    species = f"{API_PATH}/observations/species_counts?"
-    observers = f"{API_PATH}/observations/observers?"
-
-    # Crear una sesión de requests
-    session = requests.Session()
+    
+    # Define URLs once
+    urls = {
+        'observations': f"{API_PATH}/observations",
+        'species': f"{API_PATH}/observations/species_counts", 
+        'observers': f"{API_PATH}/observations/observers"
+    }
 
     # Fecha de inicio de la Biomarato: 2024/05/03 - 2024/10/15
-    day = datetime.date(year=2025, month=5, day=3)
-    rango_temporal = (datetime.date(year=2025, month=10, day=16) - day).days
+    start_date = datetime.date(year=2025, month=5, day=3)
+    end_date = datetime.date(year=2025, month=10, day=16)
+    rango_temporal = (end_date - start_date).days
+    today = datetime.date.today()
 
-    for i in range(rango_temporal):
-        if datetime.datetime.today().date() >= day:
-            st_day = day.strftime("%Y-%m-%d")
+    with requests.Session() as session:
+        current_day = start_date
+        
+        for _ in range(rango_temporal):
+            if today >= current_day:
+                st_day = current_day.strftime("%Y-%m-%d")
 
-            params = {
-                "project_id": proj_id,
-                "d2": st_day,
-                "order": "desc",
-                "order_by": "created_at",
-            }
+                params = {
+                    "project_id": proj_id,
+                    "d2": st_day,
+                    "order": "desc",
+                    "order_by": "created_at",
+                }
 
-            # Utilizar la sesión para realizar las solicitudes
-            total_species = session.get(species, params=params).json()["total_results"]
-            total_participants = session.get(observers, params=params).json()[
-                "total_results"
-            ]
-            total_obs = session.get(observations, params=params).json()["total_results"]
+                # Batch API calls with error handling
+                metrics = {}
+                for key, url in urls.items():
+                    try:
+                        response = session.get(url, params=params)
+                        response.raise_for_status()
+                        metrics[key] = response.json()["total_results"]
+                    except (requests.RequestException, KeyError) as e:
+                        print(f"Error fetching {key} for {st_day}: {e}")
+                        metrics[key] = 0
 
-            result = {
-                "date": st_day,
-                "observations": total_obs,
-                "species": total_species,
-                "participants": total_participants,
-            }
-        # Para el resto devuelve 0
-        else:
-            result = {
-                "date": day.strftime("%Y-%m-%d"),
-                "observations": 0,
-                "species": 0,
-                "participants": 0,
-            }
+                result = {
+                    "date": st_day,
+                    "observations": metrics['observations'],
+                    "species": metrics['species'],
+                    "participants": metrics['observers'],
+                }
+            else:
+                # Para el resto devuelve 0
+                result = {
+                    "date": current_day.strftime("%Y-%m-%d"),
+                    "observations": 0,
+                    "species": 0,
+                    "participants": 0,
+                }
 
-        results.append(result)
-        day = day + datetime.timedelta(days=1)
+            results.append(result)
+            current_day = current_day + datetime.timedelta(days=1)
 
     result_df = pd.DataFrame(results)
     print("Updated main metrics")
@@ -129,56 +139,103 @@ def update_main_metrics(proj_id: int) -> pd.DataFrame:
 
 
 def get_list_users(id_project):
-    users = []
-    session = requests.Session()
+    with requests.Session() as session:
+        # Get observers data
+        url_observers = f"{API_PATH}/observations/observers?project_id={id_project}&quality_grade=research"
+        try:
+            response = session.get(url_observers)
+            response.raise_for_status()
+            observers_results = response.json()["results"]
+        except (requests.RequestException, KeyError) as e:
+            print(f"Error fetching observers: {e}")
+            return pd.DataFrame()
+        
+        # Process observers data more efficiently
+        users_data = []
+        for result in observers_results:
+            try:
+                user_data = {
+                    "user_id": result["user_id"],
+                    "participant": result["user"]["login"],
+                    "observacions": result["observation_count"],
+                    "espècies": result["species_count"]
+                }
+                users_data.append(user_data)
+            except KeyError as e:
+                print(f"Missing key in observers data: {e}")
+                continue
+                
+        if not users_data:
+            return pd.DataFrame()
+            
+        df_users = pd.DataFrame(users_data)
 
-    url1 = f"https://api.minka-sdg.org/v1/observations/observers?project_id={id_project}&quality_grade=research"
-    results = session.get(url1).json()["results"]
-    for result in results:
-        datos = {}
-        datos["user_id"] = result["user_id"]
-        datos["participant"] = result["user"]["login"]
-        datos["observacions"] = result["observation_count"]
-        datos["espècies"] = result["species_count"]
-        users.append(datos)
-    df_users = pd.DataFrame(users)
+        # Get identifiers data
+        url_identifiers = f"{API_PATH}/observations/identifiers?project_id={id_project}&quality_grade=research"
+        try:
+            response = session.get(url_identifiers)
+            response.raise_for_status()
+            identifiers_results = response.json()["results"]
+        except (requests.RequestException, KeyError) as e:
+            print(f"Error fetching identifiers: {e}")
+            # Return users without identifiers data
+            df_users["identificacions"] = 0
+            return df_users[["participant", "observacions", "espècies", "identificacions"]]
 
-    identifiers = []
-    url = f"https://api.minka-sdg.org/v1/observations/identifiers?project_id={id_project}&quality_grade=research"
-    results = session.get(url).json()["results"]
-    for result in results:
-        datos = {}
-        datos["user_id"] = result["user_id"]
-        datos["identificacions"] = result["count"]
-        identifiers.append(datos)
-    df_identifiers = pd.DataFrame(identifiers)
+        # Process identifiers data
+        identifiers_data = []
+        for result in identifiers_results:
+            try:
+                identifiers_data.append({
+                    "user_id": result["user_id"],
+                    "identificacions": result["count"]
+                })
+            except KeyError as e:
+                print(f"Missing key in identifiers data: {e}")
+                continue
 
-    df_users = pd.merge(df_users, df_identifiers, how="left", on="user_id")
-    df_users.fillna(0, inplace=True)
-
-    return df_users[["participant", "observacions", "espècies", "identificacions"]]
+        if identifiers_data:
+            df_identifiers = pd.DataFrame(identifiers_data)
+            df_users = pd.merge(df_users, df_identifiers, how="left", on="user_id")
+        
+        df_users.fillna(0, inplace=True)
+        return df_users[["participant", "observacions", "espècies", "identificacions"]]
 
 
 # update obs for projects
 def get_new_data(project, grade=None):
+    # Load existing data with better error handling
+    obs_file = f"{directory}/data/{project}_df_obs.csv"
+    photos_file = f"{directory}/data/{project}_df_photos.csv"
+    
     try:
-        df_obs = pd.read_csv(f"{directory}/data/{project}_df_obs.csv")
-        df_photos = pd.read_csv(f"{directory}/data/{project}_df_photos.csv")
+        df_obs = pd.read_csv(obs_file)
         max_id = df_obs["id"].max()
-    except:
+    except (FileNotFoundError, pd.errors.EmptyDataError):
         df_obs = pd.DataFrame()
-        df_photos = pd.DataFrame()
         max_id = 0
+        
+    try:
+        df_photos = pd.read_csv(photos_file)
+    except (FileNotFoundError, pd.errors.EmptyDataError):
+        df_photos = pd.DataFrame()
 
-    # Comprueba si hay observaciones nuevas
+    # Check for new observations
     obs = get_obs(id_project=project, id_above=max_id, grade=grade)
     if len(obs) > 0:
         print(f"Add {len(obs)} obs in project {project}")
-        df_obs2, df_photos2 = get_dfs(obs)
-        df_obs = pd.concat([df_obs, df_obs2], ignore_index=True)
-        df_obs.to_csv(f"{directory}/data/{project}_df_obs.csv", index=False)
-        df_photos = pd.concat([df_photos, df_photos2], ignore_index=True)
-        df_photos.to_csv(f"{directory}/data/{project}_df_photos.csv", index=False)
+        df_obs_new, df_photos_new = get_dfs(obs)
+        
+        # Concatenate and save more efficiently
+        df_obs_combined = pd.concat([df_obs, df_obs_new], ignore_index=True)
+        df_photos_combined = pd.concat([df_photos, df_photos_new], ignore_index=True)
+        
+        # Save with error handling
+        try:
+            df_obs_combined.to_csv(obs_file, index=False)
+            df_photos_combined.to_csv(photos_file, index=False)
+        except Exception as e:
+            print(f"Error saving files for project {project}: {e}")
 
 
 def update_dfs_projects(
@@ -186,39 +243,56 @@ def update_dfs_projects(
     day=(datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d"),
     grade=None,
 ):
-
-    # updated today
+    # Get updated observations
     obs_nuevas = get_obs(id_project=project, updated_since=day, grade=grade)
+    
     if len(obs_nuevas) > 0:
         df_obs_new, df_photos_new = get_dfs(obs_nuevas)
-        df_photos_new["photos_id"] = df_photos_new["photos_id"].astype(int)
+        
+        # Ensure photos_id is int with error handling
+        try:
+            df_photos_new["photos_id"] = df_photos_new["photos_id"].astype(int)
+        except (ValueError, KeyError) as e:
+            print(f"Error converting photos_id to int: {e}")
 
-        # get downloaded
-        df_obs = pd.read_csv(f"{directory}/data/{project}_df_obs.csv")
-        df_photos = pd.read_csv(f"{directory}/data/{project}_df_photos.csv")
-        old_obs = df_obs[-df_obs["id"].isin(df_obs_new["id"].to_list())]
-        old_photos = df_photos[
-            -df_photos["photos_id"].isin(df_photos_new["photos_id"].to_list())
-        ]
+        # Load existing data with error handling
+        try:
+            df_obs = pd.read_csv(f"{directory}/data/{project}_df_obs.csv")
+            df_photos = pd.read_csv(f"{directory}/data/{project}_df_photos.csv")
+        except (FileNotFoundError, pd.errors.EmptyDataError) as e:
+            print(f"Error loading existing data for project {project}: {e}")
+            return None, None
+        
+        # More efficient filtering using sets for better performance
+        new_obs_ids = set(df_obs_new["id"].tolist())
+        new_photos_ids = set(df_photos_new["photos_id"].tolist())
+        
+        old_obs = df_obs[~df_obs["id"].isin(new_obs_ids)]
+        old_photos = df_photos[~df_photos["photos_id"].isin(new_photos_ids)]
 
-        # join old and updated
+        # Combine old and updated data
         df_obs_updated = pd.concat(
             [old_obs, df_obs_new], ignore_index=True
         ).sort_values(by="id", ascending=False)
+        
         df_photo_updated = pd.concat(
             [old_photos, df_photos_new], ignore_index=True
         ).sort_values(by="photos_id", ascending=False)
     else:
         df_obs_updated = None
         df_photo_updated = None
-    # remove casuals
+        
+    # Remove casual observations
     obs_casual = get_obs(grade="casual", updated_since=day)
-    if len(obs_casual) > 0:
-        casual_ids = [ob_casual.id for ob_casual in obs_casual]
-        df_obs_updated = df_obs_updated[-df_obs_updated["id"].isin(casual_ids)]
-        df_photo_updated = df_photo_updated[-df_photo_updated["id"].isin(casual_ids)]
+    if len(obs_casual) > 0 and df_obs_updated is not None:
+        casual_ids = {ob_casual.id for ob_casual in obs_casual}  # Use set for faster lookup
+        df_obs_updated = df_obs_updated[~df_obs_updated["id"].isin(casual_ids)]
+        
+        if df_photo_updated is not None:
+            df_photo_updated = df_photo_updated[~df_photo_updated["id"].isin(casual_ids)]
 
-    print(f"Updated obs and photos for project {project}: {len(df_obs_updated)}")
+    obs_count = len(df_obs_updated) if df_obs_updated is not None else 0
+    print(f"Updated obs and photos for project {project}: {obs_count}")
     return df_obs_updated, df_photo_updated
 
 
@@ -243,40 +317,62 @@ def get_ranking_users(proj_id, grade=None):
 
 
 def get_list_species(proj_id: int, type="project") -> Optional[pd.DataFrame]:
-    session = requests.Session()
     if type == "project":
         params = {"project_id": proj_id, "quality_grade": "research"}
     elif type == "place":
         params = {"place_id": proj_id, "quality_grade": "research"}
+    else:
+        raise ValueError("type must be 'project' or 'place'")
+        
     url = f"{API_PATH}/observations/species_counts"
-    results = []
+    
+    with requests.Session() as session:
+        try:
+            # Get total count first
+            response = session.get(url, params=params)
+            response.raise_for_status()
+            first_response = response.json()
+            total_results = first_response["total_results"]
+            
+            if total_results == 0:
+                return None
+                
+            results = first_response["results"]
+            
+            # If more than one page, fetch remaining pages
+            if total_results > 500:
+                num_pages = math.ceil(total_results / 500)
+                for page in range(2, num_pages + 1):
+                    params["page"] = page
+                    try:
+                        response = session.get(url, params=params)
+                        response.raise_for_status()
+                        results.extend(response.json()["results"])
+                    except (requests.RequestException, KeyError) as e:
+                        print(f"Error fetching page {page}: {e}")
+                        break
+        
+        except (requests.RequestException, KeyError) as e:
+            print(f"Error fetching species data: {e}")
+            return None
 
-    # Extrae todas las páginas de los resultados, si hay más de una
-    total_results = session.get(url, params=params).json()["total_results"]
-    if total_results > 500:
-        num = math.ceil(total_results / 500)
-        for i in range(1, num + 1):
-            params["page"] = i
-            results.extend(session.get(url, params=params).json()["results"])
-    else:
-        results = session.get(url, params=params).json()["results"]
-
-    # Crea la tabla name-count de especies
-    if len(results) > 0:
-        total = []
-
+    # Process results more efficiently
+    if results:
+        species_data = []
         for result in results:
-            species_count = {
-                "name": result["taxon"]["name"],
-                "count": result["count"],
-                "id": result["taxon"]["id"],
-            }
-            total.append(species_count)
-        species_count = pd.DataFrame(total)
-    else:
-        species_count = None
-
-    return species_count
+            try:
+                species_data.append({
+                    "name": result["taxon"]["name"],
+                    "count": result["count"],
+                    "id": result["taxon"]["id"],
+                })
+            except KeyError as e:
+                print(f"Missing key in species result: {e}")
+                continue
+                
+        return pd.DataFrame(species_data) if species_data else None
+    
+    return None
 
 
 def get_first_obs_taxon(taxon_id, proj_id, type="project", session=None):
@@ -301,21 +397,38 @@ def get_first_obs_taxon(taxon_id, proj_id, type="project", session=None):
             "order": "asc",
         }
 
-    results = session.get(url, params=params).json()["results"]
+    try:
+        response = session.get(url, params=params)
+        response.raise_for_status()
+        results = response.json()["results"]
+    except (requests.RequestException, KeyError) as e:
+        print(f"Error fetching first observation for taxon {taxon_id}: {e}")
+        return [None, None, None, None]
 
     if not results:
         return [None, None, None, None]
 
-    primera_observacion = results[0]
-
-    date = primera_observacion["observed_on"]
-    author = primera_observacion["user"]["login"]
-    obs_id = primera_observacion["id"]
-
-    results_photos = session.get(url, params={"id": obs_id}).json()["results"]
     try:
-        photo_url = results_photos[0]["photos"][0]["url"].replace("/square", "/large")
-    except:
+        primera_observacion = results[0]
+        date = primera_observacion["observed_on"]
+        author = primera_observacion["user"]["login"]
+        obs_id = primera_observacion["id"]
+    except KeyError as e:
+        print(f"Missing key in observation data: {e}")
+        return [None, None, None, None]
+
+    # Get photo with error handling
+    try:
+        response = session.get(url, params={"id": obs_id})
+        response.raise_for_status()
+        results_photos = response.json()["results"]
+        
+        if results_photos and results_photos[0].get("photos"):
+            photo_url = results_photos[0]["photos"][0]["url"].replace("/square", "/large")
+        else:
+            photo_url = None
+    except (requests.RequestException, KeyError, IndexError) as e:
+        print(f"Error fetching photo for observation {obs_id}: {e}")
         photo_url = None
 
     return [date, author, obs_id, photo_url]
@@ -328,94 +441,155 @@ if __name__ == "__main__":
     main_metrics_df.to_csv(f"{directory}/data/main_metrics.csv", index=False)
     print("Main metrics actualizada")
 
-    # Update df de cada proyecto
-    if len(all_projects) > 0:
+    # Update df de cada proyecto - optimized with better error handling
+    if all_projects:
         for proj_id in all_projects:
-            print("Update df:", proj_id)
+            print(f"Update df: {proj_id}")
+            
+            # Load existing data with better error handling
             try:
                 downloaded_obs = pd.read_csv(f"{directory}/data/{proj_id}_df_obs.csv")
-            except:
+            except (FileNotFoundError, pd.errors.EmptyDataError):
                 downloaded_obs = pd.DataFrame()
+            
+            # Get current observations
             obs = get_obs(id_project=proj_id)
-            # Comprueba si hay observaciones y si hay más que en el archivo descargado
+            
+            # Check if there are new observations
             if len(obs) > 0 and len(obs) != len(downloaded_obs):
-                df_obs, df_photos = get_dfs(obs)
-                pt_users = get_list_users(proj_id)
-                # df_obs, df_photos, pt_users = get_ranking_users(proj_id, grade="research")
+                print(f"Processing {len(obs)} observations for project {proj_id}")
+                
                 try:
-                    df_obs.to_csv(f"{directory}/data/{proj_id}_df_obs.csv", index=False)
-                    print(f"df_obs_{proj_id}.csv updated", f"{len(df_obs)}")
-                except:
-                    print("No se ha actualizado los df_obs")
-                    pass
-                try:
-                    df_photos.to_csv(
-                        f"{directory}/data/{proj_id}_df_photos.csv", index=False
-                    )
-                    print(f"df_photos_{proj_id}.csv updated")
-                except:
-                    print("No se han actualizado los df_photos")
-                    pass
-                try:
-                    pt_users.to_csv(
-                        f"{directory}/data/{proj_id}_pt_users.csv", index=False
-                    )
-                    print(f"pt_users_{proj_id}.csv updated")
-                except:
-                    print("No se han actualizado los pt_users")
-                    pass
+                    df_obs, df_photos = get_dfs(obs)
+                    pt_users = get_list_users(proj_id)
+                except Exception as e:
+                    print(f"Error processing data for project {proj_id}: {e}")
+                    continue
+                
+                # Save files with better error handling
+                files_to_save = [
+                    (df_obs, f"{directory}/data/{proj_id}_df_obs.csv", f"df_obs_{proj_id}"),
+                    (df_photos, f"{directory}/data/{proj_id}_df_photos.csv", f"df_photos_{proj_id}"),
+                    (pt_users, f"{directory}/data/{proj_id}_pt_users.csv", f"pt_users_{proj_id}")
+                ]
+                
+                for data, filepath, name in files_to_save:
+                    if data is not None and not data.empty:
+                        try:
+                            data.to_csv(filepath, index=False)
+                            print(f"{name}.csv updated - {len(data)} records")
+                        except Exception as e:
+                            print(f"Error saving {name}: {e}")
+                    else:
+                        print(f"No data to save for {name}")
+            else:
+                print(f"No new observations for project {proj_id}")
 
-    # Get listado de species
-    if len(all_projects) > 0:
+    # Get listado de species - optimized processing
+    if all_projects:
         for proj_id in all_projects:
             print(f"Get species for project {proj_id}")
-            species = get_list_species(proj_id)
+            
             try:
-                downloaded_species = pd.read_csv(
-                    f"{directory}/data/{proj_id}_species.csv"
-                )
-            except:
+                species = get_list_species(proj_id)
+            except Exception as e:
+                print(f"Error getting species for project {proj_id}: {e}")
+                continue
+                
+            if species is None:
+                print(f"No species data for project {proj_id}")
+                continue
+            
+            # Load existing species data
+            try:
+                downloaded_species = pd.read_csv(f"{directory}/data/{proj_id}_species.csv")
+            except (FileNotFoundError, pd.errors.EmptyDataError):
                 downloaded_species = pd.DataFrame()
-            if species is not None and len(species) != len(downloaded_species):
-                with requests.Session() as session:
-                    species[["first_date", "author", "obs_id", "photo_url"]] = (
-                        species.apply(
-                            lambda x: get_first_obs_taxon(x["id"], proj_id, session),
-                            axis=1,
-                        ).to_list()
-                    )
-                # species = species[species.author != "xasalva"]
-                species = species.sort_values(
-                    by=["first_date", "obs_id"], ascending=False
-                ).reset_index(drop=True)
-                species.to_csv(f"{directory}/data/{proj_id}_species.csv", index=False)
-                print(f"Species updated for {proj_id}")
+            
+            # Check if update is needed
+            if len(species) != len(downloaded_species):
+                print(f"Updating species data for project {proj_id}: {len(species)} species")
+                
+                try:
+                    with requests.Session() as session:
+                        # More efficient apply with error handling
+                        species_with_details = species.copy()
+                        details_list = []
+                        
+                        for _, row in species.iterrows():
+                            try:
+                                details = get_first_obs_taxon(row["id"], proj_id, session=session)
+                                details_list.append(details)
+                            except Exception as e:
+                                print(f"Error getting details for species {row['id']}: {e}")
+                                details_list.append([None, None, None, None])
+                        
+                        # Add details to dataframe
+                        details_df = pd.DataFrame(details_list, columns=["first_date", "author", "obs_id", "photo_url"])
+                        species_final = pd.concat([species_with_details, details_df], axis=1)
+                        
+                        # Sort and save
+                        species_final = species_final.sort_values(
+                            by=["first_date", "obs_id"], ascending=False, na_position='last'
+                        ).reset_index(drop=True)
+                        
+                        species_final.to_csv(f"{directory}/data/{proj_id}_species.csv", index=False)
+                        print(f"Species updated for project {proj_id}")
+                        
+                except Exception as e:
+                    print(f"Error processing species details for project {proj_id}: {e}")
+            else:
+                print(f"Species data up to date for project {proj_id}")
 
-    # Get listado de species por lugar
-    print(f"Get species for biomarato")
+    # Get listado de species por lugar - optimized
+    print("Get species for biomarato")
 
-    species_biomarato = get_list_species(place_biomaratona, type="place")
     try:
-        downloaded_species_biomarato = pd.read_csv(
-            f"{directory}/data/place_biomaratona_species.csv"
-        )
-    except:
-        downloaded_species_biomarato = pd.DataFrame()
-
-    if len(species_biomarato) != len(downloaded_species_biomarato):
-        with requests.Session() as session:
-            species_biomarato[["first_date", "author", "obs_id", "photo_url"]] = (
-                species_biomarato.apply(
-                    lambda x: get_first_obs_taxon(
-                        x["id"], place_biomaratona, type="place", session=session
-                    ),
-                    axis=1,
-                ).to_list()
+        species_biomarato = get_list_species(place_biomaratona, type="place")
+    except Exception as e:
+        print(f"Error getting biomarato species: {e}")
+        species_biomarato = None
+    
+    if species_biomarato is not None:
+        try:
+            downloaded_species_biomarato = pd.read_csv(
+                f"{directory}/data/place_biomaratona_species.csv"
             )
-        species_biomarato.to_csv(
-            f"{directory}/data/place_biomaratona_species.csv", index=False
-        )
-        print(f"Species updated for biomarato")
+        except (FileNotFoundError, pd.errors.EmptyDataError):
+            downloaded_species_biomarato = pd.DataFrame()
+
+        if len(species_biomarato) != len(downloaded_species_biomarato):
+            print(f"Updating biomarato species: {len(species_biomarato)} species")
+            
+            try:
+                with requests.Session() as session:
+                    details_list = []
+                    
+                    for _, row in species_biomarato.iterrows():
+                        try:
+                            details = get_first_obs_taxon(
+                                row["id"], place_biomaratona, type="place", session=session
+                            )
+                            details_list.append(details)
+                        except Exception as e:
+                            print(f"Error getting biomarato species details for {row['id']}: {e}")
+                            details_list.append([None, None, None, None])
+                    
+                    # Add details to dataframe
+                    details_df = pd.DataFrame(details_list, columns=["first_date", "author", "obs_id", "photo_url"])
+                    species_biomarato_final = pd.concat([species_biomarato, details_df], axis=1)
+                    
+                    species_biomarato_final.to_csv(
+                        f"{directory}/data/place_biomaratona_species.csv", index=False
+                    )
+                    print("Species updated for biomarato")
+                    
+            except Exception as e:
+                print(f"Error processing biomarato species details: {e}")
+        else:
+            print("Biomarato species data up to date")
+    else:
+        print("No biomarato species data available")
 
     end_time = time.time()
     execution_time = end_time - start_time

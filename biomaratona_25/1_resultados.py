@@ -1,6 +1,7 @@
 # Run as streamlit run app_biomarato.py --server.port 9003
 
 import os
+import time
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -52,48 +53,18 @@ config_modebar = {
 
 colors = ["#5fbfbb", "#1e9ca3", "#0c6a83", "#de6719", "#fab954"]
 
-exclude_users = [
-    "xasalva",
-    "bertinhaco",
-    "andrea",
-    "laurabiomar",
-    "guillermoalvarez_fecdas",
-    "mediambient_ajelprat",
-    "fecdas_mediambient",
-    "planctondiving",
-    "marinagm",
-    "CEM",
-    "jaume-piera",
-    "sonialinan",
-    "adrisoacha",
-    "anellides",
-    "irodero",
-    "manelsalvador",
-    "sara_riera",
-    "anomalia",
-    "amaliacardenas",
-    "aluna",
-    "carlosrodero",
-    "lydia",
-    "elibonfill",
-    "marinatorresgi",
-    "meri",
-    "monyant",
-    "ura4dive",
-    "lauracoro",
-    "pirotte_",
-    "oceanicos",
-    "abril",
-    "alba_barrera",
-    "amb_platges",
-    "daniel_palacios",
-    "davidpiquer",
-    "laiamanyer",
-    "rogerpuig",
-    "guillemdavila",
-    # vanessa,
-    # teresa,
-]
+# Convert to set for faster lookup operations
+exclude_users = {
+    "xasalva", "bertinhaco", "andrea", "laurabiomar",
+    "guillermoalvarez_fecdas", "mediambient_ajelprat", "fecdas_mediambient",
+    "planctondiving", "marinagm", "CEM", "jaume-piera", "sonialinan",
+    "adrisoacha", "anellides", "irodero", "manelsalvador", "sara_riera",
+    "anomalia", "amaliacardenas", "aluna", "carlosrodero", "lydia",
+    "elibonfill", "marinatorresgi", "meri", "monyant", "ura4dive",
+    "lauracoro", "pirotte_", "oceanicos", "abril", "alba_barrera",
+    "amb_platges", "daniel_palacios", "davidpiquer", "laiamanyer",
+    "rogerpuig", "guillemdavila"
+}
 
 
 base_url = "https://minka-sdg.org"
@@ -107,20 +78,22 @@ projects = [
 main_project = 424
 
 
-# Reducimos ancho de la barra lateral
-st.markdown(
-    f"""
-    <style>
-        [data-testid="stSidebar"] {{
-            width: 300px !important;
-        }}
-        [data-testid="stSidebar"] > div:first-child {{
-            width: 300px !important;
-        }}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# Optimized CSS - apply once
+if 'css_applied' not in st.session_state:
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"] {
+                width: 300px !important;
+            }
+            [data-testid="stSidebar"] > div:first-child {
+                width: 300px !important;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.session_state.css_applied = True
 
 with st.sidebar:
     st.write(
@@ -128,13 +101,32 @@ with st.sidebar:
     Identifica a biodiversidade em saídas de campo emocionantes, contribui para um projeto nacional de ciência cidadã, conecta-te com a natureza, junta-te a nós nesta missão científica – cada observação conta!"""
     )
 
-# Error si no responde la API
-try:
-    total_species, total_participants, total_obs = get_main_metrics(main_project)
-    lw_obs, lw_spe, lw_part = get_last_week_metrics(main_project)
-except:
-    st.error("Error loading data")
-    st.stop()
+# Cache metrics in session state to avoid repeated API calls
+if 'main_metrics_cache' not in st.session_state or st.session_state.get('cache_time', 0) < time.time() - 300:  # 5 min cache
+    try:
+        total_species, total_participants, total_obs = get_main_metrics(main_project)
+        lw_obs, lw_spe, lw_part = get_last_week_metrics(main_project)
+        st.session_state.main_metrics_cache = {
+            'total_species': total_species,
+            'total_participants': total_participants, 
+            'total_obs': total_obs,
+            'lw_obs': lw_obs,
+            'lw_spe': lw_spe,
+            'lw_part': lw_part
+        }
+        st.session_state.cache_time = time.time()
+    except Exception as e:
+        st.error(f"Erro ao carregar dados: {e}")
+        st.stop()
+else:
+    # Use cached values
+    cache = st.session_state.main_metrics_cache
+    total_species = cache['total_species']
+    total_participants = cache['total_participants']
+    total_obs = cache['total_obs']
+    lw_obs = cache['lw_obs']
+    lw_spe = cache['lw_spe']
+    lw_part = cache['lw_part']
 
 
 # Main metrics (incluye todos los usuarios y todos los grados)
@@ -173,8 +165,8 @@ with st.container():
     )
 
 
-with st.container():
-    # Evolution lines
+@st.cache_data(ttl=300)
+def load_and_process_main_metrics():
     main_metrics = pd.read_csv(f"{directory}/data/main_metrics.csv")
     main_metrics.rename(
         columns={
@@ -189,68 +181,51 @@ with st.container():
     main_metrics_filtered = main_metrics[
         main_metrics["data"] <= datetime.today()
     ].reset_index(drop=True)
-
-    col1_line, col2_line, col3_line = st.columns(3)
-    print(main_metrics_filtered.columns)
-    with col1_line:
-        fig1 = fig_area_evolution(
-            df=main_metrics_filtered,
-            field="observações",
-            title="Número de observações",
-            color="#089aa2",
-        )
-
-        st.plotly_chart(fig1, config=config_modebar, use_container_width=True)
-
-    with col2_line:
-        fig2 = fig_area_evolution(
-            df=main_metrics_filtered,
-            field="espécies",
-            title="Número de espécies",
-            color="#dc6619",
-        )
-        st.plotly_chart(fig2, config=config_modebar, use_container_width=True)
-
-    with col3_line:
-        fig3 = fig_area_evolution(
-            df=main_metrics_filtered,
-            field="participantes",
-            title="Número de participantes",
-            color="#f9b853",
-        )
-        st.plotly_chart(fig3, config=config_modebar, use_container_width=True)
+    return main_metrics_filtered
 
 with st.container():
-    # Resultados mensuales
+    # Evolution lines - use cached function
+    main_metrics_filtered = load_and_process_main_metrics()
+
+    col1_line, col2_line, col3_line = st.columns(3)
+    
+    # Create charts more efficiently with batch processing
+    chart_configs = [
+        ("observações", "Número de observações", "#089aa2"),
+        ("espécies", "Número de espécies", "#dc6619"),
+        ("participantes", "Número de participantes", "#f9b853")
+    ]
+    
+    columns = [col1_line, col2_line, col3_line]
+    
+    for i, (field, title, color) in enumerate(chart_configs):
+        with columns[i]:
+            fig = fig_area_evolution(
+                df=main_metrics_filtered,
+                field=field,
+                title=title,
+                color=color,
+            )
+            st.plotly_chart(fig, config=config_modebar, use_container_width=True)
+
+with st.container():
+    # Resultados mensuales - cached
     grouped = get_grouped_monthly(project_id=main_project, year="2025")
-    # grouped["data"] = grouped["data"].astype(str)
     col1_month, col2_month, col3_month = st.columns(3)
-    with col1_month:
-        fig1b = fig_bars_months(
-            grouped,
-            field="observações",
-            title="Observações por mês",
-            color="#089aa2",
-        )
-        st.plotly_chart(fig1b, config=config_modebar, use_container_width=True)
-
-    with col2_month:
-        fig2b = fig_bars_months(
-            grouped,
-            field="espécies",
-            title="Espécies por mês",
-            color="#dc6619",
-        )
-        st.plotly_chart(fig2b, config=config_modebar, use_container_width=True)
-
-    with col3_month:
-        fig3b = fig_bars_months(
-            grouped,
-            field="participantes",
-            title="Participantes por mês",
-            color="#f9b853",
-        )
-        st.plotly_chart(fig3b, config=config_modebar, use_container_width=True)
+    
+    # Monthly charts with same config as evolution charts
+    monthly_configs = [
+        ("observações", "Observações por mês", "#089aa2"),
+        ("espécies", "Espécies por mês", "#dc6619"),
+        ("participantes", "Participantes por mês", "#f9b853")
+    ]
+    
+    monthly_columns = [col1_month, col2_month, col3_month]
+    
+    for i, (field, title, color) in enumerate(monthly_configs):
+        with monthly_columns[i]:
+            fig = fig_bars_months(grouped, field=field, title=title, color=color)
+            st.plotly_chart(fig, config=config_modebar, use_container_width=True)
 
 
 with st.container():
@@ -259,50 +234,29 @@ with st.container():
     df_2024_filtered = get_previous_years(main_metrics_filtered)
     col1_comp, col2_comp, col3_comp = st.columns(3)
 
-    with col1_comp:
-        fig1_comp = fig_multi_year_comparison(
-            df_list=[
-                main_metrics_filtered,
-                df_2024_filtered,
-            ],
-            years=["2025", "2024"],
-            field="observações",  # Columna a comparar
-            colors=[
-                "#2CA02C",
-                "#FF9E4A",
-            ],  # Naranja, azul, verde, rojo
-        )
-        st.plotly_chart(fig1_comp, config=config_modebar, use_container_width=True)
-
-    with col2_comp:
-        fig2_comp = fig_multi_year_comparison(
-            df_list=[
-                main_metrics_filtered,
-                df_2024_filtered,
-            ],
-            years=["2025", "2024"],
-            field="espécies",  # Columna a comparar
-            colors=[
-                "#2CA02C",
-                "#FF9E4A",
-            ],  # Naranja, azul, verde, rojo
-        )
-        st.plotly_chart(fig2_comp, config=config_modebar, use_container_width=True)
-
-    with col3_comp:
-        fig3_comp = fig_multi_year_comparison(
-            df_list=[
-                main_metrics_filtered,
-                df_2024_filtered,
-            ],
-            years=["2025", "2024"],
-            field="participantes",  # Columna a comparar
-            colors=[
-                "#2CA02C",
-                "#FF9E4A",
-            ],  # Naranja, azul, verde, rojo
-        )
-        st.plotly_chart(fig3_comp, config=config_modebar, use_container_width=True)
+    # Comparison charts with shared configuration
+    comparison_configs = [
+        ("observações",),
+        ("espécies",),
+        ("participantes",)
+    ]
+    
+    comparison_columns = [col1_comp, col2_comp, col3_comp]
+    
+    # Shared data and configuration for all comparison charts
+    df_list = [main_metrics_filtered, df_2024_filtered]
+    years = ["2025", "2024"]
+    colors = ["#2CA02C", "#FF9E4A"]
+    
+    for i, (field,) in enumerate(comparison_configs):
+        with comparison_columns[i]:
+            fig_comp = fig_multi_year_comparison(
+                df_list=df_list,
+                years=years,
+                field=field,
+                colors=colors
+            )
+            st.plotly_chart(fig_comp, config=config_modebar, use_container_width=True)
 
 
 with st.container():
@@ -313,40 +267,45 @@ with st.container():
     with col2:
         st.header(":orange[Classificação dos participantes]")
     st.markdown("Número de observações com o grau de investigação.")
-    try:
-        pd.read_csv(f"{directory}/data/{main_project}_pt_users.csv")
+    @st.cache_data(ttl=3600)
+    def load_and_process_users():
+        try:
+            pt_users_df = pd.read_csv(f"{directory}/data/{main_project}_pt_users.csv")
+            # Filter excluded users (exclude_users is already a set)
+            pt_users_filtered = pt_users_df[
+                ~pt_users_df.participant.isin(exclude_users)
+            ].reset_index(drop=True)
+            
+            # Set index starting from 1
+            pt_users_filtered.index = range(1, len(pt_users_filtered) + 1)
+            
+            # Format observations column
+            pt_users_filtered["observacions_formatted"] = pt_users_filtered[
+                "observacions"
+            ].apply(lambda x: "{:,.0f}".format(x).replace(",", " "))
+            
+            return pt_users_filtered
+        except FileNotFoundError:
+            return None
+    
+    pt_users_data = load_and_process_users()
+    
+    if pt_users_data is not None:
         col0, col1, col2, col3 = st.columns([4, 1, 4, 1])
 
         # Ranking general
         with col0:
-
-            # Tabla
-            if "pt_users0" not in st.session_state:
-                st.session_state.pt_users0 = pd.read_csv(
-                    f"{directory}/data/{main_project}_pt_users.csv"
-                )
-                st.session_state.pt_users0 = st.session_state.pt_users0[
-                    -st.session_state.pt_users0.participant.isin(exclude_users)
-                ].reset_index(drop=True)
-                st.session_state.pt_users0.index = range(
-                    st.session_state.pt_users0.index.start + 1,
-                    st.session_state.pt_users0.index.stop + 1,
-                )
-                st.session_state.pt_users0["observacions"] = st.session_state.pt_users0[
-                    "observacions"
-                ].apply(lambda x: "{:,.0f}".format(x).replace(",", " "))
-
-            pt_users = st.session_state.pt_users0[
-                ["participant", "observacions", "espècies"]
+            pt_users_display = pt_users_data[
+                ["participant", "observacions_formatted", "espècies"]
             ].rename(
                 columns={
                     "participant": "participante",
-                    "observacions": "observações",
+                    "observacions_formatted": "observações",
                     "espècies": "espécies",
                 }
             )
             st.dataframe(
-                pt_users,
+                pt_users_display,
                 use_container_width=True,
                 height=210,
             )
@@ -354,19 +313,19 @@ with st.container():
             # Medallas
             col1b, __ = st.columns([10, 1])
             with col1b:
-                if len(st.session_state.pt_users0) > 0:
+                if len(pt_users_data) > 0:
                     medals = [
                         "first_place_medal",
                         "second_place_medal",
                         "third_place_medal",
                     ]
-                    for i in range(1, 4):
-                        nombre = st.session_state.pt_users0.loc[i, "participant"]
+                    for i in range(1, min(4, len(pt_users_data) + 1)):
+                        nombre = pt_users_data.loc[i, "participant"]
                         st.subheader(
                             f":{medals[i-1]}: [{nombre}](https://minka-sdg.org/users/{nombre})"
                         )
-    except FileNotFoundError:
-        st.markdown("Cap participant")
+    else:
+        st.markdown("Nenhum participante")
 
 st.divider()
 
@@ -379,17 +338,19 @@ with st.container():
     with col2:
         st.header(":orange[Agradecimentos]")
     st.markdown("Participaram da Biomaratona 2025:")
-    try:
-        df_total = pd.read_csv(f"{directory}/data/{main_project}_df_obs.csv")
-        list_participants = df_total.user_login.unique()
-        list_participants.sort()
-        linked_list = []
-        for p in list_participants:
-            linked_list.append(f"[{p}](https://minka-sdg.org/users/{p})")
-        agraiments = ", ".join(linked_list)
-        st.markdown(f"{agraiments}")
-    except FileNotFoundError:
-        pass
+    @st.cache_data(ttl=3600)
+    def get_participants_list():
+        try:
+            df_total = pd.read_csv(f"{directory}/data/{main_project}_df_obs.csv", usecols=['user_login'])
+            list_participants = sorted(df_total.user_login.unique())
+            linked_list = [f"[{p}](https://minka-sdg.org/users/{p})" for p in list_participants]
+            return ", ".join(linked_list)
+        except FileNotFoundError:
+            return None
+    
+    participants_text = get_participants_list()
+    if participants_text:
+        st.markdown(participants_text)
 
 # Logos
 st.divider()

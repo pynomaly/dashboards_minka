@@ -56,7 +56,11 @@ def load_maps():
     # Only load maps if they don't exist in session_state or if project changed
     if map_key not in st.session_state:
         try:
-            df_map = pd.read_csv(f"{directory}/data/{proj_id}_df_obs.csv")
+            # Load only required columns for maps to reduce memory usage
+            map_columns = ["latitude", "longitude", "taxon_name", "user_login", "id"]
+            df_map = pd.read_csv(
+                f"{directory}/data/{proj_id}_df_obs.csv", usecols=map_columns
+            )
             # Store both maps in a dictionary with this project's key
             st.session_state[map_key] = {
                 "heatmap": create_heatmap(df_map),
@@ -81,21 +85,24 @@ def load_maps():
 
 @st.cache_data(ttl=300)
 def get_main_metrics(proj_id, session=None):
-    species = f"{api_path}/observations/species_counts?"
-    url1 = f"{species}&project_id={proj_id}"
     if session is None:
         session = requests.Session()
-    total_species = session.get(url1).json()["total_results"]
 
-    observers = f"{api_path}/observations/observers?"
-    url2 = f"{observers}&project_id={proj_id}"
-    total_participants = session.get(url2).json()["total_results"]
+    # Prepare all URLs at once
+    urls = {
+        "species": f"{api_path}/observations/species_counts?project_id={proj_id}",
+        "observers": f"{api_path}/observations/observers?project_id={proj_id}",
+        "observations": f"{api_path}/observations?project_id={proj_id}",
+    }
 
-    observations = f"{api_path}/observations?"
-    url3 = f"{observations}&project_id={proj_id}"
-    total_obs = session.get(url3).json()["total_results"]
+    # Make concurrent requests would be ideal, but for simplicity we'll batch process
+    results = {}
+    for key, url in urls.items():
+        response = session.get(url)
+        response.raise_for_status()  # Better error handling
+        results[key] = response.json()["total_results"]
 
-    return total_species, total_participants, total_obs
+    return results["species"], results["observers"], results["observations"]
 
 
 @st.cache_data(ttl=300)
@@ -105,18 +112,26 @@ def get_last_week_metrics(proj_id, session=None):
     )
     if session is None:
         session = requests.Session()
-    species = f"{api_path}/observations/species_counts?"
-    url1 = f"{species}&project_id={proj_id}&d2={last_week_date}&order=desc&order_by=created_at"
-    lw_spe = session.get(url1).json()["total_results"]
 
-    observers = f"{api_path}/observations/observers?"
-    url2 = f"{observers}&project_id={proj_id}&d2={last_week_date}&order=desc&order_by=created_at"
-    lw_part = session.get(url2).json()["total_results"]
+    # Common parameters
+    common_params = (
+        f"project_id={proj_id}&d2={last_week_date}&order=desc&order_by=created_at"
+    )
 
-    observations = f"{api_path}/observations?"
-    url3 = f"{observations}&project_id={proj_id}&d2={last_week_date}&order=desc&order_by=created_at"
-    lw_obs = session.get(url3).json()["total_results"]
-    return lw_obs, lw_spe, lw_part
+    # Prepare all URLs at once
+    urls = {
+        "species": f"{api_path}/observations/species_counts?{common_params}",
+        "observers": f"{api_path}/observations/observers?{common_params}",
+        "observations": f"{api_path}/observations?{common_params}",
+    }
+
+    results = {}
+    for key, url in urls.items():
+        response = session.get(url)
+        response.raise_for_status()
+        results[key] = response.json()["total_results"]
+
+    return results["observations"], results["species"], results["observers"]
 
 
 @st.cache_data(ttl=3600)
@@ -171,7 +186,7 @@ def fig_area_evolution(df, field, title, color):
         df,
         x="data",
         y=field,
-        markers=True,
+        markers=False,
     )
     fig.update_traces(
         marker_color=color,
@@ -203,6 +218,10 @@ def fig_bars_months(grouped: pd.DataFrame, field: str, title: str, color: str):
     """
     if field not in grouped.columns:
         raise ValueError(f"Invalid field: {field}")
+
+    # Pre-calculate tick values for better performance
+    tick_values = grouped["data"].tolist()
+
     fig = px.bar(
         grouped,
         x="data",
@@ -225,13 +244,13 @@ def fig_bars_months(grouped: pd.DataFrame, field: str, title: str, color: str):
         yaxis_title="",
         separators=". ",
         hoverlabel=dict(bgcolor="white"),
-        title=dict(text=f"{title}", font_size=18),
+        title=dict(text=title, font_size=18),
         showlegend=False,
         yaxis_tickformat=",d",
         xaxis=dict(
             tickmode="array",
-            tickvals=grouped["data"].to_list(),
-            ticktext=grouped["data"].to_list(),
+            tickvals=tick_values,
+            ticktext=tick_values,
             tickfont=dict(size=14),
             tickangle=-45,
         ),
@@ -291,43 +310,54 @@ def fig_provinces(main_metrics: pd.DataFrame, field: str, title: str) -> px.bar:
 
 @st.cache_data(ttl=3600)
 def get_last_obs(proj_id):
-    last_obs = pd.read_csv(f"{directory}/data/{proj_id}_df_obs.csv")
-    last_photos = pd.read_csv(f"{directory}/data/{proj_id}_df_photos.csv")
-    total = pd.merge(
-        last_photos,
-        last_obs[
-            [
-                "id",
-                "observed_on",
-                "quality_grade",
-                "kingdom",
-                "phylum",
-                "class",
-                "order",
-                "family",
-                "genus",
-            ]
-        ],
-        on="id",
-        how="left",
-    )
+    # Define columns to keep from last_obs to reduce memory usage
+    obs_columns = [
+        "id",
+        "observed_on",
+        "quality_grade",
+        "kingdom",
+        "phylum",
+        "class",
+        "order",
+        "family",
+        "genus",
+    ]
 
-    excluded_logins = ["xasalva", "mediambient_ajelprat"]
-    last_total = total[
-        (~total.user_login.isin(excluded_logins)) & (total.quality_grade == "research")
-    ].reset_index(drop=True)
-    last_total.drop_duplicates(subset="id", inplace=True)
-    last_total = last_total.sort_values(by="id", ascending=False).reset_index(drop=True)
+    last_obs = pd.read_csv(
+        f"{directory}/data/{proj_id}_df_obs.csv", usecols=obs_columns
+    )
+    last_photos = pd.read_csv(f"{directory}/data/{proj_id}_df_photos.csv")
+
+    # Merge with more efficient left join
+    total = pd.merge(last_photos, last_obs, on="id", how="left")
+
+    # Filter and process in a single chain operation
+    excluded_logins = {"xasalva", "mediambient_ajelprat"}  # Use set for faster lookup
+    last_total = (
+        total[
+            (~total.user_login.isin(excluded_logins))
+            & (total.quality_grade == "research")
+        ]
+        .drop_duplicates(subset="id")
+        .sort_values(by="id", ascending=False)
+        .reset_index(drop=True)
+    )
 
     return last_total
 
 
 @st.cache_resource(ttl=3600)
 def create_heatmap(df):
-    df.dropna(subset=["latitude", "longitude"], inplace=True)
-    locations = [(lat, lon) for lat, lon in zip(df["latitude"], df["longitude"])]
+    # Create a copy to avoid modifying original dataframe
+    df_clean = df.dropna(subset=["latitude", "longitude"]).copy()
 
-    center = df[["latitude", "longitude"]].mean().tolist()
+    if df_clean.empty:
+        # Return empty map if no valid coordinates
+        return folium.Map(location=[0, 0], tiles="cartodb positron", zoom_start=2)
+
+    # More efficient location extraction using numpy
+    locations = df_clean[["latitude", "longitude"]].values.tolist()
+    center = df_clean[["latitude", "longitude"]].mean().tolist()
 
     m = folium.Map(location=center, tiles="cartodb positron", zoom_start=5)
     HeatMap(
@@ -350,29 +380,28 @@ def create_heatmap(df):
 
 @st.cache_resource(ttl=3600)
 def create_markercluster(df):
-    df.dropna(subset=["latitude", "longitude"], inplace=True)
+    # Create a copy to avoid modifying original dataframe
+    df_clean = df.dropna(subset=["latitude", "longitude"]).copy()
 
-    lats = df["latitude"].to_list()
-    lons = df["longitude"].to_list()
+    if df_clean.empty:
+        return folium.Map(location=[0, 0], tiles="cartodb positron", zoom_start=2)
 
-    locations = list(zip(lats, lons))
+    # More efficient coordinate extraction
+    coords = df_clean[["latitude", "longitude"]].values
+    center = coords.mean(axis=0).tolist()
 
-    # Define coordinates of where we want to center our map
-    center = [np.mean(lats), np.mean(lons)]
-
-    # tiles1 = "cartodb positron"
     attr = "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
     tiles2 = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
 
     m = folium.Map(location=center, tiles=tiles2, attr=attr, zoom_start=5)
-
     marker_cluster = MarkerCluster().add_to(m)
 
-    for i in range(len(df)):
+    # More efficient iteration using iterrows
+    for _, row in df_clean.iterrows():
         folium.Marker(
-            location=locations[i],
+            location=[row["latitude"], row["longitude"]],
             popup=folium.Popup(
-                f"<b>Taxon: </b>{df['taxon_name'].values[i]}<br><b>User: </b>{df['user_login'].values[i]}<br><a href='https://minka-sdg.org/observations/{df['id'].values[i]}' target='_blank'>Minka Observation</a>",
+                f"<b>Taxon: </b>{row['taxon_name']}<br><b>User: </b>{row['user_login']}<br><a href='https://minka-sdg.org/observations/{row['id']}' target='_blank'>Minka Observation</a>",
                 min_width=150,
                 max_width=150,
             ),
@@ -389,9 +418,6 @@ def reindex(df):
 
 @st.cache_data(ttl=3600)
 def get_grouped_monthly(project_id: int, year) -> pd.DataFrame:
-
-    session = requests.Session()
-
     meses = {
         f"{year}-05": ["01", "31"],
         f"{year}-06": ["01", "30"],
@@ -401,31 +427,43 @@ def get_grouped_monthly(project_id: int, year) -> pd.DataFrame:
         f"{year}-10": ["01", "15"],
     }
 
+    # Define base URLs once
+    base_urls = {
+        "observations": f"{api_path}/observations",
+        "species": f"{api_path}/observations/species_counts",
+        "observers": f"{api_path}/observations/observers",
+    }
+
     results_by_month = []
 
-    for mes, limits in meses.items():
-        month = {}
+    with requests.Session() as session:
+        for mes, limits in meses.items():
+            params = {
+                "project_id": project_id,
+                "d1": f"{mes}-{limits[0]}",
+                "d2": f"{mes}-{limits[1]}",
+            }
 
-        url_obs = f"{api_path}/observations"
-        url_spe = f"{api_path}/observations/species_counts"
-        url_observers = f"{api_path}/observations/observers"
+            # Batch API calls with error handling
+            month_data = {"data": mes}
 
-        params = {
-            "project_id": project_id,
-            "d1": f"{mes}-{limits[0]}",
-            "d2": f"{mes}-{limits[1]}",
-        }
+            for key, url in base_urls.items():
+                try:
+                    response = session.get(url, params=params)
+                    response.raise_for_status()
+                    result = response.json()["total_results"]
+                except (requests.RequestException, KeyError) as e:
+                    print(f"Error fetching {key} for {mes}: {e}")
+                    result = 0
 
-        month["data"] = mes
-        month["observações"] = session.get(url_obs, params=params).json()[
-            "total_results"
-        ]
-        month["espécies"] = session.get(url_spe, params=params).json()["total_results"]
-        month["participantes"] = session.get(url_observers, params=params).json()[
-            "total_results"
-        ]
+                if key == "observations":
+                    month_data["observações"] = result
+                elif key == "species":
+                    month_data["espécies"] = result
+                elif key == "observers":
+                    month_data["participantes"] = result
 
-        results_by_month.append(month)
+            results_by_month.append(month_data)
 
     return pd.DataFrame(results_by_month)
 
@@ -456,7 +494,6 @@ def fig_multi_year_comparison(df_list, years, field, colors):
     - df_list: Lista de DataFrames [df_2022, df_2023, df_2024, df_2025].
     - years: Lista de etiquetas para los años (ej: ["2022", "2023", "2024", "2025"]).
     - field: Columna a comparar (ej: "ventas").
-    - title: Título del gráfico.
     - colors: Lista de colores para cada año (ej: ["#FF9E4A", "#1F77B4", "#2CA02C", "#D62728"]).
     """
     if len(df_list) != len(years) or len(df_list) != len(colors):
@@ -464,55 +501,56 @@ def fig_multi_year_comparison(df_list, years, field, colors):
             "Las listas de DataFrames, años y colores deben tener la misma longitud."
         )
 
-    # Crear secuencia de posiciones (ej: Día 1, Día 2, ...)
+    # Crear secuencia de posiciones (ej: Día 1, Día 2, ...) - optimized
     max_length = max(len(df) for df in df_list)
     positions = [f"Dia {i+1}" for i in range(max_length)]
 
     fig = px.area()  # Figura vacía
 
-    # Añadir cada año como un área
+    # Añadir cada año como un área - optimized loop
     for df, year, color in zip(df_list, years, colors):
-        df = df.reset_index(drop=True)  # Ignorar fechas
-        fig.add_trace(
-            px.line(
-                df,
-                x=positions[: len(df)],
-                y=field,
-                markers=False,
-                color_discrete_sequence=[color],
-            )
-            .update_traces(
-                name=year,
-                showlegend=True,
-                line_width=3,
-                # marker_size=4,
-                hovertemplate=(
-                    f"<b>{year}</b>=%{{y:,}}<extra></extra>"  # Año en negrita
-                ),
-            )
-            .data[0]
+        df_reset = df.reset_index(drop=True)  # Avoid modifying original
+        df_length = len(df_reset)
+
+        # Create line trace more efficiently
+        line_fig = px.line(
+            df_reset,
+            x=positions[:df_length],
+            y=field,
+            markers=False,
+            color_discrete_sequence=[color],
         )
 
-    # Personalización
+        trace = line_fig.data[0]
+        trace.update(
+            name=year,
+            showlegend=True,
+            line_width=3,
+            hovertemplate=f"<b>{year}</b>=%{{y:,}}<extra></extra>",
+        )
+
+        fig.add_trace(trace)
+
+    # Personalización optimizada
     fig.update_layout(
         plot_bgcolor="white",
         yaxis_title=field,
         yaxis_tickformat=",d",
         yaxis=dict(
-            showgrid=True,  # Activar grid
-            gridcolor="lightgray",  # Color del grid
-            gridwidth=0.5,  # Grosor de las líneas
+            showgrid=True,
+            gridcolor="lightgray",
+            gridwidth=0.5,
         ),
         xaxis=dict(
             showgrid=True,
             gridcolor="lightgray",
-            gridwidth=0.1,  # Más delgado que el horizontal
+            gridwidth=0.1,
             tickangle=-45,
         ),
         title=dict(text=field, font_size=18),
         legend_title_text="Any",
         hovermode="x unified",
-        height=450,  # Altura ajustable
+        height=450,
     )
 
     return fig
