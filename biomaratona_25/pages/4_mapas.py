@@ -69,7 +69,7 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/Biomarato_logo_100.png")
     with col2:
-        st.header(":orange[Mapes]")
+        st.header(":orange[Mapas]")
 
 # Project selection
 project_name = st.selectbox(
