@@ -130,39 +130,73 @@ st.markdown(
 )
 
 
+@st.cache_data(ttl=1800, show_spinner="🔍 Processant espècies...")
 def get_last_species_from_obs(df_obs, df_photos):
-    df_obs2 = df_obs[df_obs["taxon_rank"] == "species"].reset_index(drop=True)
-    df_obs3 = df_obs2.sort_values(by=["observed_on", "observed_on_time"]).reset_index(
-        drop=True
-    )
-    df_obs4 = df_obs3.drop_duplicates(subset=["taxon_id"], keep="first")
-    df_obs5 = df_obs4.sort_values(
-        by=["observed_on", "observed_on_time"], ascending=False
-    ).reset_index(drop=True)
+    """Optimized species processing with caching"""
+    if df_obs.empty or df_photos.empty:
+        return pd.DataFrame()
 
-    df_unique_photos = df_photos.drop_duplicates(subset=["id"], keep="first")
-    df_result = pd.merge(
-        df_obs5, df_unique_photos[["id", "photos_medium_url", "attribution"]], on="id"
-    )
-    return df_result
+    try:
+        # Filter species observations efficiently
+        df_species = df_obs[df_obs["taxon_rank"] == "species"].copy()
+
+        if df_species.empty:
+            return pd.DataFrame()
+
+        # Sort and get unique species (keep latest observation per species)
+        df_species = (
+            df_species.sort_values(
+                by=["observed_on", "observed_on_time"], ascending=False
+            )
+            .drop_duplicates(subset=["taxon_id"], keep="first")
+            .reset_index(drop=True)
+        )
+
+        # Merge with photos efficiently
+        df_unique_photos = df_photos.drop_duplicates(subset=["id"], keep="first")
+        df_result = pd.merge(
+            df_species,
+            df_unique_photos[["id", "photos_medium_url", "attribution"]],
+            on="id",
+            how="left",
+        )
+
+        return df_result
+
+    except Exception as e:
+        st.error(f"Error processing species data: {e}")
+        return pd.DataFrame()
 
 
+@st.cache_data(ttl=900)
 def show_last_species(df, provincia_name):
     """
-    Show the last species added to the list.
+    Optimized display of last species with better error handling
     """
+    if df is None or df.empty:
+        st.info(f"No hi ha espècies disponibles per {provincia_name}")
+        return
+
     try:
-        df.reset_index(drop=True, inplace=True)
-        df["observed_on"] = pd.to_datetime(df["observed_on"])
+        df = df.reset_index(drop=True).copy()
+
+        # Convert dates efficiently
+        df["observed_on"] = pd.to_datetime(df["observed_on"], errors="coerce")
         df["observed_on"] = df["observed_on"].dt.strftime("%d-%m-%Y")
-        df.loc[:, "obs_url"] = df["id"].apply(
+        df["obs_url"] = df["id"].apply(
             lambda x: f"https://minka-sdg.org/observations/{x}"
         )
-        i = 0
+
+        # Ensure we have enough data
+        max_items = min(8, len(df))
+        df_display = df.head(max_items)
+
         col1sp, col2sp, col3sp, col4sp = st.columns(4, gap="small")
+
+        # Table in first column
         with col1sp:
             st.dataframe(
-                df[["taxon_name", "observed_on", "obs_url"]].rename(
+                df_display[["taxon_name", "observed_on", "obs_url"]].rename(
                     columns={"observed_on": "data"}
                 ),
                 column_config={
@@ -172,32 +206,54 @@ def show_last_species(df, provincia_name):
                 height=300,
                 hide_index=True,
             )
-        for col in [col2sp, col3sp, col4sp]:
-            with col:
-                photo_url = df.loc[i, "photos_medium_url"]
-                taxon_name = df.loc[i, "taxon_name"]
-                st.markdown(
-                    f":link: [MINKA](https://minka-sdg.org/observations/{df.loc[i, 'id']})"
-                )
-                st.image(
-                    photo_url,
-                    caption=f"{taxon_name} | Foto: {df.loc[i, 'attribution']}",
-                )
-                i += 1
-        for col in [col1sp, col2sp, col3sp, col4sp]:
-            with col:
-                photo_url = df.loc[i, "photos_medium_url"]
-                taxon_name = df.loc[i, "taxon_name"]
-                st.markdown(
-                    f":link: [MINKA](https://minka-sdg.org/observations/{df.loc[i, 'id']})"
-                )
-                st.image(
-                    photo_url,
-                    caption=f"{taxon_name} | Foto: {df.loc[i, 'attribution']}",
-                )
-                i += 1
-    except:
-        pass
+
+        # Images in other columns - first row
+        cols = [col2sp, col3sp, col4sp]
+        for i, col in enumerate(cols, 1):
+            if i < len(df_display):
+                with col:
+                    row = df_display.iloc[i]
+                    photo_url = row.get("photos_medium_url")
+                    taxon_name = row.get("taxon_name", "Unknown")
+                    attribution = row.get("attribution", "Unknown")
+
+                    st.markdown(
+                        f":link: [MINKA](https://minka-sdg.org/observations/{row['id']})"
+                    )
+
+                    if photo_url and pd.notna(photo_url):
+                        st.image(
+                            photo_url,
+                            caption=f"{taxon_name} | Foto: {attribution}",
+                            use_container_width=True,
+                        )
+                    else:
+                        st.info(f"Sense foto\n{taxon_name}")
+
+        # Images - second row
+        for i, col in enumerate([col1sp, col2sp, col3sp, col4sp], 4):
+            if i < len(df_display):
+                with col:
+                    row = df_display.iloc[i]
+                    photo_url = row.get("photos_medium_url")
+                    taxon_name = row.get("taxon_name", "Unknown")
+                    attribution = row.get("attribution", "Unknown")
+
+                    st.markdown(
+                        f":link: [MINKA](https://minka-sdg.org/observations/{row['id']})"
+                    )
+
+                    if photo_url and pd.notna(photo_url):
+                        st.image(
+                            photo_url,
+                            caption=f"{taxon_name} | Foto: {attribution}",
+                            use_container_width=True,
+                        )
+                    else:
+                        st.info(f"Sense foto\n{taxon_name}")
+
+    except Exception as e:
+        st.error(f"Error mostrant espècies de {provincia_name}: {e}")
 
 
 # Carrusel de últimas observaciones,
@@ -209,56 +265,70 @@ with st.container():
     with col2:
         st.header(":orange[Últimes observacions publicades]")
 
+    # Optimized image viewer with caching
+    @st.cache_data(ttl=600, show_spinner="📷 Carregant darreres observacions...")
+    def load_recent_observations(project_id):
+        """Load and process recent observations with caching"""
+        return get_last_obs(project_id)
+
     # Visor de imágenes: 15 imágenes, máximo 3 por usuario
     # Excluye a Xavi y a mediambient_ajelprat en la función
+    last_total = load_recent_observations(main_project)
 
-    last_total = get_last_obs(main_project)
+    # Optimized results processing with vectorized operations
+    @st.cache_data(ttl=300)
+    def process_gallery_results(df_observations, max_per_user=3, total_limit=15):
+        """Process gallery results with optimized operations"""
+        if df_observations.empty:
+            return pd.DataFrame()
 
-    # convertimos el df para que sólo aparezcan 5 obs de cada usuario como máximo
-    results = pd.DataFrame()
-    for user in last_total.user_login.unique():
-        last_five = last_total[last_total.user_login == user][:3]
-        results = pd.concat([results, last_five], axis=0)
-    # results = results.reset_index(drop=True)
-    results = (
-        results.sort_values(by="id", ascending=False).reset_index(drop=True).head(15)
-    )
+        # Group by user and take top 3 observations per user
+        results = df_observations.groupby("user_login").head(max_per_user)
 
+        # Sort by id descending and limit total results
+        results = results.sort_values(by="id", ascending=False).head(total_limit)
+
+        return results.reset_index(drop=True)
+
+    # convertimos el df para que sólo aparezcan 3 obs de cada usuario como máximo
+    results = process_gallery_results(last_total, max_per_user=3, total_limit=15)
+
+    # Optimized gallery using direct URLs instead of fetching content
     c1, c2, c3, c4, c5 = st.columns(5)
     col = 0
-    session = requests.Session()
+
     for index, row in results.iterrows():
-        image = row["photos_medium_url"]
+        image_url = row["photos_medium_url"]
         id_obs = row["id"]
         taxon_name = row.taxon_name
-        try:
-            response = session.get(image)
-        except:
+
+        # Skip if no image URL
+        if not image_url:
             continue
 
         if col == 0:
             with c1:
-                st.image(response.content)
+                st.image(image_url, caption=taxon_name)
                 mdlit(f"@(https://minka-sdg.org/observations/{id_obs})")
             col += 1
         elif col == 1:
             with c2:
-                st.image(response.content)
+                st.image(image_url, caption=taxon_name)
                 mdlit(f"@(https://minka-sdg.org/observations/{id_obs})")
             col += 1
         elif col == 2:
             with c3:
-                st.image(response.content)
+                st.image(image_url, caption=taxon_name)
                 mdlit(f"@(https://minka-sdg.org/observations/{id_obs})")
             col += 1
         elif col == 3:
             with c4:
-                st.image(response.content)
+                st.image(image_url, caption=taxon_name)
                 mdlit(f"@(https://minka-sdg.org/observations/{id_obs})")
             col += 1
         elif col == 4:
             with c5:
-                st.image(response.content)
+                st.image(image_url, caption=taxon_name)
                 mdlit(f"@(https://minka-sdg.org/observations/{id_obs})")
             col = 0
 
@@ -277,80 +347,95 @@ with st.container():
     excluded = []
     # excluded = ["xasalva", "mediambient_ajelprat"]
 
-    # Dataframes de observaciones de cada provincia
+    # Optimized province data loading without ThreadPoolExecutor to avoid ScriptRunContext warning
+    @st.cache_data(ttl=1800, show_spinner="Carregant dades de províncies...")
+    def load_all_province_data(directory_path, excluded_users):
+        """Load all province species data with caching and sequential processing"""
+        provinces = {
+            "Girona": project_id_gir,
+            "Tarragona": project_id_tarr,
+            "Barcelona": project_id_bcn,
+        }
+
+        results = {}
+
+        for prov_name, prov_id in provinces.items():
+            try:
+                df_obs = pd.read_csv(f"{directory_path}/data/{prov_id}_df_obs.csv")
+                df_photos = pd.read_csv(
+                    f"{directory_path}/data/{prov_id}_df_photos.csv"
+                )
+                sp_data = get_last_species_from_obs(df_obs, df_photos)
+                sp_data = sp_data[-sp_data.user_login.isin(excluded_users)]
+                results[prov_name] = (
+                    reindex(sp_data)
+                    if sp_data is not None and not sp_data.empty
+                    else None
+                )
+            except (FileNotFoundError, Exception):
+                results[prov_name] = None
+
+        return results
+
+    # Load all province data with caching
+    province_data = load_all_province_data(directory, excluded)
+    sp_girona = province_data.get("Girona")
+    sp_tarragona = province_data.get("Tarragona")
+    sp_barcelona = province_data.get("Barcelona")
+
+    # Display provinces with error handling
+    provinces_display = [
+        ("Girona", sp_girona),
+        ("Tarragona", sp_tarragona),
+        ("Barcelona", sp_barcelona),
+    ]
+
+    for prov_name, prov_data in provinces_display:
+        st.header(prov_name)
+        show_last_species(prov_data, prov_name)
+        st.divider()
+
+
+# Optimized new species section
+@st.cache_data(ttl=1800, show_spinner="🌱 Carregant noves espècies...")
+def load_new_species_data(directory_path):
+    """Load and process new species data with caching"""
     try:
-        province_id = project_id_gir
-        df_obs1 = pd.read_csv(f"{directory}/data/{province_id}_df_obs.csv")
-        df_photos1 = pd.read_csv(f"{directory}/data/{province_id}_df_photos.csv")
-        sp_girona = get_last_species_from_obs(df_obs1, df_photos1)
-        sp_girona = sp_girona[-sp_girona.user_login.isin(excluded)]
+        df_species = pd.read_csv(f"{directory_path}/data/place_biomarato_species.csv")
 
-    except:
-        sp_girona = None
-    try:
-        province_id = project_id_tarr
-        df_obs1 = pd.read_csv(f"{directory}/data/{province_id}_df_obs.csv")
-        df_photos1 = pd.read_csv(f"{directory}/data/{province_id}_df_photos.csv")
-        sp_tarragona = get_last_species_from_obs(df_obs1, df_photos1)
-        sp_tarragona = sp_tarragona[-sp_tarragona.user_login.isin(excluded)]
-    except FileNotFoundError:
-        sp_tarragona = None
+        # Filter last 30 days
+        last_month = datetime.now() - timedelta(days=30)
+        df_species["first_date"] = pd.to_datetime(df_species["first_date"])
+        df_filtered = df_species[df_species.first_date >= last_month]
 
-    try:
-        province_id = project_id_bcn
-        df_obs1 = pd.read_csv(f"{directory}/data/{province_id}_df_obs.csv")
-        df_photos1 = pd.read_csv(f"{directory}/data/{province_id}_df_photos.csv")
-        sp_barcelona = get_last_species_from_obs(df_obs1, df_photos1)
-        sp_barcelona = sp_barcelona[-sp_barcelona.user_login.isin(excluded)]
+        if df_filtered.empty:
+            return pd.DataFrame()
 
-    except FileNotFoundError:
-        sp_barcelona = None
+        # Sort and rename columns efficiently
+        df_filtered = df_filtered.sort_values(by="first_date", ascending=False)
 
-    for df in [sp_girona, sp_tarragona, sp_barcelona]:
-        if df is not None:
-            df = reindex(df)
-
-    # Girona
-    st.header("Girona")
-    show_last_species(sp_girona, "Girona")
-
-    st.divider()
-
-    # Tarragona
-    st.header("Tarragona")
-    show_last_species(sp_tarragona, "Tarragona")
-
-    st.divider()
-
-    # Barcelona
-    st.header("Barcelona")
-    show_last_species(sp_barcelona, "Barcelona")
-
-    st.divider()
-
-# Nuevas especies en place BioMARató
-df_species = pd.read_csv(f"{directory}/data/place_biomarato_species.csv")
-
-with st.container():
-    st.header("Noves espècies a l'àrea Biomarató en els darrers 30 dies")
-    last_month = datetime.now() - timedelta(days=30)
-    df_species.first_date = pd.to_datetime(df_species.first_date)
-    df_species_filtered = df_species[df_species.first_date >= last_month]
-    df_species_filtered = df_species_filtered.sort_values(
-        by="first_date", ascending=False
-    )
-    df_species_filtered.rename(
-        columns={
+        column_mapping = {
             "id": "taxon_id",
             "first_date": "observed_on",
             "name": "taxon_name",
             "photo_url": "photos_medium_url",
             "author": "attribution",
             "obs_id": "id",
-        },
-        inplace=True,
-    )
-    show_last_species(df_species_filtered, "BioMARató")
+        }
+
+        return df_filtered.rename(columns=column_mapping)
+
+    except FileNotFoundError:
+        return pd.DataFrame()
+    except Exception as e:
+        st.error(f"Error carregant noves espècies: {e}")
+        return pd.DataFrame()
+
+
+with st.container():
+    st.header("Noves espècies a l'àrea Biomarató en els darrers 30 dies")
+    new_species_data = load_new_species_data(directory)
+    show_last_species(new_species_data, "BioMARató")
 
 # Logos
 st.divider()

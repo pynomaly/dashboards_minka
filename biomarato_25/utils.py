@@ -71,12 +71,23 @@ def load_maps():
         map1, map2 = st.columns(2)
 
         with map1:
-            map_html1 = st.session_state[map_key]["heatmap"]._repr_html_()
-            components.html(map_html1, height=600)
+            st.subheader("Mapa de calor")
+            if st.session_state[map_key]["heatmap"]:
+                map_html1 = st.session_state[map_key]["heatmap"]._repr_html_()
+                components.html(map_html1, height=600)
 
         with map2:
-            map_html2 = st.session_state[map_key]["markermap"]._repr_html_()
-            components.html(map_html2, height=600)
+            st.subheader("Mapa de marcadors")
+            markermap = st.session_state[map_key]["markermap"]
+
+            # Handle different map types (folium object vs HTML string)
+            if isinstance(markermap, str):
+                # Pure HTML/JavaScript map
+                components.html(markermap, height=600)
+            else:
+                # Folium map object
+                map_html2 = markermap._repr_html_()
+                components.html(map_html2, height=600)
 
 
 @st.cache_data(ttl=300)
@@ -171,7 +182,7 @@ def fig_area_evolution(df, field, title, color):
         df,
         x="data",
         y=field,
-        markers=True,
+        markers=False,
     )
     fig.update_traces(
         marker_color=color,
@@ -324,55 +335,270 @@ def get_last_obs(proj_id):
 
 @st.cache_resource(ttl=3600)
 def create_heatmap(df):
-    df.dropna(subset=["latitude", "longitude"], inplace=True)
-    locations = [(lat, lon) for lat, lon in zip(df["latitude"], df["longitude"])]
+    """Create heatmap with same HTML structure as markercluster for consistent height"""
+    df_clean = df.dropna(subset=["latitude", "longitude"]).copy()
 
-    center = df[["latitude", "longitude"]].mean().tolist()
+    if df_clean.empty:
+        return None
 
-    m = folium.Map(location=center, tiles="cartodb positron", zoom_start=6)
-    HeatMap(
-        locations,
-        radius=10,
-        gradient={
-            "0.1": "blue",
-            "0.2": "cyan",
-            "0.4": "lime",
-            "0.6": "orange",
-            "0.8": "red",
-            "0.99": "purple",
-        },
-        min_opacity=0.7,
-        max_opacity=0.9,
-        use_local_extrema=False,
-    ).add_to(m)
-    return m
+    # Get coordinates and center
+    coordinates = df_clean[["latitude", "longitude"]].values
+    center = coordinates.mean(axis=0).tolist()
+
+    # Convert coordinates to JavaScript format
+    import json
+
+    locations = [[float(lat), float(lng)] for lat, lng in coordinates]
+
+    # Create HTML with same structure as markercluster
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mapa de Calor - {len(locations):,} punts</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <style>
+            html, body {{ margin: 0; padding: 0; height: 100%; }}
+            #map {{ height: 600px !important; width: 100% !important; }}
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+        
+        <script>
+            var map = L.map('map').setView([{center[0]}, {center[1]}], 6);
+            
+            L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                maxZoom: 18
+            }}).addTo(map);
+            
+            // Create heatmap with same configuration as folium version
+            var heat = L.heatLayer({json.dumps(locations)}, {{
+                radius: 10,
+                blur: 15,
+                maxZoom: 18,
+                max: 1.0,
+                minOpacity: 0.7,
+                gradient: {{
+                    0.1: 'blue',
+                    0.2: 'cyan', 
+                    0.4: 'lime',
+                    0.6: 'orange',
+                    0.8: 'red',
+                    0.99: 'purple'
+                }}
+            }}).addTo(map);
+            
+            console.log('Heatmap loaded with ' + {len(locations)} + ' points');
+        </script>
+    </body>
+    </html>
+    """
+
+    return html_content
 
 
 @st.cache_resource(ttl=3600)
 def create_markercluster(df):
-    df.dropna(subset=["latitude", "longitude"], inplace=True)
+    """Ultra-fast marker clustering with multiple strategies"""
+    df_clean = df.dropna(subset=["latitude", "longitude"]).copy()
 
-    lats = df["latitude"].to_list()
-    lons = df["longitude"].to_list()
+    if df_clean.empty:
+        return None
 
-    locations = list(zip(lats, lons))
+    coordinates = df_clean[["latitude", "longitude"]].values
+    center = coordinates.mean(axis=0).tolist()
 
-    # Define coordinates of where we want to center our map
-    center = [np.mean(lats), np.mean(lons)]
+    # Use JavaScript implementation for all datasets for consistency
+    return _create_javascript_map(df_clean, center)
 
-    # tiles1 = "cartodb positron"
-    attr = "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+
+def _create_javascript_map(df, center):
+    """Pure JavaScript/Leaflet implementation for massive datasets"""
+    required_cols = ["taxon_name", "user_login", "id", "latitude", "longitude"]
+    if not all(col in df.columns for col in required_cols):
+        st.error("Missing required columns for map")
+        return None
+
+    # Convert to compact JSON format
+    import json
+
+    markers_data = []
+    for row in df.itertuples():
+        markers_data.append(
+            {
+                "lat": float(row.latitude),
+                "lng": float(row.longitude),
+                "taxon": str(row.taxon_name)[:50],  # Truncate for performance
+                "user": str(row.user_login)[:30],
+                "id": int(row.id),
+            }
+        )
+
+    # Create optimized HTML with chunked loading
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mapa Biomarató - {len(markers_data):,} punts</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <style>
+            html, body {{ margin: 0; padding: 0; height: 100%; }}
+            #map {{ height: 600px !important; width: 100% !important; }}
+            .loading {{ 
+                position: absolute; top: 10px; right: 10px; z-index: 1000; 
+                background: white; padding: 5px 10px; border-radius: 5px; 
+                font-family: Arial; font-size: 12px; 
+            }}
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <div id="loading" class="loading">Carregant {len(markers_data):,} punts...</div>
+        
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+        
+        <script>
+            var map = L.map('map').setView([{center[0]}, {center[1]}], 6);
+            
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
+                attribution: 'Tiles &copy; Esri',
+                maxZoom: 18
+            }}).addTo(map);
+            
+            // Ultra-optimized cluster settings
+            var markers = L.markerClusterGroup({{
+                maxClusterRadius: 60,
+                disableClusteringAtZoom: 15,
+                spiderfyOnMaxZoom: false,
+                showCoverageOnHover: false,
+                zoomToBoundsOnClick: true,
+                chunkedLoading: true,
+                chunkInterval: 100,
+                chunkDelay: 10,
+                animate: false
+            }});
+            
+            // Load markers in ultra-small chunks for responsiveness
+            var markerData = {json.dumps(markers_data)};
+            var batchSize = 500;
+            var index = 0;
+            var loadingDiv = document.getElementById('loading');
+            
+            function addBatch() {{
+                var batch = markerData.slice(index, index + batchSize);
+                var tempMarkers = [];
+                
+                batch.forEach(function(point) {{
+                    // Create custom green icon with binoculars using DivIcon
+                    var binocularsIcon = L.divIcon({{
+                        html: '<div style="background-color: #4CAF50; width: 24px; height: 24px; border-radius: 3px; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.4);"><i class="fas fa-binoculars" style="color: white; font-size: 12px;"></i></div>',
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 24],
+                        popupAnchor: [0, -24],
+                        className: 'custom-binoculars-icon'
+                    }});
+                    
+                    var marker = L.marker([point.lat, point.lng], {{
+                        icon: binocularsIcon
+                    }});
+                    marker.bindPopup(
+                        '<b>Taxon:</b> ' + point.taxon + 
+                        '<br><b>User:</b> ' + point.user + 
+                        '<br><a href="https://minka-sdg.org/observations/' + point.id + '" target="_blank">🔗 Minka</a>'
+                    );
+                    tempMarkers.push(marker);
+                }});
+                
+                markers.addLayers(tempMarkers);
+                
+                index += batchSize;
+                var progress = Math.min(100, Math.round((index / markerData.length) * 100));
+                loadingDiv.innerHTML = 'Carregant ' + progress + '% (' + Math.min(index, markerData.length) + '/' + markerData.length + ')';
+                
+                if (index < markerData.length) {{
+                    setTimeout(addBatch, 1); // Very small delay
+                }} else {{
+                    map.addLayer(markers);
+                    loadingDiv.style.display = 'none';
+                    console.log('Loaded ' + markerData.length + ' markers successfully');
+                }}
+            }}
+            
+            // Start loading
+            setTimeout(addBatch, 100);
+        </script>
+    </body>
+    </html>
+    """
+
+    return html_content
+
+
+def _create_sampled_folium_map(df, center, max_points=5000):
+    """Folium with intelligent sampling"""
+    # Stratified sampling to maintain spatial distribution
+    sampled_df = df.sample(n=min(max_points, len(df)), random_state=42)
+
+    attr = "Tiles &copy; Esri"
+    tiles2 = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+
+    m = folium.Map(
+        location=center, tiles=tiles2, attr=attr, zoom_start=6, prefer_canvas=True
+    )
+
+    marker_cluster = MarkerCluster(
+        options={
+            "maxClusterRadius": 60,
+            "disableClusteringAtZoom": 16,
+            "animate": False,
+            "showCoverageOnHover": False,
+        }
+    ).add_to(m)
+
+    # Simple green markers (faster than FontAwesome)
+    for row in sampled_df.itertuples():
+        folium.Marker(
+            location=[row.latitude, row.longitude],
+            popup=folium.Popup(
+                f"<b>Taxon:</b> {row.taxon_name}<br><b>User:</b> {row.user_login}<br><a href='https://minka-sdg.org/observations/{row.id}' target='_blank'>🔗 Minka</a>",
+                min_width=150,
+                max_width=200,
+            ),
+            icon=folium.Icon(color="green"),  # Simplified icon
+        ).add_to(marker_cluster)
+
+    st.info(
+        f"Mostrant {len(sampled_df):,} de {len(df):,} observacions (mostreig optimitzat)"
+    )
+    return m
+
+
+def _create_original_folium_map(df, center):
+    """Original folium implementation for small datasets"""
+    attr = "Tiles &copy; Esri"
     tiles2 = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
 
     m = folium.Map(location=center, tiles=tiles2, attr=attr, zoom_start=6)
-
     marker_cluster = MarkerCluster().add_to(m)
 
-    for i in range(len(df)):
+    for row in df.itertuples():
         folium.Marker(
-            location=locations[i],
+            location=[row.latitude, row.longitude],
             popup=folium.Popup(
-                f"<b>Taxon: </b>{df['taxon_name'].values[i]}<br><b>User: </b>{df['user_login'].values[i]}<br><a href='https://minka-sdg.org/observations/{df['id'].values[i]}' target='_blank'>Minka Observation</a>",
+                f"<b>Taxon:</b> {row.taxon_name}<br><b>User:</b> {row.user_login}<br><a href='https://minka-sdg.org/observations/{row.id}' target='_blank'>Minka Observation</a>",
                 min_width=150,
                 max_width=150,
             ),

@@ -144,15 +144,29 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Error si no responde la API
-try:
-    total_species, total_participants, total_obs = get_main_metrics(main_project)
-    lw_obs, lw_spe, lw_part = get_last_week_metrics(main_project)
-except:
-    st.error("Error loading data")
-    st.stop()
 
-components.html(matomo_script, height=0, width=0)
+# Optimized data loading with caching
+@st.cache_data(ttl=300, show_spinner="Carregant mètriques principals...")
+def load_main_dashboard_data(project_id):
+    """Load and cache main dashboard data"""
+    try:
+        total_species, total_participants, total_obs = get_main_metrics(project_id)
+        lw_obs, lw_spe, lw_part = get_last_week_metrics(project_id)
+        return total_species, total_participants, total_obs, lw_obs, lw_spe, lw_part
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        st.stop()
+
+
+# Load main metrics with caching
+total_species, total_participants, total_obs, lw_obs, lw_spe, lw_part = (
+    load_main_dashboard_data(main_project)
+)
+
+# Load Matomo tracking asynchronously
+if "matomo_loaded" not in st.session_state:
+    components.html(matomo_script, height=0, width=0)
+    st.session_state.matomo_loaded = True
 
 
 # Main metrics (incluye todos los usuarios y todos los grados)
@@ -191,9 +205,11 @@ with st.container():
     )
 
 
-with st.container():
-    # Evolution lines
-    main_metrics = pd.read_csv(f"{directory}/data/main_metrics.csv")
+# Cached data loading for evolution charts
+@st.cache_data(ttl=600, show_spinner="Preparant gràfics d'evolució...")
+def load_main_metrics_data(directory_path):
+    """Load and process main metrics data with caching"""
+    main_metrics = pd.read_csv(f"{directory_path}/data/main_metrics.csv")
     main_metrics.rename(
         columns={
             "date": "data",
@@ -206,7 +222,14 @@ with st.container():
     main_metrics_filtered = main_metrics[
         main_metrics["data"] <= datetime.today()
     ].reset_index(drop=True)
+    return main_metrics_filtered
 
+
+with st.container():
+    # Evolution lines with cached data
+    main_metrics_filtered = load_main_metrics_data(directory)
+
+    # Evolution charts in three parallel columns
     col1_line, col2_line, col3_line = st.columns(3)
 
     with col1_line:
@@ -216,7 +239,6 @@ with st.container():
             title="Nombre d'observacions",
             color="#089aa2",
         )
-
         st.plotly_chart(fig1, config=config_modebar, use_container_width=True)
 
     with col2_line:
@@ -237,10 +259,18 @@ with st.container():
         )
         st.plotly_chart(fig3, config=config_modebar, use_container_width=True)
 
+
+# Cached monthly data loading
+@st.cache_data(ttl=1800, show_spinner="Carregant dades mensuals...")
+def load_monthly_data(project_id, year):
+    """Load monthly grouped data with caching"""
+    return get_grouped_monthly(project_id=project_id, year=year)
+
+
 with st.container():
-    # Resultados mensuales
-    grouped = get_grouped_monthly(project_id=main_project, year="2025")
-    # grouped["data"] = grouped["data"].astype(str)
+    # Resultados mensuales with caching
+    grouped = load_monthly_data(main_project, "2025")
+    # Monthly charts - always visible
     col1_month, col2_month, col3_month = st.columns(3)
     with col1_month:
         fig1b = fig_bars_months(
@@ -270,12 +300,20 @@ with st.container():
         st.plotly_chart(fig3b, config=config_modebar, use_container_width=True)
 
 
+# Cached previous years data
+@st.cache_data(ttl=3600, show_spinner="Carregant comparatives d'anys anteriors...")
+def load_comparison_data(main_metrics_filtered):
+    """Load previous years data for comparison with caching"""
+    return get_previous_years(main_metrics_filtered)
+
+
 with st.container():
     st.subheader(":orange[Comparativa de resultats entre BioMARatons (2022-2025)]")
-    # Datos de años anteriores
-    df_2022_filtered, df_2023_filtered, df_2024_filtered = get_previous_years(
+    # Datos de años anteriores with caching
+    df_2022_filtered, df_2023_filtered, df_2024_filtered = load_comparison_data(
         main_metrics_filtered
     )
+    # Comparison charts - always visible
     col1_comp, col2_comp, col3_comp = st.columns(3)
 
     with col1_comp:
@@ -348,45 +386,62 @@ with st.container():
         pd.read_csv(f"{directory}/data/{main_project}_pt_users.csv")
         col0, col1, col2, col3 = st.columns([4, 1, 4, 1])
 
-        # Ranking general
+        # Optimized ranking with better caching
         with col0:
+            # Cached user ranking processing
+            @st.cache_data(
+                ttl=600, show_spinner="Carregant rànquing de participants..."
+            )
+            def load_user_ranking(directory_path, project_id, exclude_users_list):
+                """Load and process user ranking data with caching"""
+                try:
+                    pt_users = pd.read_csv(
+                        f"{directory_path}/data/{project_id}_pt_users.csv"
+                    )
+                    pt_users = pt_users[
+                        ~pt_users.participant.isin(exclude_users_list)
+                    ].reset_index(drop=True)
+                    pt_users.index = range(
+                        pt_users.index.start + 1,
+                        pt_users.index.stop + 1,
+                    )
+                    pt_users["observacions"] = pt_users["observacions"].apply(
+                        lambda x: "{:,.0f}".format(x).replace(",", " ")
+                    )
+                    return pt_users
+                except Exception as e:
+                    st.error(f"Error loading user rankings: {e}")
+                    return pd.DataFrame()
+
+            # Load ranking data
+            pt_users_data = load_user_ranking(directory, main_project, exclude_users)
 
             # Tabla
-            if "pt_users0" not in st.session_state:
-                st.session_state.pt_users0 = pd.read_csv(
-                    f"{directory}/data/{main_project}_pt_users.csv"
-                )
-                st.session_state.pt_users0 = st.session_state.pt_users0[
-                    -st.session_state.pt_users0.participant.isin(exclude_users)
-                ].reset_index(drop=True)
-                st.session_state.pt_users0.index = range(
-                    st.session_state.pt_users0.index.start + 1,
-                    st.session_state.pt_users0.index.stop + 1,
-                )
-                st.session_state.pt_users0["observacions"] = st.session_state.pt_users0[
-                    "observacions"
-                ].apply(lambda x: "{:,.0f}".format(x).replace(",", " "))
 
-            st.dataframe(
-                st.session_state.pt_users0[["participant", "observacions", "espècies"]],
-                use_container_width=True,
-                height=210,
-            )
+            if not pt_users_data.empty:
+                st.dataframe(
+                    pt_users_data[["participant", "observacions", "espècies"]],
+                    use_container_width=True,
+                    height=210,
+                )
+            else:
+                st.info("No hi ha dades de participants disponibles")
         with col2:
             # Medallas
             col1b, __ = st.columns([10, 1])
             with col1b:
-                if len(st.session_state.pt_users0) > 0:
+                if len(pt_users_data) > 0:
                     medals = [
                         "first_place_medal",
                         "second_place_medal",
                         "third_place_medal",
                     ]
-                    for i in range(1, 4):
-                        nombre = st.session_state.pt_users0.loc[i, "participant"]
-                        st.subheader(
-                            f":{medals[i-1]}: [{nombre}](https://minka-sdg.org/users/{nombre})"
-                        )
+                    for i in range(1, min(4, len(pt_users_data) + 1)):
+                        if i in pt_users_data.index:
+                            nombre = pt_users_data.loc[i, "participant"]
+                            st.subheader(
+                                f":{medals[i-1]}: [{nombre}](https://minka-sdg.org/users/{nombre})"
+                            )
     except FileNotFoundError:
         st.markdown("Cap participant")
 
@@ -400,18 +455,29 @@ with st.container():
         st.image(f"{directory}/images/Biomarato_logo_100.png")
     with col2:
         st.header(":orange[Agraïments]")
+
+    # Cached participants list loading
+    @st.cache_data(ttl=1800, show_spinner="Carregant llista de participants...")
+    def load_participants_list(directory_path, project_id):
+        """Load and process participants list with caching"""
+        try:
+            df_total = pd.read_csv(
+                f"{directory_path}/data/{project_id}_df_obs.csv", usecols=["user_login"]
+            )
+            list_participants = df_total.user_login.unique()
+            list_participants.sort()
+            linked_list = [
+                f"[{p}](https://minka-sdg.org/users/{p})" for p in list_participants
+            ]
+            return ", ".join(linked_list)
+        except FileNotFoundError:
+            return "No hi ha dades de participants disponibles"
+        except Exception as e:
+            return f"Error carregant participants: {e}"
+
     st.markdown("A la Biomarató 2025 de Catalunya han participat:")
-    try:
-        df_total = pd.read_csv(f"{directory}/data/{main_project}_df_obs.csv")
-        list_participants = df_total.user_login.unique()
-        list_participants.sort()
-        linked_list = []
-        for p in list_participants:
-            linked_list.append(f"[{p}](https://minka-sdg.org/users/{p})")
-        agraiments = ", ".join(linked_list)
-        st.markdown(f"{agraiments}")
-    except FileNotFoundError:
-        pass
+    participants_text = load_participants_list(directory, main_project)
+    st.markdown(participants_text)
 
 # Logos
 st.divider()

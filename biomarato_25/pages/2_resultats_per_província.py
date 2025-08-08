@@ -130,29 +130,60 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# Create session for image loading
 session = requests.Session()
+
+# Optimized data loading with caching - moved inside container to avoid ScriptRunContext warning
 
 # Ranking by province (incluye todos los usuarios y todos los grados)
 with st.container():
+    # Optimized data loading functions
+    @st.cache_data(ttl=600, show_spinner="Carregant mètriques per província...")
+    def load_province_metrics():
+        """Load and cache province metrics"""
+        return get_metrics_province()
+
+    @st.cache_data(ttl=600, show_spinner="Carregant rànquings de participants...")
+    def load_province_rankings(directory_path, exclude_users_list):
+        """Load and process all province rankings with caching"""
+        provinces = {"Girona": 418, "Tarragona": 419, "Barcelona": 420}
+
+        rankings = {}
+        for prov_name, prov_id in provinces.items():
+            try:
+                df = pd.read_csv(f"{directory_path}/data/{prov_id}_pt_users.csv")
+                df = df[~df.participant.isin(exclude_users_list)].reset_index(drop=True)
+                df.index = range(df.index.start + 1, df.index.stop + 1)
+                df["observacions"] = df["observacions"].apply(
+                    lambda x: "{:,.0f}".format(x).replace(",", " ")
+                )
+                rankings[prov_name] = df
+            except FileNotFoundError:
+                rankings[prov_name] = pd.DataFrame()
+
+        return rankings
+
+    # Load data with caching
+    main_metrics_prov = load_province_metrics()
+    province_rankings = load_province_rankings(directory, exclude_users)
+
     # Cabecera
     col1, col2 = st.columns([1, 25])
     with col1:
         st.image(f"{directory}/images/Biomarato_logo_100.png")
     with col2:
         st.header(":orange[Quina província ha estat la més activa?]")
-    if "main_metrics_prov" not in st.session_state:
-        st.session_state.main_metrics_prov = get_metrics_province()
 
-    # Gráfico de barras
-    fig1 = fig_provinces(
-        st.session_state.main_metrics_prov, "observacions", "Nombre d’observacions"
-    )
-    fig2 = fig_provinces(
-        st.session_state.main_metrics_prov, "espècies", "Espècies diferents"
-    )
-    fig3 = fig_provinces(
-        st.session_state.main_metrics_prov, "participants", "Participants"
-    )
+    # Generate cached province charts
+    @st.cache_data(ttl=900, show_spinner="Generant gràfics de províncies...")
+    def generate_province_charts(metrics_df):
+        """Generate all province charts with caching"""
+        fig1 = fig_provinces(metrics_df, "observacions", "Nombre d'observacions")
+        fig2 = fig_provinces(metrics_df, "espècies", "Espècies diferents")
+        fig3 = fig_provinces(metrics_df, "participants", "Participants")
+        return fig1, fig2, fig3
+
+    fig1, fig2, fig3 = generate_province_charts(main_metrics_prov)
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -162,28 +193,22 @@ with st.container():
     with col3:
         st.plotly_chart(fig3, config=config_modebar, use_container_width=True)
 
-    # Trofeos provincia en cabeza
-    prov_sp = (
-        st.session_state.main_metrics_prov.sort_values(by="espècies", ascending=False)[
+    # Optimized trophy winners calculation
+    @st.cache_data(ttl=900)
+    def get_trophy_winners(metrics_df):
+        """Calculate trophy winners with caching"""
+        prov_sp = metrics_df.sort_values(by="espècies", ascending=False)[
             "provincia"
-        ]
-        .head(1)
-        .values[0]
-    )
-    prov_obs = (
-        st.session_state.main_metrics_prov.sort_values(
-            by="observacions", ascending=False
-        )["provincia"]
-        .head(1)
-        .values[0]
-    )
-    prov_part = (
-        st.session_state.main_metrics_prov.sort_values(
-            by="participants", ascending=False
-        )["provincia"]
-        .head(1)
-        .values[0]
-    )
+        ].iloc[0]
+        prov_obs = metrics_df.sort_values(by="observacions", ascending=False)[
+            "provincia"
+        ].iloc[0]
+        prov_part = metrics_df.sort_values(by="participants", ascending=False)[
+            "provincia"
+        ].iloc[0]
+        return prov_obs, prov_sp, prov_part
+
+    prov_obs, prov_sp, prov_part = get_trophy_winners(main_metrics_prov)
     col1, col2, col3, col4, col5, col6, col7, col8, col9 = st.columns(
         [2, 1, 4, 2, 1, 4, 2, 1, 4], gap="small"
     )
@@ -213,102 +238,67 @@ with st.container():
     st.markdown("Nombre d'observacions amb grau de recerca.")
 
     col1, col2, col3 = st.columns(3)
-    try:
-        # Ranking Girona
-        with col1:
-            try:
-                provincia1 = "Girona"
-                st.subheader(provincia1)
 
-                # Dataframe
-                if "pt_users1" not in st.session_state:
-                    st.session_state.pt_users1 = pd.read_csv(
-                        f"{directory}/data/{project_id_gir}_pt_users.csv"
+    # Ranking Girona
+    with col1:
+        provincia1 = "Girona"
+        st.subheader(provincia1)
+
+        # Use cached data
+        girona_data = province_rankings.get("Girona", pd.DataFrame())
+
+        if not girona_data.empty:
+            st.dataframe(
+                girona_data[["participant", "observacions", "espècies"]],
+                use_container_width=True,
+                height=210,
+            )
+
+            # Winner name and photo
+            __, col1b, __ = st.columns([1, 10, 1])
+            with col1b:
+                if len(girona_data) > 0 and 1 in girona_data.index:
+                    nombre = girona_data.loc[1, "participant"]
+                    st.subheader(
+                        f":medal: [{nombre}](https://minka-sdg.org/users/{nombre})"
                     )
-                    st.session_state.pt_users1 = st.session_state.pt_users1[
-                        -st.session_state.pt_users1.participant.isin(exclude_users)
-                    ].reset_index(drop=True)
 
-                    st.session_state.pt_users1.index = range(
-                        st.session_state.pt_users1.index.start + 1,
-                        st.session_state.pt_users1.index.stop + 1,
-                    )
-                    st.session_state.pt_users1["observacions"] = (
-                        st.session_state.pt_users1["observacions"].apply(
-                            lambda x: "{:,.0f}".format(x).replace(",", " ")
-                        )
-                    )
-
-                st.dataframe(
-                    st.session_state.pt_users1[
-                        ["participant", "observacions", "espècies"]
-                    ],
-                    use_container_width=True,
-                    height=210,
-                )
-
-                # Nombre
-                __, col1b, __ = st.columns([1, 10, 1])
-                with col1b:
-                    if len(st.session_state.pt_users1) > 0:
-                        nombre = st.session_state.pt_users1.loc[1, "participant"]
-                        st.subheader(
-                            f":medal: [{nombre}](https://minka-sdg.org/users/{nombre})"
-                        )
-                        # st.markdown(f":first_place_medal: **[{nombre}]('https://minka-sdg.org/users/{nombre}')**")
-
-                        # Foto
-                        try:
-                            url = f"{base_url}/users/{nombre}.json"
-                            foto = f"https://minka-sdg.org/{session.get(url).json()['medium_user_icon_url']}"
-                            response = session.get(foto)
-                            st.image(response.content, caption=nombre, width=300)
-                        except:
-                            pass
-            except FileNotFoundError:
-                pass
+                    # Load winner photo
+                    try:
+                        url = f"{base_url}/users/{nombre}.json"
+                        foto = f"https://minka-sdg.org/{session.get(url).json()['medium_user_icon_url']}"
+                        response = session.get(foto)
+                        st.image(response.content, caption=nombre, width=300)
+                    except:
+                        pass
+        else:
+            st.info("No hi ha dades disponibles per Girona")
 
         # Ranking Tarragona
         with col2:
-            try:
-                provincia2 = "Tarragona"
-                st.subheader(provincia2)
-                # Dataframe
-                if "pt_users2" not in st.session_state:
-                    st.session_state.pt_users2 = pd.read_csv(
-                        f"{directory}/data/{project_id_tarr}_pt_users.csv"
-                    )
-                    st.session_state.pt_users2 = st.session_state.pt_users2[
-                        -st.session_state.pt_users2.participant.isin(exclude_users)
-                    ].reset_index(drop=True)
-                    st.session_state.pt_users2.index = range(
-                        st.session_state.pt_users2.index.start + 1,
-                        st.session_state.pt_users2.index.stop + 1,
-                    )
-                    st.session_state.pt_users2["observacions"] = (
-                        st.session_state.pt_users2["observacions"].apply(
-                            lambda x: "{:,.0f}".format(x).replace(",", " ")
-                        )
-                    )
+            provincia2 = "Tarragona"
+            st.subheader(provincia2)
 
+            # Use cached data
+            tarragona_data = province_rankings.get("Tarragona", pd.DataFrame())
+
+            if not tarragona_data.empty:
                 st.dataframe(
-                    st.session_state.pt_users2[
-                        ["participant", "observacions", "espècies"]
-                    ],
+                    tarragona_data[["participant", "observacions", "espècies"]],
                     use_container_width=True,
                     height=210,
                 )
 
-                # Nombre
+                # Winner name and photo
                 __, col1b, __ = st.columns([1, 10, 1])
                 with col1b:
-                    if len(st.session_state.pt_users2) > 0:
-                        nombre = st.session_state.pt_users2.loc[1, "participant"]
+                    if len(tarragona_data) > 0 and 1 in tarragona_data.index:
+                        nombre = tarragona_data.loc[1, "participant"]
                         st.subheader(
                             f":medal: [{nombre}](https://minka-sdg.org/users/{nombre})"
                         )
 
-                        # Foto
+                        # Load winner photo
                         try:
                             url = f"{base_url}/users/{nombre}.json"
                             foto = f"https://minka-sdg.org/{session.get(url).json()['medium_user_icon_url']}"
@@ -316,51 +306,34 @@ with st.container():
                             st.image(response.content, caption=nombre, width=300)
                         except:
                             pass
-            except FileNotFoundError:
-                pass
+            else:
+                st.info("No hi ha dades disponibles per Tarragona")
 
         # Ranking Barcelona
         with col3:
-            try:
-                provincia3 = "Barcelona"
-                st.subheader(provincia3)
+            provincia3 = "Barcelona"
+            st.subheader(provincia3)
 
-                # Dataframe
-                if "pt_users3" not in st.session_state:
-                    st.session_state.pt_users3 = pd.read_csv(
-                        f"{directory}/data/{project_id_bcn}_pt_users.csv"
-                    )
-                    st.session_state.pt_users3 = st.session_state.pt_users3[
-                        -st.session_state.pt_users3.participant.isin(exclude_users)
-                    ].reset_index(drop=True)
-                    st.session_state.pt_users3.index = range(
-                        st.session_state.pt_users3.index.start + 1,
-                        st.session_state.pt_users3.index.stop + 1,
-                    )
-                    st.session_state.pt_users3["observacions"] = (
-                        st.session_state.pt_users3["observacions"].apply(
-                            lambda x: "{:,.0f}".format(x).replace(",", " ")
-                        )
-                    )
+            # Use cached data
+            barcelona_data = province_rankings.get("Barcelona", pd.DataFrame())
 
+            if not barcelona_data.empty:
                 st.dataframe(
-                    st.session_state.pt_users3[
-                        ["participant", "observacions", "espècies"]
-                    ],
+                    barcelona_data[["participant", "observacions", "espècies"]],
                     use_container_width=True,
                     height=210,
                 )
 
-                # Nombre
+                # Winner name and photo
                 __, col1b, __ = st.columns([1, 10, 1])
                 with col1b:
-                    if len(st.session_state.pt_users3) > 0:
-                        nombre = st.session_state.pt_users3.loc[1, "participant"]
+                    if len(barcelona_data) > 0 and 1 in barcelona_data.index:
+                        nombre = barcelona_data.loc[1, "participant"]
                         st.subheader(
                             f":medal: [{nombre}](https://minka-sdg.org/users/{nombre})"
                         )
 
-                        # Foto
+                        # Load winner photo
                         try:
                             url = f"{base_url}/users/{nombre}.json"
                             foto = f"https://minka-sdg.org/{session.get(url).json()['medium_user_icon_url']}"
@@ -368,11 +341,8 @@ with st.container():
                             st.image(response.content, caption=nombre, width=300)
                         except:
                             pass
-            except FileNotFoundError:
-                pass
-
-    except FileNotFoundError:
-        st.markdown("Cap participant")
+            else:
+                st.info("No hi ha dades disponibles per Barcelona")
 
 st.divider()
 
