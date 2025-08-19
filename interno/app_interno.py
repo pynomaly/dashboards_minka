@@ -1,8 +1,6 @@
 import hmac
 import os
 import sys
-from contextlib import redirect_stdout
-from io import StringIO
 
 import pandas as pd
 import streamlit as st
@@ -78,6 +76,7 @@ def get_marine_column(df_obs):
 if __name__ == "__main__":
 
     st.title("Descargar observaciones de MINKA")
+
     st.divider()
     col1, col2 = st.columns(2)
     with col1:
@@ -151,58 +150,69 @@ if __name__ == "__main__":
 
     if st.button("Descargar"):
 
-        # Crear un contenedor para la salida
-        output_container = st.empty()
+        # Limpiar datos de sesión anteriores
+        if "df_obs" in st.session_state:
+            del st.session_state.df_obs
 
-        # Crear un buffer personalizado que actualice la UI
-        class StreamlitOutput(StringIO):
-            def write(self, text):
-                super().write(text)
-                # Actualizar el contenedor con todo el contenido acumulado
-                output_container.code(self.getvalue(), language="text")
-
-        # Redirigir stdout a nuestro buffer personalizado
-        with redirect_stdout(StreamlitOutput()):
-            st.write("#### Paso 1: Descargando observaciones...")
+        with st.status("Descargando observaciones...", expanded=True) as status:
             try:
+                # Usar el grade seleccionado por el usuario
+                grade_param = variables["grade"] if variables["grade"] is not None else None
+
                 obs = get_obs(
                     id_project=variables["id_project"],
                     place_id=variables["id_place"],
-                    grade=variables["grade"],
+                    grade=grade_param,
                     starts_on=variables["starts_on"],
                     ends_on=variables["ends_on"],
                     created_d1=variables["created_d1"],
                     created_d2=variables["created_d2"],
                     user=variables["user_login"],
                 )
-            except:
-                st.markdown("Revisa los parámetros que has indicado")
+
+                status.update(label=f"✅ Descarga completada: {len(obs)} observaciones", state="complete")
+
+                if len(obs) == 0:
+                    status.update(label="⚠️ No se encontraron observaciones", state="complete")
+                    st.warning(
+                        "No se encontraron observaciones con los parámetros especificados"
+                    )
+
+            except Exception as e:
+                status.update(label=f"❌ Error en descarga: {str(e)}", state="error")
+                st.error(f"Error descargando observaciones: {str(e)}")
+                st.error(f"Tipo de error: {type(e).__name__}")
                 obs = []
 
-        with redirect_stdout(StreamlitOutput()):
-            if len(obs) > 0:
-                st.write("#### Paso 2: Construyendo dataframe...")
-                df_obs, df_photos = get_dfs(obs)
-                df_obs = df_obs.sort_values(by="id", ascending=False)
-                st.write("#### Paso 3: Añadiendo columna marina...")
-                df_obs = get_marine_column(df_obs)
-                st.session_state.df_obs = df_obs
+        if len(obs) > 0:
+            with st.status("Procesando datos...", expanded=True) as processing_status:
+                try:
+                    processing_status.write("Construyendo dataframe...")
+                    df_obs, df_photos = get_dfs(obs)
+                    df_obs = df_obs.sort_values(by="id", ascending=False)
+                    
+                    processing_status.write("Añadiendo columna marina...")
+                    df_obs = get_marine_column(df_obs)
+                    st.session_state.df_obs = df_obs
+                    
+                    processing_status.update(label="✅ Procesamiento completado", state="complete")
+                    
+                except Exception as e:
+                    processing_status.update(label=f"❌ Error en procesamiento: {str(e)}", state="error")
+                    st.error(f"Error procesando observaciones: {str(e)}")
+                    st.error(f"Tipo de error: {type(e).__name__}")
+                    st.write(f"Número de observaciones descargadas: {len(obs)}")
+                    st.stop()
 
-                # Primero elimina el contenedor de output antes de mostrar los resultados
-                output_container.empty()
+            st.subheader(f"**Número de observaciones:** {len(st.session_state.df_obs)}")
+            st.dataframe(st.session_state.df_obs, hide_index=True)
 
-                st.subheader(
-                    f"**Número de observaciones:** {len(st.session_state.df_obs)}"
-                )
-                st.dataframe(st.session_state.df_obs, hide_index=True)
-
-                csv2 = convert_df(st.session_state.df_obs)
-                st.download_button(
-                    label="Descarga CSV",
-                    data=csv2,
-                    file_name="observations.csv",
-                    mime="text/csv",
-                )
-            else:
-                output_container.empty()  # Limpiar también en caso de no haber observaciones
-                st.markdown("Ninguna observación")
+            csv2 = convert_df(st.session_state.df_obs)
+            st.download_button(
+                label="Descarga CSV",
+                data=csv2,
+                file_name="observations.csv",
+                mime="text/csv",
+            )
+        else:
+            st.markdown("Ninguna observación")
