@@ -176,13 +176,7 @@ if df_map is None:
     st.error(f"No s'han trobat dades per {project_name}")
     st.stop()
 
-# Show dataset info and loading strategy
 num_points = len(df_map)
-
-if num_points > 50000:
-    st.warning(
-        f"⚡ Dataset gran detectat. Utilitzant estratègies d'optimització per millorar el rendiment."
-    )
 
 
 # Enhanced caching system - maps persist across sessions
@@ -266,11 +260,11 @@ if map_key in st.session_state:
             if heatmap:
                 # Handle both HTML strings and folium objects
                 if isinstance(heatmap, str):
-                    components.html(heatmap, height=600)
+                    components.html(heatmap, height=600, width=None, scrolling=False)
                 else:
                     # Fallback for folium objects
                     map_html = heatmap._repr_html_()
-                    components.html(map_html, height=600)
+                    components.html(map_html, height=600, width=None, scrolling=False)
 
         with map2:
             st.subheader("📍 Mapa de marcadors")
@@ -278,33 +272,33 @@ if map_key in st.session_state:
             if markermap:
                 # Handle both HTML strings and folium objects
                 if isinstance(markermap, str):
-                    components.html(markermap, height=600)
+                    components.html(markermap, height=600, width=None, scrolling=False)
                 else:
                     # Fallback for folium objects
                     map_html = markermap._repr_html_()
-                    components.html(map_html, height=600)
+                    components.html(markermap, height=600, width=None, scrolling=False)
 
     elif map_type == "Només mapa de calor":
         st.subheader("🔥 Mapa de calor")
         heatmap = st.session_state[map_key]["heatmap"]
         if heatmap:
             if isinstance(heatmap, str):
-                components.html(heatmap, height=600)
+                components.html(heatmap, height=600, width=None, scrolling=False)
             else:
                 # Fallback for folium objects
                 map_html = heatmap._repr_html_()
-                components.html(map_html, height=600)
+                components.html(map_html, height=600, width=None, scrolling=False)
 
     else:  # Només mapa de marcadors
         st.subheader("📍 Mapa de marcadors")
         markermap = st.session_state[map_key]["markermap"]
         if markermap:
             if isinstance(markermap, str):
-                components.html(markermap, height=600)
+                components.html(markermap, height=600, width=None, scrolling=False)
             else:
                 # Fallback for folium objects
                 map_html = markermap._repr_html_()
-                components.html(map_html, height=600)
+                components.html(markermap, height=600, width=None, scrolling=False)
 
 # Logos
 st.divider()
