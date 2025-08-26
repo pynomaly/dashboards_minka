@@ -298,10 +298,6 @@ def fig_provinces(main_metrics: pd.DataFrame, field: str, title: str) -> px.bar:
     - fig (plotly.graph_objects.Figure): The generated bar chart.
 
     """
-    print(f"fig_provinces called with field: {field}, title: {title}")
-    print(f"Input DataFrame shape: {main_metrics.shape}")
-    print(f"Input DataFrame content:\n{main_metrics}")
-    print(f"Available provinces: {list(main_metrics['provincia'])}")
     
     fig = px.bar(
         main_metrics.sort_values(by=field, ascending=False),
