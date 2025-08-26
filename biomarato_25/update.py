@@ -124,13 +124,22 @@ def _fetch_daily_metrics_batch(session, proj_id, day_batches, urls):
                 metrics = {}
                 for future in as_completed(metric_futures, timeout=15):
                     metric = metric_futures[future]
-                    try:
-                        response = future.result()
-                        response.raise_for_status()
-                        metrics[metric] = response.json()["total_results"]
-                    except Exception as e:
-                        print(f"Error fetching {metric} for {day_str}: {e}")
-                        metrics[metric] = 0
+                    retries = 3
+                    for attempt in range(retries):
+                        try:
+                            response = future.result()
+                            response.raise_for_status()
+                            metrics[metric] = response.json()["total_results"]
+                            break
+                        except Exception as e:
+                            if attempt < retries - 1:
+                                print(f"Error fetching {metric} for {day_str} (attempt {attempt + 1}): {e}. Retrying...")
+                                time.sleep(2)  # Wait 2 seconds before retry
+                                # Re-submit the request for retry
+                                future = day_executor.submit(session.get, urls[["species", "participants", "observations"].index(metric)], params=params, timeout=10)
+                            else:
+                                print(f"Failed to fetch {metric} for {day_str} after {retries} attempts: {e}")
+                                raise  # Re-raise the exception after all retries failed
             
             return {
                 "date": day_str,
