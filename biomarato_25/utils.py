@@ -130,7 +130,7 @@ def get_last_week_metrics(proj_id, session=None):
     return lw_obs, lw_spe, lw_part
 
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=300)
 def get_metrics_province():
     prov = {
         projects[0]["name"]: projects[0]["id"],
@@ -142,26 +142,60 @@ def get_metrics_province():
 
     with requests.Session() as session:
         for k, v in prov.items():
+            print(f"Getting data for {k} (ID: {v})")
+            
             species = f"{api_path}/observations/species_counts?"
             url1 = f"{species}&project_id={v}"
-            total_species = session.get(url1).json().get("total_results")
+            print(f"Species URL: {url1}")
+            response1 = session.get(url1)
+            print(f"Species response status: {response1.status_code}")
+            if response1.status_code == 200:
+                total_species = response1.json().get("total_results")
+                print(f"Species data: {total_species}")
+            else:
+                print(f"Species response text: {response1.text}")
+                total_species = None
 
             observers = f"{api_path}/observations/observers?"
             url2 = f"{observers}&project_id={v}"
-            total_participants = session.get(url2).json().get("total_results")
+            print(f"Observers URL: {url2}")
+            response2 = session.get(url2)
+            print(f"Observers response status: {response2.status_code}")
+            if response2.status_code == 200:
+                total_participants = response2.json().get("total_results")
+                print(f"Participants data: {total_participants}")
+            else:
+                print(f"Observers response text: {response2.text}")
+                total_participants = None
 
             observations = f"{api_path}/observations?"
             url3 = f"{observations}&project_id={v}"
-            total_obs = session.get(url3).json().get("total_results")
+            print(f"Observations URL: {url3}")
+            response3 = session.get(url3)
+            print(f"Observations response status: {response3.status_code}")
+            if response3.status_code == 200:
+                total_obs = response3.json().get("total_results")
+                print(f"Observations data: {total_obs}")
+            else:
+                print(f"Observations response text: {response3.text}")
+                total_obs = None
 
-            data = {
-                "provincia": k,
-                "espècies": total_species,
-                "participants": total_participants,
-                "observacions": total_obs,
-            }
-            result.append(data)
+            # Only add to result if we got valid data
+            if total_species is not None and total_participants is not None and total_obs is not None:
+                data = {
+                    "provincia": k,
+                    "espècies": total_species,
+                    "participants": total_participants,
+                    "observacions": total_obs,
+                }
+                result.append(data)
+                print(f"Added data for {k}: {data}")
+            else:
+                print(f"Skipping {k} due to API errors")
+    
     main_metrics = pd.DataFrame(result)
+    print(f"Final DataFrame shape: {main_metrics.shape}")
+    print(f"Final DataFrame content:\n{main_metrics}")
     return main_metrics
 
 
@@ -250,7 +284,7 @@ def fig_bars_months(grouped: pd.DataFrame, field: str, title: str, color: str):
     return fig
 
 
-@st.cache_resource(ttl=3600)
+@st.cache_resource(ttl=300)
 def fig_provinces(main_metrics: pd.DataFrame, field: str, title: str) -> px.bar:
     """
     Generate a bar chart of the main metrics for each province.
@@ -264,6 +298,11 @@ def fig_provinces(main_metrics: pd.DataFrame, field: str, title: str) -> px.bar:
     - fig (plotly.graph_objects.Figure): The generated bar chart.
 
     """
+    print(f"fig_provinces called with field: {field}, title: {title}")
+    print(f"Input DataFrame shape: {main_metrics.shape}")
+    print(f"Input DataFrame content:\n{main_metrics}")
+    print(f"Available provinces: {list(main_metrics['provincia'])}")
+    
     fig = px.bar(
         main_metrics.sort_values(by=field, ascending=False),
         x=field,
@@ -356,22 +395,37 @@ def create_heatmap(df):
     <html>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
         <title>Mapa de Calor - {len(locations):,} punts</title>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <style>
-            html, body {{ margin: 0; padding: 0; height: 100%; }}
-            #map {{ height: 600px !important; width: 100% !important; }}
+            html, body {{ margin: 0; padding: 0; height: 100%; width: 100%; }}
+            #map {{ 
+                height: 600px !important; 
+                width: 100% !important; 
+                position: relative;
+                aspect-ratio: 16/9;
+                min-width: 800px;
+                max-height: 600px;
+            }}
         </style>
     </head>
     <body>
         <div id="map"></div>
         
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
         
         <script>
-            var map = L.map('map').setView([{center[0]}, {center[1]}], 6);
+            var map = L.map('map', {{
+                crs: L.CRS.EPSG3857,
+                zoomControl: true
+            }}).setView([{center[0]}, {center[1]}], 6);
+            
+            // Force map resize after initialization
+            setTimeout(function() {{
+                map.invalidateSize();
+            }}, 100);
             
             L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{
                 attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
@@ -394,6 +448,11 @@ def create_heatmap(df):
                     0.99: 'purple'
                 }}
             }}).addTo(map);
+            
+            // Force final map resize for heatmap
+            setTimeout(function() {{
+                map.invalidateSize();
+            }}, 200);
             
             console.log('Heatmap loaded with ' + {len(locations)} + ' points');
         </script>
@@ -447,15 +506,22 @@ def _create_javascript_map(df, center):
     <html>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
         <title>Mapa Biomarató - {len(markers_data):,} punts</title>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <style>
-            html, body {{ margin: 0; padding: 0; height: 100%; }}
-            #map {{ height: 600px !important; width: 100% !important; }}
+            html, body {{ margin: 0; padding: 0; height: 100%; width: 100%; }}
+            #map {{ 
+                height: 600px !important; 
+                width: 100% !important; 
+                position: relative;
+                aspect-ratio: 16/9;
+                min-width: 800px;
+                max-height: 600px;
+            }}
             .loading {{ 
                 position: absolute; top: 10px; right: 10px; z-index: 1000; 
                 background: white; padding: 5px 10px; border-radius: 5px; 
@@ -467,11 +533,19 @@ def _create_javascript_map(df, center):
         <div id="map"></div>
         <div id="loading" class="loading">Carregant {len(markers_data):,} punts...</div>
         
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
         
         <script>
-            var map = L.map('map').setView([{center[0]}, {center[1]}], 6);
+            var map = L.map('map', {{
+                crs: L.CRS.EPSG3857,
+                zoomControl: true
+            }}).setView([{center[0]}, {center[1]}], 6);
+            
+            // Force map resize after initialization
+            setTimeout(function() {{
+                map.invalidateSize();
+            }}, 100);
             
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
                 attribution: 'Tiles &copy; Esri',
@@ -533,6 +607,10 @@ def _create_javascript_map(df, center):
                 }} else {{
                     map.addLayer(markers);
                     loadingDiv.style.display = 'none';
+                    // Force map resize after all markers are loaded
+                    setTimeout(function() {{
+                        map.invalidateSize();
+                    }}, 200);
                     console.log('Loaded ' + markerData.length + ' markers successfully');
                 }}
             }}

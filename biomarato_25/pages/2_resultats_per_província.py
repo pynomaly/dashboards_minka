@@ -138,7 +138,7 @@ session = requests.Session()
 # Ranking by province (incluye todos los usuarios y todos los grados)
 with st.container():
     # Optimized data loading functions
-    @st.cache_data(ttl=600, show_spinner="Carregant mètriques per província...")
+    @st.cache_data(ttl=60, show_spinner="Carregant mètriques per província...")
     def load_province_metrics():
         """Load and cache province metrics"""
         return get_metrics_province()
@@ -175,7 +175,7 @@ with st.container():
         st.header(":orange[Quina província ha estat la més activa?]")
 
     # Generate cached province charts
-    @st.cache_data(ttl=900, show_spinner="Generant gràfics de províncies...")
+    @st.cache_data(ttl=60, show_spinner="Generant gràfics de províncies...")
     def generate_province_charts(metrics_df):
         """Generate all province charts with caching"""
         fig1 = fig_provinces(metrics_df, "observacions", "Nombre d'observacions")
