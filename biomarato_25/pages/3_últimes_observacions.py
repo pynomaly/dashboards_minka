@@ -218,7 +218,7 @@ def show_last_species(df, provincia_name):
                     attribution = row.get("attribution", "Unknown")
 
                     st.markdown(
-                        f":link: [MINKA](https://minka-sdg.org/observations/{row['id']})"
+                        f":link: [MINKA](https://minka-sdg.org/observations/{int(row['id'])})"
                     )
 
                     if photo_url and pd.notna(photo_url):
