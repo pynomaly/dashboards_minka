@@ -235,7 +235,11 @@ with st.container():
         col1, __ = st.columns([3, 1])
         with col1:
             st.image(f"{directory}/images/organizadores_2024_v2.png")
-
+        col_21, col_22, __ = st.columns([2, 2, 1.5])
+        with col_21:
+            st.image(f"{directory}/images/logo_cibio2.jpeg")
+        with col_22:
+            st.image(f"{directory}/images/logo_biopolis_horizontal2.jpeg")
     with col_2:
         st.markdown("##### Amb el finançament dels projectes europeus:")
         st.image(f"{directory}/images/logos_financiacion_biomarato_v2.png")

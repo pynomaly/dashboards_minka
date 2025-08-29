@@ -55,15 +55,44 @@ colors = ["#5fbfbb", "#1e9ca3", "#0c6a83", "#de6719", "#fab954"]
 
 # Convert to set for faster lookup operations
 exclude_users = {
-    "xasalva", "bertinhaco", "andrea", "laurabiomar",
-    "guillermoalvarez_fecdas", "mediambient_ajelprat", "fecdas_mediambient",
-    "planctondiving", "marinagm", "CEM", "jaume-piera", "sonialinan",
-    "adrisoacha", "anellides", "irodero", "manelsalvador", "sara_riera",
-    "anomalia", "amaliacardenas", "aluna", "carlosrodero", "lydia",
-    "elibonfill", "marinatorresgi", "meri", "monyant", "ura4dive",
-    "lauracoro", "pirotte_", "oceanicos", "abril", "alba_barrera",
-    "amb_platges", "daniel_palacios", "davidpiquer", "laiamanyer",
-    "rogerpuig", "guillemdavila"
+    "xasalva",
+    "bertinhaco",
+    "andrea",
+    "laurabiomar",
+    "guillermoalvarez_fecdas",
+    "mediambient_ajelprat",
+    "fecdas_mediambient",
+    "planctondiving",
+    "marinagm",
+    "CEM",
+    "jaume-piera",
+    "sonialinan",
+    "adrisoacha",
+    "anellides",
+    "irodero",
+    "manelsalvador",
+    "sara_riera",
+    "anomalia",
+    "amaliacardenas",
+    "aluna",
+    "carlosrodero",
+    "lydia",
+    "elibonfill",
+    "marinatorresgi",
+    "meri",
+    "monyant",
+    "ura4dive",
+    "lauracoro",
+    "pirotte_",
+    "oceanicos",
+    "abril",
+    "alba_barrera",
+    "amb_platges",
+    "daniel_palacios",
+    "davidpiquer",
+    "laiamanyer",
+    "rogerpuig",
+    "guillemdavila",
 }
 
 
@@ -79,7 +108,7 @@ main_project = 424
 
 
 # Optimized CSS - apply once
-if 'css_applied' not in st.session_state:
+if "css_applied" not in st.session_state:
     st.markdown(
         """
         <style>
@@ -102,17 +131,20 @@ with st.sidebar:
     )
 
 # Cache metrics in session state to avoid repeated API calls
-if 'main_metrics_cache' not in st.session_state or st.session_state.get('cache_time', 0) < time.time() - 300:  # 5 min cache
+if (
+    "main_metrics_cache" not in st.session_state
+    or st.session_state.get("cache_time", 0) < time.time() - 300
+):  # 5 min cache
     try:
         total_species, total_participants, total_obs = get_main_metrics(main_project)
         lw_obs, lw_spe, lw_part = get_last_week_metrics(main_project)
         st.session_state.main_metrics_cache = {
-            'total_species': total_species,
-            'total_participants': total_participants, 
-            'total_obs': total_obs,
-            'lw_obs': lw_obs,
-            'lw_spe': lw_spe,
-            'lw_part': lw_part
+            "total_species": total_species,
+            "total_participants": total_participants,
+            "total_obs": total_obs,
+            "lw_obs": lw_obs,
+            "lw_spe": lw_spe,
+            "lw_part": lw_part,
         }
         st.session_state.cache_time = time.time()
     except Exception as e:
@@ -121,12 +153,12 @@ if 'main_metrics_cache' not in st.session_state or st.session_state.get('cache_t
 else:
     # Use cached values
     cache = st.session_state.main_metrics_cache
-    total_species = cache['total_species']
-    total_participants = cache['total_participants']
-    total_obs = cache['total_obs']
-    lw_obs = cache['lw_obs']
-    lw_spe = cache['lw_spe']
-    lw_part = cache['lw_part']
+    total_species = cache["total_species"]
+    total_participants = cache["total_participants"]
+    total_obs = cache["total_obs"]
+    lw_obs = cache["lw_obs"]
+    lw_spe = cache["lw_spe"]
+    lw_part = cache["lw_part"]
 
 
 # Main metrics (incluye todos los usuarios y todos los grados)
@@ -183,21 +215,22 @@ def load_and_process_main_metrics():
     ].reset_index(drop=True)
     return main_metrics_filtered
 
+
 with st.container():
     # Evolution lines - use cached function
     main_metrics_filtered = load_and_process_main_metrics()
 
     col1_line, col2_line, col3_line = st.columns(3)
-    
+
     # Create charts more efficiently with batch processing
     chart_configs = [
         ("observações", "Número de observações", "#089aa2"),
         ("espécies", "Número de espécies", "#dc6619"),
-        ("participantes", "Número de participantes", "#f9b853")
+        ("participantes", "Número de participantes", "#f9b853"),
     ]
-    
+
     columns = [col1_line, col2_line, col3_line]
-    
+
     for i, (field, title, color) in enumerate(chart_configs):
         with columns[i]:
             fig = fig_area_evolution(
@@ -212,16 +245,16 @@ with st.container():
     # Resultados mensuales - cached
     grouped = get_grouped_monthly(project_id=main_project, year="2025")
     col1_month, col2_month, col3_month = st.columns(3)
-    
+
     # Monthly charts with same config as evolution charts
     monthly_configs = [
         ("observações", "Observações por mês", "#089aa2"),
         ("espécies", "Espécies por mês", "#dc6619"),
-        ("participantes", "Participantes por mês", "#f9b853")
+        ("participantes", "Participantes por mês", "#f9b853"),
     ]
-    
+
     monthly_columns = [col1_month, col2_month, col3_month]
-    
+
     for i, (field, title, color) in enumerate(monthly_configs):
         with monthly_columns[i]:
             fig = fig_bars_months(grouped, field=field, title=title, color=color)
@@ -235,26 +268,19 @@ with st.container():
     col1_comp, col2_comp, col3_comp = st.columns(3)
 
     # Comparison charts with shared configuration
-    comparison_configs = [
-        ("observações",),
-        ("espécies",),
-        ("participantes",)
-    ]
-    
+    comparison_configs = [("observações",), ("espécies",), ("participantes",)]
+
     comparison_columns = [col1_comp, col2_comp, col3_comp]
-    
+
     # Shared data and configuration for all comparison charts
     df_list = [main_metrics_filtered, df_2024_filtered]
     years = ["2025", "2024"]
     colors = ["#2CA02C", "#FF9E4A"]
-    
+
     for i, (field,) in enumerate(comparison_configs):
         with comparison_columns[i]:
             fig_comp = fig_multi_year_comparison(
-                df_list=df_list,
-                years=years,
-                field=field,
-                colors=colors
+                df_list=df_list, years=years, field=field, colors=colors
             )
             st.plotly_chart(fig_comp, config=config_modebar, use_container_width=True)
 
@@ -267,6 +293,7 @@ with st.container():
     with col2:
         st.header(":orange[Classificação dos participantes]")
     st.markdown("Número de observações com o grau de investigação.")
+
     @st.cache_data(ttl=3600)
     def load_and_process_users():
         try:
@@ -275,21 +302,21 @@ with st.container():
             pt_users_filtered = pt_users_df[
                 ~pt_users_df.participant.isin(exclude_users)
             ].reset_index(drop=True)
-            
+
             # Set index starting from 1
             pt_users_filtered.index = range(1, len(pt_users_filtered) + 1)
-            
+
             # Format observations column
             pt_users_filtered["observacions_formatted"] = pt_users_filtered[
                 "observacions"
             ].apply(lambda x: "{:,.0f}".format(x).replace(",", " "))
-            
+
             return pt_users_filtered
         except FileNotFoundError:
             return None
-    
+
     pt_users_data = load_and_process_users()
-    
+
     if pt_users_data is not None:
         col0, col1, col2, col3 = st.columns([4, 1, 4, 1])
 
@@ -338,16 +365,21 @@ with st.container():
     with col2:
         st.header(":orange[Agradecimentos]")
     st.markdown("Participaram da Biomaratona 2025:")
+
     @st.cache_data(ttl=3600)
     def get_participants_list():
         try:
-            df_total = pd.read_csv(f"{directory}/data/{main_project}_df_obs.csv", usecols=['user_login'])
+            df_total = pd.read_csv(
+                f"{directory}/data/{main_project}_df_obs.csv", usecols=["user_login"]
+            )
             list_participants = sorted(df_total.user_login.unique())
-            linked_list = [f"[{p}](https://minka-sdg.org/users/{p})" for p in list_participants]
+            linked_list = [
+                f"[{p}](https://minka-sdg.org/users/{p})" for p in list_participants
+            ]
             return ", ".join(linked_list)
         except FileNotFoundError:
             return None
-    
+
     participants_text = get_participants_list()
     if participants_text:
         st.markdown(participants_text)
@@ -358,9 +390,16 @@ with st.container():
     col_1, col_2 = st.columns(2)
     with col_1:
         st.markdown("##### Organizadores:")
+
         col1, __ = st.columns([3, 1])
         with col1:
             st.image(f"{directory}/images/organizadores_2024_v2.png")
+
+        col_21, col_22, __ = st.columns([2, 2, 1.5])
+        with col_21:
+            st.image(f"{directory}/images/logo_cibio2.jpeg")
+        with col_22:
+            st.image(f"{directory}/images/logo_biopolis_horizontal2.jpeg")
 
     with col_2:
         st.markdown("##### Com o financiamento de projetos europeus:")
