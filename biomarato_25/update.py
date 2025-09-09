@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import datetime
-import json
 import math
 import os
 import time
@@ -13,7 +12,6 @@ import pandas as pd
 import requests
 from dotenv import load_dotenv
 from mecoda_minka import get_dfs, get_obs
-from playwright.sync_api import sync_playwright
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -110,7 +108,7 @@ def _fetch_daily_metrics_batch(session, proj_id, day_batches, urls):
     results = []
 
     def fetch_single_day(day_str):
-        headers = {"Authorization": api_token}
+        headers = {"Authorization": f"Bearer {access_token}"}
         params = {
             "project_id": proj_id,
             "d2": day_str,
@@ -252,10 +250,16 @@ def get_list_users(id_project):
     # Fetch both endpoints in parallel with timeout
     with ThreadPoolExecutor(max_workers=2) as executor:
         future_users = executor.submit(
-            session.get, url1, headers={"Authorization": api_token}, timeout=15
+            session.get,
+            url1,
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=15,
         )
         future_identifiers = executor.submit(
-            session.get, url2, headers={"Authorization": api_token}, timeout=15
+            session.get,
+            url2,
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=15,
         )
 
         try:
@@ -462,7 +466,7 @@ def get_ranking_users(proj_id, grade=None):
 
 def get_list_species(proj_id: int, type="project") -> Optional[pd.DataFrame]:
     """Optimized version with global session and chunked processing"""
-    headers = {"Authorization": api_token}
+    headers = {"Authorization": f"Bearer {access_token}"}
     session = _get_global_session()
 
     if type == "project":
@@ -544,7 +548,7 @@ def get_first_obs_taxon(taxon_id, proj_id, type="project", session=None):
     if session is None:
         session = requests.Session()
 
-    headers = {"Authorization": api_token}
+    headers = {"Authorization": f"Bearer {access_token}"}
     url = f"{API_PATH}/observations"
     if type == "place":
         params = {
@@ -660,55 +664,33 @@ def _process_species_with_obs(species_df, proj_id, session, type="project"):
     ).reset_index(drop=True)
 
 
-def get_admin_token():
-    # Inicia Playwright
-    with sync_playwright() as p:
-        # Lanza el navegador Firefox
-        browser = p.firefox.launch(
-            headless=True
-        )  # headless=False abre el navegador en modo visual
-        page = browser.new_page()
+def get_access_token():
+    url = "https://www.minka-sdg.org/oauth/token"
 
-        # Navega a la URL de login de Minka SDG
-        page.goto("https://minka-sdg.org/login")
+    payload = {
+        "client_id": os.getenv("MINKA_CLIENT_ID"),
+        "client_secret": os.getenv("MINKA_CLIENT_SECRET"),
+        "grant_type": "password",
+        "username": os.getenv("MINKA_USER_EMAIL"),
+        "password": os.getenv("MINKA_USER_PASSWORD"),
+    }
 
-        # Introduce el nombre de usuario
-        page.fill('//*[@id="user_email"]', os.getenv("MINKA_USER_EMAIL"))
+    response = requests.post(url, data=payload)
 
-        # Introduce la contraseña
-        page.fill('//*[@id="user_password"]', os.getenv("MINKA_USER_PASSWORD"))
-
-        # Haz clic en el botón de login usando el prefijo "xpath="
-        page.locator(
-            "xpath=/html/body/div[1]/div[2]/div/div[2]/div/form/div[4]/input"
-        ).click()
-
-        # Navega a la URL del api_token
-        page.goto("https://minka-sdg.org/users/api_token")
-
-        # Extrae el json de esa página
-        # Espera a que la página cargue completamente
-        page.wait_for_load_state("networkidle")
-
-        # Extrae el JSON de la página
-        page_text = page.evaluate("document.body.innerText")
-        json_data = json.loads(page_text.strip())
-
-        # Extrae específicamente el api_token
-        api_token = json_data.get("api_token")
-
-        # Cierra el navegador
-        browser.close()
-
-        return api_token
+    if response.ok:
+        token = response.json().get("access_token")
+    else:
+        print("Error:", response.status_code, response.text)
+        token = None
+    return token
 
 
 if __name__ == "__main__":
     start_time = time.time()
     load_dotenv()
 
-    api_token = get_admin_token()
-    # api_token = None
+    # api_token = get_admin_token()
+    access_token = get_access_token()
 
     # Get main_metrics.csv
     main_metrics_df = update_main_metrics(main_project)
