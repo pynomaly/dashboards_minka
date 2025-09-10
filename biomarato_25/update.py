@@ -4,7 +4,6 @@ import datetime
 import math
 import os
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import lru_cache
 from typing import Optional
 
@@ -104,11 +103,13 @@ exclude_users = [
 
 
 def _fetch_daily_metrics_batch(session, proj_id, day_batches, urls):
-    """Fetch metrics for multiple days in parallel batches"""
-    results = []
+    """Fetch metrics for multiple days with parallel processing"""
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    
+    headers = {"Authorization": f"Bearer {access_token}"}
 
-    def fetch_single_day(day_str):
-        headers = {"Authorization": f"Bearer {access_token}"}
+    def fetch_day_metrics(day_str):
+        """Fetch all metrics for a single day"""
         params = {
             "project_id": proj_id,
             "d2": day_str,
@@ -116,79 +117,57 @@ def _fetch_daily_metrics_batch(session, proj_id, day_batches, urls):
             "order_by": "created_at",
         }
 
-        try:
-            # Fetch all metrics concurrently for this day
-            with ThreadPoolExecutor(max_workers=3) as day_executor:
-                metric_futures = {
-                    day_executor.submit(
-                        session.get, url, headers=headers, params=params, timeout=10
-                    ): metric
-                    for url, metric in zip(
-                        urls, ["species", "participants", "observations"]
+        def fetch_metric(url_metric_pair):
+            url, metric = url_metric_pair
+            retries = 3
+            for attempt in range(retries):
+                try:
+                    response = session.get(
+                        url, headers=headers, params=params, timeout=10
                     )
-                }
+                    response.raise_for_status()
+                    return metric, response.json()["total_results"]
+                except Exception as e:
+                    if attempt < retries - 1:
+                        print(
+                            f"Error fetching {metric} for {day_str} (attempt {attempt + 1}): {e}. Retrying..."
+                        )
+                        time.sleep(2)
+                    else:
+                        print(
+                            f"Failed to fetch {metric} for {day_str} after {retries} attempts: {e}"
+                        )
+                        return metric, 0
 
-                metrics = {}
-                for future in as_completed(metric_futures, timeout=15):
-                    metric = metric_futures[future]
-                    retries = 3
-                    for attempt in range(retries):
-                        try:
-                            response = future.result()
-                            response.raise_for_status()
-                            metrics[metric] = response.json()["total_results"]
-                            break
-                        except Exception as e:
-                            if attempt < retries - 1:
-                                print(
-                                    f"Error fetching {metric} for {day_str} (attempt {attempt + 1}): {e}. Retrying..."
-                                )
-                                time.sleep(2)  # Wait 2 seconds before retry
-                                # Re-submit the request for retry
-                                future = day_executor.submit(
-                                    session.get,
-                                    urls[
-                                        [
-                                            "species",
-                                            "participants",
-                                            "observations",
-                                        ].index(metric)
-                                    ],
-                                    headers=headers,
-                                    params=params,
-                                    timeout=10,
-                                )
-                            else:
-                                print(
-                                    f"Failed to fetch {metric} for {day_str} after {retries} attempts: {e}"
-                                )
-                                raise  # Re-raise the exception after all retries failed
-
-            return {
-                "date": day_str,
-                "observations": metrics.get("observations", 0),
-                "species": metrics.get("species", 0),
-                "participants": metrics.get("participants", 0),
+        # Fetch all metrics for this day in parallel
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            metric_futures = {
+                executor.submit(fetch_metric, (url, metric)): (url, metric)
+                for url, metric in zip(urls, ["species", "participants", "observations"])
             }
-        except Exception as e:
-            print(f"Error processing day {day_str}: {e}")
-            return {
-                "date": day_str,
-                "observations": 0,
-                "species": 0,
-                "participants": 0,
-            }
+            
+            metrics = {}
+            for future in as_completed(metric_futures):
+                metric_name, value = future.result()
+                metrics[metric_name] = value
 
-    # Process days in batches
-    with ThreadPoolExecutor(max_workers=8) as executor:
-        day_futures = {
-            executor.submit(fetch_single_day, day_str): day_str
-            for day_str in day_batches
+        return {
+            "date": day_str,
+            "observations": metrics.get("observations", 0),
+            "species": metrics.get("species", 0),
+            "participants": metrics.get("participants", 0),
         }
+
+    # Process all days in parallel
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        day_futures = {executor.submit(fetch_day_metrics, day_str): day_str for day_str in day_batches}
+        
+        results = []
         for future in as_completed(day_futures):
             results.append(future.result())
 
-    return results
+    # Sort results by date to maintain order
+    return sorted(results, key=lambda x: x["date"])
 
 
 def update_main_metrics(proj_id: int) -> pd.DataFrame:
@@ -214,7 +193,7 @@ def update_main_metrics(proj_id: int) -> pd.DataFrame:
     future_results = []
 
     current_day = day
-    for i in range(rango_temporal):
+    for _ in range(rango_temporal):
         day_str = current_day.strftime("%Y-%m-%d")
         if today >= current_day:
             valid_days.append(day_str)
@@ -241,41 +220,38 @@ def update_main_metrics(proj_id: int) -> pd.DataFrame:
 
 
 def get_list_users(id_project):
-    """Optimized version using parallel requests and global session"""
+    """Parallelized version using concurrent API calls"""
+    from concurrent.futures import ThreadPoolExecutor
+    
     session = _get_global_session()
+    headers = {"Authorization": f"Bearer {access_token}"}
 
     url1 = f"https://api.minka-sdg.org/v1/observations/observers?project_id={id_project}&quality_grade=research"
     url2 = f"https://api.minka-sdg.org/v1/observations/identifiers?project_id={id_project}&quality_grade=research"
 
-    # Fetch both endpoints in parallel with timeout
-    with ThreadPoolExecutor(max_workers=2) as executor:
-        future_users = executor.submit(
-            session.get,
-            url1,
-            headers={"Authorization": f"Bearer {access_token}"},
-            timeout=15,
-        )
-        future_identifiers = executor.submit(
-            session.get,
-            url2,
-            headers={"Authorization": f"Bearer {access_token}"},
-            timeout=15,
-        )
-
+    def fetch_url(url):
         try:
-            users_response = future_users.result()
-            identifiers_response = future_identifiers.result()
-
-            users_response.raise_for_status()
-            identifiers_response.raise_for_status()
-
-            users_results = users_response.json()["results"]
-            identifiers_results = identifiers_response.json()["results"]
+            response = session.get(url, headers=headers, timeout=15)
+            response.raise_for_status()
+            return response.json()["results"]
         except Exception as e:
-            print(f"Error fetching user data for project {id_project}: {e}")
-            return pd.DataFrame(
-                columns=["participant", "observacions", "espècies", "identificacions"]
-            )
+            print(f"Error fetching {url}: {e}")
+            return []
+
+    try:
+        # Fetch both URLs concurrently
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            future_users = executor.submit(fetch_url, url1)
+            future_identifiers = executor.submit(fetch_url, url2)
+            
+            users_results = future_users.result()
+            identifiers_results = future_identifiers.result()
+            
+    except Exception as e:
+        print(f"Error fetching user data for project {id_project}: {e}")
+        return pd.DataFrame(
+            columns=["participant", "observacions", "espècies", "identificacions"]
+        )
 
     if not users_results:
         return pd.DataFrame(
@@ -487,39 +463,23 @@ def get_list_species(proj_id: int, type="project") -> Optional[pd.DataFrame]:
             return None
 
         if total_results > 500:
-            # Optimized parallel page fetching with larger batches
+            # Sequential page fetching
             num_pages = math.ceil(total_results / 500)
             all_results = []
 
-            # Process in chunks to avoid overwhelming the API
-            chunk_size = 8
-            for chunk_start in range(1, num_pages + 1, chunk_size):
-                chunk_end = min(chunk_start + chunk_size, num_pages + 1)
+            for page in range(1, num_pages + 1):
+                page_params = params.copy()
+                page_params["page"] = page
 
-                with ThreadPoolExecutor(max_workers=6) as executor:
-                    chunk_futures = {}
-                    for page in range(chunk_start, chunk_end):
-                        page_params = params.copy()
-                        page_params["page"] = page
-                        chunk_futures[
-                            executor.submit(
-                                session.get,
-                                url,
-                                headers=headers,
-                                params=page_params,
-                                timeout=15,
-                            )
-                        ] = page
-
-                    for future in as_completed(chunk_futures, timeout=30):
-                        try:
-                            response = future.result()
-                            response.raise_for_status()
-                            all_results.extend(response.json()["results"])
-                        except Exception as e:
-                            page = chunk_futures[future]
-                            print(f"Error fetching page {page}: {e}")
-                            continue
+                try:
+                    response = session.get(
+                        url, headers=headers, params=page_params, timeout=15
+                    )
+                    response.raise_for_status()
+                    all_results.extend(response.json()["results"])
+                except Exception as e:
+                    print(f"Error fetching page {page}: {e}")
+                    continue
 
             results = all_results
         else:
@@ -614,52 +574,65 @@ def _process_project(proj_id):
 
 
 def _process_species_with_obs(species_df, proj_id, session, type="project"):
-    """Memory-optimized species processing with chunked parallel fetching"""
+    """Sequential species processing"""
     if species_df is None or len(species_df) == 0:
         return species_df
 
-    # Process in chunks to avoid memory overload
-    chunk_size = 50
-    species_chunks = [
-        species_df[i : i + chunk_size] for i in range(0, len(species_df), chunk_size)
-    ]
+    species_copy = species_df.copy()
 
-    all_results = []
+    for idx, row in species_copy.iterrows():
+        try:
+            result = get_first_obs_taxon(row["id"], proj_id, type, session)
+            species_copy.loc[idx, ["first_date", "author", "obs_id", "photo_url"]] = (
+                result
+            )
+        except Exception as e:
+            print(f"Error fetching observation for taxon at index {idx}: {e}")
+            species_copy.loc[idx, ["first_date", "author", "obs_id", "photo_url"]] = [
+                None,
+                None,
+                None,
+                None,
+            ]
 
-    for chunk in species_chunks:
-        chunk_results = []
-
-        # Process each chunk in parallel
-        with ThreadPoolExecutor(max_workers=8) as executor:
-            futures = {
-                executor.submit(
-                    get_first_obs_taxon, row["id"], proj_id, type, session
-                ): idx
-                for idx, row in chunk.iterrows()
-            }
-
-            for future in as_completed(futures, timeout=45):
-                idx = futures[future]
-                try:
-                    result = future.result()
-                    chunk_results.append((idx, result))
-                except Exception as e:
-                    print(f"Error fetching observation for taxon at index {idx}: {e}")
-                    chunk_results.append((idx, [None, None, None, None]))
-
-        # Add results to chunk
-        chunk_copy = chunk.copy()
-        for idx, data in chunk_results:
-            chunk_copy.loc[idx, ["first_date", "author", "obs_id", "photo_url"]] = data
-
-        all_results.append(chunk_copy)
-
-        # Small delay between chunks to avoid overwhelming the API
+        # Small delay to avoid overwhelming the API
         time.sleep(0.1)
 
-    # Combine all chunks
-    result_df = pd.concat(all_results, ignore_index=True)
-    return result_df.sort_values(
+    return species_copy.sort_values(
+        by=["first_date", "obs_id"], ascending=False, na_position="last"
+    ).reset_index(drop=True)
+
+
+def _process_species_with_obs_concurrent(species_df, proj_id, session, type="project"):
+    """Concurrent species processing for better performance"""
+    if species_df is None or len(species_df) == 0:
+        return species_df
+    
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    
+    def fetch_single_observation(idx_row_tuple):
+        idx, row = idx_row_tuple
+        try:
+            result = get_first_obs_taxon(row["id"], proj_id, type, session)
+            return idx, result
+        except Exception as e:
+            print(f"Error fetching observation for taxon at index {idx}: {e}")
+            return idx, [None, None, None, None]
+    
+    species_copy = species_df.copy()
+    
+    # Process observations concurrently with a reasonable thread limit
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        future_to_idx = {
+            executor.submit(fetch_single_observation, (idx, row)): idx 
+            for idx, row in species_copy.iterrows()
+        }
+        
+        for future in as_completed(future_to_idx):
+            idx, result = future.result()
+            species_copy.loc[idx, ["first_date", "author", "obs_id", "photo_url"]] = result
+    
+    return species_copy.sort_values(
         by=["first_date", "obs_id"], ascending=False, na_position="last"
     ).reset_index(drop=True)
 
@@ -679,6 +652,7 @@ def get_access_token():
 
     if response.ok:
         token = response.json().get("access_token")
+        print("Token obtained")
     else:
         print("Error:", response.status_code, response.text)
         token = None
@@ -697,35 +671,44 @@ if __name__ == "__main__":
     main_metrics_df.to_csv(f"{directory}/data/main_metrics.csv", index=False)
     print("Main metrics actualizada")
 
-    # Process projects in parallel
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        project_futures = [
-            executor.submit(_process_project, proj_id) for proj_id in all_projects
-        ]
-        for future in as_completed(project_futures):
-            future.result()  # Wait for completion
+    # Process projects sequentially
+    for proj_id in all_projects:
+        _process_project(proj_id)
 
     # Process species data with optimization
-    with requests.Session() as session:
-        session.headers.update({"Connection": "keep-alive"})
-
-        # Process project species
-        for proj_id in all_projects:
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    
+    def process_project_species(proj_id):
+        """Process species for a single project"""
+        try:
             print(f"Get species for project {proj_id}")
-            try:
-                species = get_list_species(proj_id)
-                downloaded_species = pd.read_csv(
-                    f"{directory}/data/{proj_id}_species.csv"
-                )
+            species = get_list_species(proj_id)
+            downloaded_species = pd.read_csv(
+                f"{directory}/data/{proj_id}_species.csv"
+            )
 
-                if species is not None and len(species) != len(downloaded_species):
-                    species = _process_species_with_obs(species, proj_id, session)
-                    species.to_csv(
-                        f"{directory}/data/{proj_id}_species.csv", index=False
-                    )
-                    print(f"Species updated for {proj_id}")
-            except Exception as e:
-                print(f"Error processing species for project {proj_id}: {e}")
+            if species is not None and len(species) != len(downloaded_species):
+                with requests.Session() as session:
+                    session.headers.update({"Connection": "keep-alive"})
+                    species = _process_species_with_obs_concurrent(species, proj_id, session)
+                species.to_csv(
+                    f"{directory}/data/{proj_id}_species.csv", index=False
+                )
+                print(f"Species updated for {proj_id}")
+                return f"Success: {proj_id}"
+            return f"No update needed: {proj_id}"
+        except Exception as e:
+            error_msg = f"Error processing species for project {proj_id}: {e}"
+            print(error_msg)
+            return error_msg
+
+    # Process project species concurrently
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        future_to_proj = {executor.submit(process_project_species, proj_id): proj_id 
+                         for proj_id in all_projects}
+        
+        for future in as_completed(future_to_proj):
+            result = future.result()
 
         # Process biomarato place species
         print("Get species for biomarato")
@@ -739,9 +722,11 @@ if __name__ == "__main__":
             if species_biomarato is not None and len(species_biomarato) != len(
                 downloaded_species_biomarato
             ):
-                species_biomarato = _process_species_with_obs(
-                    species_biomarato, place_biomarato, session, "place"
-                )
+                with requests.Session() as biomarato_session:
+                    biomarato_session.headers.update({"Connection": "keep-alive"})
+                    species_biomarato = _process_species_with_obs_concurrent(
+                        species_biomarato, place_biomarato, biomarato_session, "place"
+                    )
                 species_biomarato.to_csv(
                     f"{directory}/data/place_biomarato_species.csv", index=False
                 )

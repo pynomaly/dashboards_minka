@@ -142,46 +142,46 @@ def get_metrics_province():
 
     with requests.Session() as session:
         for k, v in prov.items():
-            print(f"Getting data for {k} (ID: {v})")
-            
+
             species = f"{api_path}/observations/species_counts?"
             url1 = f"{species}&project_id={v}"
-            print(f"Species URL: {url1}")
+
             response1 = session.get(url1)
-            print(f"Species response status: {response1.status_code}")
+
             if response1.status_code == 200:
                 total_species = response1.json().get("total_results")
-                print(f"Species data: {total_species}")
+
             else:
-                print(f"Species response text: {response1.text}")
                 total_species = None
 
             observers = f"{api_path}/observations/observers?"
             url2 = f"{observers}&project_id={v}"
-            print(f"Observers URL: {url2}")
+
             response2 = session.get(url2)
-            print(f"Observers response status: {response2.status_code}")
+
             if response2.status_code == 200:
                 total_participants = response2.json().get("total_results")
-                print(f"Participants data: {total_participants}")
+
             else:
-                print(f"Observers response text: {response2.text}")
                 total_participants = None
 
             observations = f"{api_path}/observations?"
             url3 = f"{observations}&project_id={v}"
-            print(f"Observations URL: {url3}")
+
             response3 = session.get(url3)
-            print(f"Observations response status: {response3.status_code}")
+
             if response3.status_code == 200:
                 total_obs = response3.json().get("total_results")
-                print(f"Observations data: {total_obs}")
+
             else:
-                print(f"Observations response text: {response3.text}")
                 total_obs = None
 
             # Only add to result if we got valid data
-            if total_species is not None and total_participants is not None and total_obs is not None:
+            if (
+                total_species is not None
+                and total_participants is not None
+                and total_obs is not None
+            ):
                 data = {
                     "provincia": k,
                     "espècies": total_species,
@@ -189,13 +189,10 @@ def get_metrics_province():
                     "observacions": total_obs,
                 }
                 result.append(data)
-                print(f"Added data for {k}: {data}")
             else:
                 print(f"Skipping {k} due to API errors")
-    
+
     main_metrics = pd.DataFrame(result)
-    print(f"Final DataFrame shape: {main_metrics.shape}")
-    print(f"Final DataFrame content:\n{main_metrics}")
     return main_metrics
 
 
@@ -298,7 +295,7 @@ def fig_provinces(main_metrics: pd.DataFrame, field: str, title: str) -> px.bar:
     - fig (plotly.graph_objects.Figure): The generated bar chart.
 
     """
-    
+
     fig = px.bar(
         main_metrics.sort_values(by=field, ascending=False),
         x=field,
