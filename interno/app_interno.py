@@ -62,7 +62,9 @@ if not check_password():
 def get_marine_column(df_obs):
     if len(df_obs) > 0:
         df_obs["taxon_id"] = pd.to_numeric(df_obs["taxon_id"], errors="coerce")
-        tree = pd.read_csv(f"{directory}/data_marines/taxon_tree_with_marines.csv")
+        tree = pd.read_csv(
+            f"https://raw.githubusercontent.com/eosc-cos4cloud/mecoda-minka/refs/heads/master/src/mecoda_minka/data/taxon_tree.csv"
+        )
         df_obs_with_marine = pd.merge(
             df_obs, tree[["taxon_id", "marine"]], how="left", on="taxon_id"
         )
@@ -157,7 +159,9 @@ if __name__ == "__main__":
         with st.status("Descargando observaciones...", expanded=True) as status:
             try:
                 # Usar el grade seleccionado por el usuario
-                grade_param = variables["grade"] if variables["grade"] is not None else None
+                grade_param = (
+                    variables["grade"] if variables["grade"] is not None else None
+                )
 
                 obs = get_obs(
                     id_project=variables["id_project"],
@@ -170,10 +174,15 @@ if __name__ == "__main__":
                     user=variables["user_login"],
                 )
 
-                status.update(label=f"✅ Descarga completada: {len(obs)} observaciones", state="complete")
+                status.update(
+                    label=f"✅ Descarga completada: {len(obs)} observaciones",
+                    state="complete",
+                )
 
                 if len(obs) == 0:
-                    status.update(label="⚠️ No se encontraron observaciones", state="complete")
+                    status.update(
+                        label="⚠️ No se encontraron observaciones", state="complete"
+                    )
                     st.warning(
                         "No se encontraron observaciones con los parámetros especificados"
                     )
@@ -190,15 +199,19 @@ if __name__ == "__main__":
                     processing_status.write("Construyendo dataframe...")
                     df_obs, df_photos = get_dfs(obs)
                     df_obs = df_obs.sort_values(by="id", ascending=False)
-                    
+
                     processing_status.write("Añadiendo columna marina...")
                     df_obs = get_marine_column(df_obs)
                     st.session_state.df_obs = df_obs
-                    
-                    processing_status.update(label="✅ Procesamiento completado", state="complete")
-                    
+
+                    processing_status.update(
+                        label="✅ Procesamiento completado", state="complete"
+                    )
+
                 except Exception as e:
-                    processing_status.update(label=f"❌ Error en procesamiento: {str(e)}", state="error")
+                    processing_status.update(
+                        label=f"❌ Error en procesamiento: {str(e)}", state="error"
+                    )
                     st.error(f"Error procesando observaciones: {str(e)}")
                     st.error(f"Tipo de error: {type(e).__name__}")
                     st.write(f"Número de observaciones descargadas: {len(obs)}")
