@@ -480,7 +480,6 @@ if __name__ == "__main__":
             # Get current observations
             obs = get_obs(id_project=proj_id)
             pt_users = get_list_users(proj_id)
-            pt_users.to_csv(f"{directory}/data/{proj_id}_pt_users.csv", index=False)
 
             # Check if there are new observations
             if len(obs) > 0 and len(obs) != len(downloaded_obs):
