@@ -182,7 +182,7 @@ def get_list_users(id_project):
         df_users = pd.DataFrame(users_data)
 
         # Get identifiers data
-        url_identifiers = f"{API_PATH}/observations/identifiers?project_id={id_project}&quality_grade=research"
+        url_identifiers = f"{API_PATH}/observations/identifiers?project_id={id_project}"
         try:
             response = session.get(url_identifiers)
             response.raise_for_status()
@@ -315,8 +315,12 @@ def update_dfs_projects(
 def get_ranking_users(proj_id, grade=None):
     get_new_data(proj_id, grade)
     update_dfs_projects(proj_id, grade=grade)
-    df_obs = pd.read_csv(f"{directory}/data/{proj_id}_df_obs.csv")
-    df_photos = pd.read_csv(f"{directory}/data/{proj_id}_df_photos.csv")
+    try:
+        df_obs = pd.read_csv(f"{directory}/data/{proj_id}_df_obs.csv")
+        df_photos = pd.read_csv(f"{directory}/data/{proj_id}_df_photos.csv")
+    except:
+        df_obs = pd.DataFrame()
+        df_photos = pd.DataFrame()
 
     if len(df_obs) == 0:
         df_obs = None
@@ -457,6 +461,7 @@ def get_first_obs_taxon(taxon_id, proj_id, type="project", session=None):
 if __name__ == "__main__":
     # Get main_metrics.csv
     start_time = time.time()
+    print("Updating main metrics")
     main_metrics_df = update_main_metrics(main_project)
     main_metrics_df.to_csv(f"{directory}/data/main_metrics.csv", index=False)
     print("Main metrics actualizada")
@@ -474,14 +479,15 @@ if __name__ == "__main__":
 
             # Get current observations
             obs = get_obs(id_project=proj_id)
+            pt_users = get_list_users(proj_id)
+            pt_users.to_csv(f"{directory}/data/{proj_id}_pt_users.csv", index=False)
 
             # Check if there are new observations
             if len(obs) > 0 and len(obs) != len(downloaded_obs):
                 print(f"Processing {len(obs)} observations for project {proj_id}")
-
                 try:
                     df_obs, df_photos = get_dfs(obs)
-                    pt_users = get_list_users(proj_id)
+
                 except Exception as e:
                     print(f"Error processing data for project {proj_id}: {e}")
                     continue

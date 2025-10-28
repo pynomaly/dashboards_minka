@@ -292,7 +292,7 @@ with st.container():
         st.image(f"{directory}/images/Biomarato_logo_100.png")
     with col2:
         st.header(":orange[Classificação dos participantes]")
-    st.markdown("Número de observações com o grau de investigação.")
+    # st.markdown("Número de observações com o grau de investigação.")
 
     @st.cache_data(ttl=3600)
     def load_and_process_users():
