@@ -152,7 +152,7 @@ def update_main_metrics(proj_id: int) -> pd.DataFrame:
 def get_list_users(id_project):
     with requests.Session() as session:
         # Get observers data
-        url_observers = f"{API_PATH}/observations/observers?project_id={id_project}&quality_grade=research"
+        url_observers = f"{API_PATH}/observations/observers?project_id={id_project}"
         try:
             response = session.get(url_observers)
             response.raise_for_status()
