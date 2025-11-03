@@ -543,7 +543,7 @@ with st.container():
                 hide_index=True,
             )
         else:
-            st.info("Fes clic en un any per veure el llistat d'espècies")
+            st.info("Fes clic en un any per veure el llistat d'observadors/es")
 
     st.divider()
 
