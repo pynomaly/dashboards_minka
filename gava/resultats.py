@@ -549,7 +549,7 @@ with st.container():
 
 # mapa
 with st.container():
-    st.markdown("## Map d'observacións a Gavà")
+    st.markdown("## Mapa d'observacións a Gavà")
     # Definir el centro del mapa
     gava_center = [41.2890, 2.14]
 
