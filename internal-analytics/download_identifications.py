@@ -164,6 +164,7 @@ def get_most_freq_taxon(user_id, column_name, df_identifications):
 
 
 if __name__ == "__main__":
+    # Descarga y guarda en minka_identifications
     df_identifications = download_identifications()
     # df_identifications = pd.read_csv(f"{directory}/data/minka_identifications.csv")
 
@@ -181,10 +182,12 @@ if __name__ == "__main__":
         "last_identification"
     ].dt.date
 
+    __import__("pdb").set_trace()
     print("Get most frequent taxons")
+    # No convierte en lista si ya es una lista
     df_identifications["taxon.ancestor_ids"] = df_identifications[
         "taxon.ancestor_ids"
-    ].apply(ast.literal_eval)
+    ].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
     df_identifiers["most_kingdom"] = df_identifiers["identifier_id"].apply(
         lambda x: get_most_freq_taxon(x, "kingdom", df_identifications)
     )
