@@ -25,8 +25,9 @@ def get_zenodo_stats():
     url = "https://zenodo.org/api/records"
     params = {
         "q": "communities:embimos",
-        "size": 100,  # Número máximo de resultados por página
+        "size": 25,  # Número máximo de resultados por página
         "page": 1,  # Comenzar desde la página 1
+        "sort": "mostrecent",
     }
 
     records = []
@@ -59,7 +60,7 @@ def get_zenodo_stats():
         params["page"] += 1  # Pasar a la siguiente página
 
     # Convertir la lista en un DataFrame
-    df_zenodo = pd.DataFrame(records)
+    df_zenodo = pd.DataFrame(records).drop_duplicates()
 
     # Mostrar los primeros registros
     df_zenodo.sort_values(by="downloads", ascending=False, inplace=True)
