@@ -182,7 +182,6 @@ if __name__ == "__main__":
         "last_identification"
     ].dt.date
 
-    __import__("pdb").set_trace()
     print("Get most frequent taxons")
     # No convierte en lista si ya es una lista
     df_identifications["taxon.ancestor_ids"] = df_identifications[
