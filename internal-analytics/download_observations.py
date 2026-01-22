@@ -213,10 +213,12 @@ if __name__ == "__main__":
     df_accounts.to_csv(f"{directory}/data/minka_accounts.csv", index=False)
 
     # Descarga de observaciones
-    print("Get observations")
+    """print("Get observations")
     obs = get_obs()
     print("Get dfs for obs")
-    df_obs, df_photos = get_dfs(obs)
+    df_obs, df_photos = get_dfs(obs)"""
+
+    df_obs = pd.read_csv(f"{directory}/data/minka_obs.csv")
 
     print("Get catalunya column")
     df_obs = get_catalunya_column(df_obs)
