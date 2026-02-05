@@ -209,7 +209,7 @@ def show_last_species(df, provincia_name):
 
         # Images in other columns - first row
         cols = [col2sp, col3sp, col4sp]
-        for i, col in enumerate(cols, 1):
+        for i, col in enumerate(cols, 0):
             if i < len(df_display):
                 with col:
                     row = df_display.iloc[i]
