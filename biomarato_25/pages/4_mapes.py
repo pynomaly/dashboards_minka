@@ -255,7 +255,7 @@ if map_key in st.session_state:
         map1, map2 = st.columns(2)
 
         with map1:
-            st.subheader("🔥 Mapa de calor")
+            st.subheader("Mapa de calor")
             heatmap = st.session_state[map_key]["heatmap"]
             if heatmap:
                 # Handle both HTML strings and folium objects
@@ -267,7 +267,7 @@ if map_key in st.session_state:
                     components.html(map_html, height=600, width=None, scrolling=False)
 
         with map2:
-            st.subheader("📍 Mapa de marcadors")
+            st.subheader("Mapa de marcadors")
             markermap = st.session_state[map_key]["markermap"]
             if markermap:
                 # Handle both HTML strings and folium objects
@@ -279,7 +279,7 @@ if map_key in st.session_state:
                     components.html(markermap, height=600, width=None, scrolling=False)
 
     elif map_type == "Només mapa de calor":
-        st.subheader("🔥 Mapa de calor")
+        st.subheader("Mapa de calor")
         heatmap = st.session_state[map_key]["heatmap"]
         if heatmap:
             if isinstance(heatmap, str):
@@ -290,7 +290,7 @@ if map_key in st.session_state:
                 components.html(map_html, height=600, width=None, scrolling=False)
 
     else:  # Només mapa de marcadors
-        st.subheader("📍 Mapa de marcadors")
+        st.subheader("Mapa de marcadors")
         markermap = st.session_state[map_key]["markermap"]
         if markermap:
             if isinstance(markermap, str):
