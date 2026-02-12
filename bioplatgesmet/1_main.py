@@ -1,9 +1,24 @@
 # Contents of ~/my_app/main_page.py
 import os
+
+try:
+    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet_new"
+except KeyError:
+    print(
+        "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
+    )
+
+import streamlit as st
+
+st.set_page_config(
+    layout="wide",
+    page_icon=f"{directory}/images/minka-logo.png",
+    page_title="Dashboard Bioplatgesmet",
+)
+
 from datetime import datetime
 
 import pandas as pd
-import streamlit as st
 import streamlit.components.v1 as components
 from i18n import create_footer, create_sidebar_content, init_i18n, t
 from streamlit_extras.metric_cards import style_metric_cards
@@ -35,19 +50,6 @@ config_modebar = {
     ],
     "displaylogo": False,
 }
-
-try:
-    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet_new"
-except KeyError:
-    print(
-        "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
-    )
-
-st.set_page_config(
-    layout="wide",
-    page_icon=f"{directory}/images/minka-logo.png",
-    page_title="Dashboard Bioplatgesmet",
-)
 st.markdown(
     f"""
     <style>
