@@ -15,7 +15,7 @@ from markdownlit import mdlit
 from mecoda_minka import get_dfs, get_obs
 
 try:
-    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
+    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet_new"
 except KeyError:
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
@@ -307,6 +307,7 @@ def create_markercluster(df, center=None, zoom=10):
 
     m = folium.Map(location=center, tiles=tiles2, attr=attr, zoom_start=zoom)
 
+    # Añadir clúster de marcadores
     marker_cluster = MarkerCluster().add_to(m)
 
     for i in range(len(df)):

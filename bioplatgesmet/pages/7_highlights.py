@@ -1,5 +1,6 @@
 import math
 import os
+import sys
 from datetime import date, datetime, timedelta
 
 import pandas as pd
@@ -7,11 +8,14 @@ import requests
 import streamlit as st
 import streamlit.components.v1 as components
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from i18n import create_footer, init_i18n, t
+
 grupos = ["amenazadas", "exoticas", "invasoras", "protegidas"]
 main_project = 264
 
 try:
-    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
+    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet_new"
 except KeyError:
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
@@ -26,15 +30,18 @@ st.markdown(
     f"""
     <style>
         [data-testid="stSidebar"] {{
-            width: 220px !important;
+            width: 300px !important;
         }}
         [data-testid="stSidebar"] > div:first-child {{
-            width: 220px !important;
+            width: 300px !important;
         }}
     </style>
     """,
     unsafe_allow_html=True,
 )
+
+# Initialize i18n
+init_i18n(current_page="highlights")
 
 matomo_script = """
 <!-- Matomo -->
@@ -192,7 +199,8 @@ first_observed = (
 )
 
 
-periods = {"7 dies": 7, "14 dies": 14, "1 mes": 30, "3 mesos": 90, "6 mesos": 180}
+periods_keys = ["days_7", "days_14", "month_1", "months_3", "months_6"]
+periods_values = [7, 14, 30, 90, 180]
 
 # Título
 with st.container():
@@ -200,7 +208,7 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/Logo_BioplatgesMet.png")
     with col2:
-        st.header(":blue[Destacats del projecte BioPlatgesMet]")
+        st.header(f":blue[{t('header.highlights_title')}]")
         st.markdown("")
         st.markdown("")
         st.markdown("")
@@ -209,21 +217,23 @@ with st.container():
 with st.container():
     col1, col2, col3 = st.columns([2, 1, 8])
     with col1:
-        st.markdown("##### Període consultat:")
+        st.markdown(f"##### {t('ui.period_consulted')}")
 
     with col2:
+        periods_translated = [t(f"highlights.{key}") for key in periods_keys]
+        periods_map = dict(zip(periods_translated, periods_values))
         option = st.selectbox(
-            "## Període consultat:", (periods.keys()), label_visibility="collapsed"
+            t("ui.period_consulted"), periods_translated, label_visibility="collapsed"
         )
 
 
-days = periods[option]
+days = periods_map[option]
 
 st.divider()
 
 # Reporte de gatos y ratas: crear listado de especies
 with st.container():
-    titulo4 = f":blue[Alerta d'espècies monitoritzades]"
+    titulo4 = f":blue[{t('highlights.monitored_species_alert')}]"
     st.subheader(titulo4)
     st.markdown(f"{get_message('alerta', df_obs, days, color='red')}")
 
@@ -232,22 +242,22 @@ st.divider()
 
 # Reporte de especies de interés
 with st.container():
-    titulo1 = f":blue[Espècies d'interès registrades en els darrers {days} dies]"
+    titulo1 = f":blue[{t('highlights.interest_species_recorded').replace('{days}', str(days))}]"
     st.subheader(titulo1)
 
-    st.markdown("##### **Espècies invasores:**")
+    st.markdown(f"##### **{t('highlights.invasive_species')}**")
     st.markdown(f"{get_message('invasoras', df_obs, days, color='orange')}")
     st.markdown("")
 
-    st.markdown("##### **Espècies exòtiques:**")
+    st.markdown(f"##### **{t('highlights.exotic_species')}**")
     st.markdown(f"{get_message('exoticas', df_obs, days, color='orange')}")
     st.markdown("")
 
-    st.markdown("##### **Espècies amenaçades:**")
+    st.markdown(f"##### **{t('highlights.threatened_species')}**")
     st.markdown(f"{get_message('amenazadas', df_obs, days, color='orange')}")
     st.markdown("")
 
-    st.markdown("##### **Espècies protegides:**")
+    st.markdown(f"##### **{t('highlights.protected_species')}**")
     st.markdown(f"{get_message('protegidas', df_obs, days, color='orange')}")
     st.markdown("")
 
@@ -255,7 +265,9 @@ st.divider()
 
 # Nuevas especies: últimas especies que se han registrado por primera vez
 with st.container():
-    titulo3 = f":blue[Noves espècies registrades en els darrers {days} dies]"
+    titulo3 = (
+        f":blue[{t('highlights.new_species_recorded').replace('{days}', str(days))}]"
+    )
     st.subheader(titulo3)
 
     text_report = generar_reporte_nuevas_especies(df_sorted, days)
@@ -265,13 +277,13 @@ with st.container():
         st.markdown(text_report)
     else:
         tabs = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-        st.markdown(f"{tabs}:grey[Cap espècie registrada per primera vegada.]")
+        st.markdown(f"{tabs}:grey[{t('highlights.no_species_first_time')}]")
 
 st.divider()
 
 # Nuevos usuarios: mínimo suben una observación al proyecto, separada por municipio.
 with st.container():
-    titulo2 = f":blue[Participants incorporats al projecte en els darrers {days} dies]"
+    titulo2 = f":blue[{t('highlights.new_participants').replace('{days}', str(days))}]"
     st.subheader(titulo2)
     df_members = get_members_df(264)
 
@@ -299,7 +311,7 @@ with st.container():
     # Mensaje si no hay nuevos usuarios
     if len(members_last_month) == 0:
         tabs = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-        msg_users = f":gray[{tabs}Cap nou participant amb almenys una observació.]"
+        msg_users = f":gray[{tabs}{t('highlights.no_new_participant')}]"
         st.markdown(msg_users)
 
     st.markdown("")
@@ -308,15 +320,4 @@ with st.container():
 
 
 # Footer
-with st.container(border=True):
-    col1, __, col2 = st.columns([10, 1, 5], gap="small")
-    with col1:
-        st.markdown("##### Organitzadors")
-        st.image(
-            f"{directory}/images/organizadores_bioplatgesmet_logos2.png",
-        )
-    with col2:
-        st.markdown("##### Amb el finançament dels projectes europeus")
-        st.image(
-            f"{directory}/images/financiadores_bioplatgesmet_logos.png",
-        )
+create_footer()

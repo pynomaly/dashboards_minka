@@ -1,11 +1,17 @@
 # Contents of ~/my_app/pages/page_2.py
 import os
+import sys
 
 import numpy as np
 import pandas as pd
 import streamlit as st
 import streamlit.components.v1 as components
 from streamlit_folium import folium_static, st_folium
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from i18n import create_footer, init_i18n, t
 from utils import (
     create_heatmap,
     create_markercluster,
@@ -16,7 +22,7 @@ from utils import (
 )
 
 try:
-    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
+    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet_new"
 except KeyError:
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
@@ -31,32 +37,35 @@ st.markdown(
     f"""
     <style>
         [data-testid="stSidebar"] {{
-            width: 220px !important;
+            width: 300px !important;
         }}
         [data-testid="stSidebar"] > div:first-child {{
-            width: 220px !important;
+            width: 300px !important;
         }}
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# configuración de ModeBar
+# Initialize i18n
+init_i18n(current_page="municipalities")
+
+# configuracion de ModeBar
 config_modebar = {
-    "displayModeBar": True,  # Mostrar u ocultar la ModeBar
-    "modeBarButtonsToRemove": [  # Lista de botones a remover
-        "zoom2d",  # Eliminar el botón de zoom
-        "pan2d",  # Eliminar el botón de paneo
-        "select2d",  # Eliminar el botón de selección
-        "lasso2d",  # Eliminar el botón de lazo
-        "autoScale2d",  # Eliminar el botón de autoescalar
-        "resetScale2d",  # Eliminar el botón de resetear escala
-        "hoverClosestCartesian",  # Eliminar el botón de acercar el hover
-        "hoverCompareCartesian",  # Eliminar el botón de comparar en hover
-        "zoomIn2d",  # Eliminar el botón de zoom +
-        "zoomOut2d",  # Eliminar el botón de zoom -
+    "displayModeBar": True,
+    "modeBarButtonsToRemove": [
+        "zoom2d",
+        "pan2d",
+        "select2d",
+        "lasso2d",
+        "autoScale2d",
+        "resetScale2d",
+        "hoverClosestCartesian",
+        "hoverCompareCartesian",
+        "zoomIn2d",
+        "zoomOut2d",
     ],
-    "displaylogo": False,  # Ocultar el logo de Plotly
+    "displaylogo": False,
 }
 
 BASE_URL = "https://minka-sdg.org"
@@ -64,9 +73,9 @@ API_PATH = f"https://api.minka-sdg.org/v1"
 places = {
     "Montgat": [357],
     "Castelldefels": [349],
-    "Gavà": [350],
+    "Gava": [350],
     "El Prat de Llobregat": [351],
-    "Sant Adrià": [352],
+    "Sant Adria": [352],
     "Viladecans": [354],
     "Barcelona": [355, 356],
     "Badalona": [347, 348],
@@ -86,66 +95,81 @@ ciutats = [
 main_project = 264
 
 
-# Cacheado de datos
-@st.cache_data(ttl=3600)
+# Cacheado de datos optimizado
+@st.cache_data(ttl=3600, show_spinner=False)
 def load_csv(file_path):
     return pd.read_csv(file_path)
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def load_city_metrics():
+    """Carga metricas totales por ciudad"""
+    return pd.read_csv(f"{directory}/data/city_total_metrics.csv")
+
+
+@st.cache_data(ttl=900, show_spinner=False)
+def load_city_observations(city_name):
+    """Carga observaciones por ciudad"""
+    return pd.read_csv(f"{directory}/data/obs_{city_name}.csv")
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_cached_city_data(city_name):
+    """Obtiene todos los datos de una ciudad de forma cacheada"""
+    last_species = get_last_species(city_name)
+    species_count = get_num_species_by_city(city_name)
+    best_observers = get_best_observers(city_name)
+
+    # Procesar datos de especies
+    species_count["taxon_name"] = (
+        f"https://minka-sdg.org/taxa/" + species_count["taxon_name"]
+    )
+    species_count.index = np.arange(1, len(species_count) + 1)
+
+    # Procesar datos de observadores
+    best_observers["nom"] = f"https://minka-sdg.org/users/" + best_observers["nom"]
+    best_observers.index = np.arange(1, len(best_observers) + 1)
+
+    return last_species, species_count, best_observers
+
+
 @st.cache_data
 def convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv(index=False).encode("utf-8")
 
 
-# Columna izquierda
-st.sidebar.markdown("# Municipis participants en aquest projecte:")
-st.sidebar.markdown(
-    """
-* Badalona
-* Barcelona
-* Castelldefels
-* El Prat de Llobregat
-* Gavà
-* Montgat
-* Sant Adrià del Besòs
-* Viladecans
-"""
-)
-
 # Header
 with st.container():
-    # Título
     col1, col2 = st.columns([1, 15])
     with col1:
         st.image(f"{directory}/images/Logo_BioplatgesMet.png")
     with col2:
-        st.header(":blue[Resultats per municipi]")
+        st.header(f":blue[{t('header.municipalities_title')}]")
 
 
 with st.container():
-
-    # Ranking de ciudades, métricas totales
-    city_total_metrics = load_csv(f"{directory}/data/city_total_metrics.csv")
+    # Ranking de ciudades, metricas totales
+    city_total_metrics = load_city_metrics()
 
     fig1 = fig_provinces(
-        city_total_metrics, "observacions", "Nombre d’observacions", "#00567A"
+        city_total_metrics, "observacions", t("charts.observations_count"), "#00567A"
     )
     fig2 = fig_provinces(
-        city_total_metrics, "espècies", "Nombre d’espècies diferents", "#0081B8"
+        city_total_metrics, "espècies", t("charts.species_count"), "#0081B8"
     )
     fig3 = fig_provinces(
-        city_total_metrics, "participants", "Nombre de participants", "#009DE0"
+        city_total_metrics, "participants", t("charts.participants_count"), "#009DE0"
     )
 
     col1, col2, col3 = st.columns(3, gap="large")
     with col1:
         st.plotly_chart(fig1, config=config_modebar, use_container_width=True)
-        csv4 = convert_df(city_total_metrics)
+        if "csv4" not in st.session_state:
+            st.session_state.csv4 = convert_df(city_total_metrics)
 
         st.download_button(
-            label="Descarrega les dades",
-            data=csv4,
+            label=t("ui.download_data"),
+            data=st.session_state.csv4,
             file_name="city_total_metrics.csv",
             mime="text/csv",
         )
@@ -170,19 +194,17 @@ for tab in st.tabs(
     ]
 ):
     with tab:
-        # st.header(ciutats[i])
-
         col1, col2, col3 = st.columns([2, 1, 1])
 
         with col1:
-            st.markdown("**Últimes espècies registrades:**")
-            results = get_last_species(ciutats[i])
+            st.markdown(f"**{t('municipalities.last_species')}**")
+            results, _, _ = get_cached_city_data(ciutats[i])
             st.dataframe(
                 results[["taxon_name", "url", "image"]],
                 column_config={
                     "image": st.column_config.ImageColumn(
-                        "Imatge (doble clic per ampliar)",
-                        help="Previsualitza",
+                        t("municipalities.image_column"),
+                        help="Preview",
                         width=200,
                     ),
                     "url": st.column_config.LinkColumn(
@@ -194,12 +216,8 @@ for tab in st.tabs(
             )
 
         with col2:
-            st.markdown("**Espècies amb més observacions:**")
-            df_species = get_num_species_by_city(ciutats[i])
-            df_species["taxon_name"] = (
-                f"https://minka-sdg.org/taxa/" + df_species["taxon_name"]
-            )
-            df_species.index = np.arange(1, len(df_species) + 1)
+            st.markdown(f"**{t('municipalities.most_observed_species')}**")
+            _, df_species, _ = get_cached_city_data(ciutats[i])
             st.data_editor(
                 df_species,
                 column_config={
@@ -213,14 +231,11 @@ for tab in st.tabs(
             )
 
         with col3:
-            st.markdown("**Participants amb més observacions:**")
-            df_observers = get_best_observers(ciutats[i])
-            df_observers["nom"] = f"https://minka-sdg.org/users/" + df_observers["nom"]
-            df_observers.index = np.arange(1, len(df_observers) + 1)
+            st.markdown(f"**{t('municipalities.top_participants')}**")
+            _, _, df_observers = get_cached_city_data(ciutats[i])
             st.dataframe(
                 df_observers,
                 column_config={
-                    # "nom": st.column_config.TextColumn(width="medium"),
                     "nom": st.column_config.LinkColumn(
                         "nom", display_text=r"https://minka-sdg.org/users/(.*?)$"
                     ),
@@ -231,20 +246,16 @@ for tab in st.tabs(
             )
 
         with st.container():
-            st.header(f"Observacions per ciutat: {ciutats[i]}")
+            st.header(f"{t('ui.observations_by_city')}: {ciutats[i]}")
             city_name = ciutats[i]
-            df = load_csv(f"{directory}/data/obs_{ciutats[i]}.csv")
+            df = load_city_observations(ciutats[i])
 
             map1, map2 = st.columns([10, 10], gap="small")
 
-            # Definir el centro del mapa
             center = [41.36174441599461, 2.108076037807884]
 
-            # Usar claves únicas en session_state para cada ciudad
             heatmap_key = f"heatmap_city_{city_name}"
             markermap_key = f"markermap_city_{city_name}"
-
-            # Guardar el mapa en session_state para evitar que desaparezca
 
             if heatmap_key not in st.session_state:
                 st.session_state[heatmap_key] = create_heatmap(df, center=center)
@@ -254,7 +265,6 @@ for tab in st.tabs(
                     df, center=center
                 )
 
-            # Renderizar los mapas con _repr_html_()
             with map1:
                 map_html1 = st.session_state[heatmap_key]._repr_html_()
                 components.html(map_html1, height=600)
@@ -263,29 +273,18 @@ for tab in st.tabs(
                 map_html2 = st.session_state[markermap_key]._repr_html_()
                 components.html(map_html2, height=600)
 
-            # Convertir dataframe y agregar botón de descarga
-            csv5 = convert_df(df)
+            csv_key = f"csv5_{ciutats[i]}"
+            if csv_key not in st.session_state:
+                st.session_state[csv_key] = convert_df(df)
 
             st.download_button(
-                label="Descarrega les dades",
-                data=csv5,
+                label=t("ui.download_data"),
+                data=st.session_state[csv_key],
                 file_name=f"observacions_{ciutats[i]}.csv",
                 mime="text/csv",
             )
 
         i += 1
 
-st.container(height=50, border=False)
-
-with st.container(border=True):
-    col1, __, col2 = st.columns([10, 1, 5], gap="small")
-    with col1:
-        st.markdown("##### Organitzadors")
-        st.image(
-            f"{directory}/images/organizadores_bioplatgesmet_logos2.png",
-        )
-    with col2:
-        st.markdown("##### Amb el finançament dels projectes europeus")
-        st.image(
-            f"{directory}/images/financiadores_bioplatgesmet_logos.png",
-        )
+# Footer
+create_footer()

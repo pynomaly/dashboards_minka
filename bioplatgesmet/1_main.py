@@ -5,8 +5,7 @@ from datetime import datetime
 import pandas as pd
 import streamlit as st
 import streamlit.components.v1 as components
-
-# from streamlit.components.v1 import html
+from i18n import create_footer, create_sidebar_content, init_i18n, t
 from streamlit_extras.metric_cards import style_metric_cards
 from utils import (
     create_heatmap,
@@ -20,25 +19,25 @@ from utils import (
 # variables
 colors = ["#009DE0", "#0081B8", "#00567A", "#3b4a7f"]
 
-# configuración de ModeBar
+# configuracion de ModeBar
 config_modebar = {
-    "displayModeBar": True,  # Mostrar u ocultar la ModeBar
-    "modeBarButtonsToRemove": [  # Lista de botones a remover
-        "zoom2d",  # Eliminar el botón de zoom
-        "pan2d",  # Eliminar el botón de paneo
-        "lasso2d",  # Eliminar el botón de lazo
-        "autoScale2d",  # Eliminar el botón de autoescalar
-        "resetScale2d",  # Eliminar el botón de resetear escala
-        "hoverClosestCartesian",  # Eliminar el botón de acercar el hover
-        "hoverCompareCartesian",  # Eliminar el botón de comparar en hover
-        "zoomIn2d",  # Eliminar el botón de zoom +
-        "zoomOut2d",  # Eliminar el botón de zoom -
+    "displayModeBar": True,
+    "modeBarButtonsToRemove": [
+        "zoom2d",
+        "pan2d",
+        "lasso2d",
+        "autoScale2d",
+        "resetScale2d",
+        "hoverClosestCartesian",
+        "hoverCompareCartesian",
+        "zoomIn2d",
+        "zoomOut2d",
     ],
-    "displaylogo": False,  # Ocultar el logo de Plotly
+    "displaylogo": False,
 }
 
 try:
-    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
+    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet_new"
 except KeyError:
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
@@ -53,15 +52,19 @@ st.markdown(
     f"""
     <style>
         [data-testid="stSidebar"] {{
-            width: 240px !important;
+            width: 300px !important;
         }}
         [data-testid="stSidebar"] > div:first-child {{
-            width: 240px !important;
+            width: 300px !important;
         }}
     </style>
     """,
     unsafe_allow_html=True,
 )
+
+# Initialize i18n
+init_i18n(current_page="main")
+create_sidebar_content()
 
 base_url = "https://minka-sdg.org"
 api_path = "https://api.minka-sdg.org/v1"
@@ -73,9 +76,9 @@ codes = {
     164: "Castelldefels",
     165: "Barcelona",
     166: "Viladecans",
-    167: "Gavà",
+    167: "Gava",
     168: "El Prat",
-    169: "Sant Adrià",
+    169: "Sant Adria",
     170: "Badalona",
 }
 
@@ -83,7 +86,6 @@ matomo_script = """
 <!-- Matomo -->
 <script>
   var _paq = window._paq = window._paq || [];
-  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
   (function() {
@@ -98,46 +100,74 @@ matomo_script = """
 """
 
 
-# Cacheado de datos
-@st.cache_data(ttl=3600)
+# Cacheado de datos optimizado
+@st.cache_data(ttl=3600, show_spinner=False)
 def load_csv(file_path):
     return pd.read_csv(file_path)
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def load_and_process_cumulative_data():
+    """Carga y procesa datos acumulativos mensuales"""
+    df_cumulative_monthly = pd.read_csv(
+        f"{directory}/data/cumulative_city_monthly_metrics.csv"
+    )
+    df_cum_monthly_general = df_cumulative_monthly[
+        df_cumulative_monthly.city == "BioPlatgesMet"
+    ].copy()
+    df_cum_monthly_general["month"] = df_cum_monthly_general["month"].astype(str)
+    df_cum_monthly_general.rename(
+        columns={
+            "city": "ciutat",
+            "month": "data",
+            "total_obs": "observacions",
+            "total_spe": "especies",
+            "total_part": "participants",
+            "total_ident": "identificadores",
+        },
+        inplace=True,
+    )
+    return df_cum_monthly_general.reset_index(drop=True).loc[5:]
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def load_and_process_main_metrics():
+    """Carga y procesa metricas principales"""
+    main_metrics = pd.read_csv(f"{directory}/data/264_main_metrics.csv")
+    main_metrics.rename(
+        columns={
+            "date": "data",
+            "observations": "observacions",
+            "species": "especies",
+            "identifiers": "identificadores",
+        },
+        inplace=True,
+    )
+    return main_metrics
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def load_observations_data():
+    """Carga datos de observaciones"""
+    return pd.read_csv(f"{directory}/data/{main_project}_obs.csv")
+
+
 @st.cache_data
 def convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv(index=False).encode("utf-8")
-
-
-def create_sidebar():
-    st.sidebar.markdown("# BioPlatgesMet")
-    st.sidebar.markdown(
-        """
-    El Servei de Platges de l’AMB, l’Institut de Ciències del Mar – CSIC i l'Institut Metròpoli participen en el projecte europeu GUARDEN (Programa Horizon Europe) junt amb altres 15 socis de 8 països. BioPlatgesMet és el nom del seu desenvolupament en l’àmbit de les platges metropolitanes.
-
-    El seu objectiu principal és protegir la biodiversitat de les platges metropolitanes, preservar els beneficis que la natura aporta a la societat i conscienciar la ciutadania de la seva importància. Aquesta iniciativa de ciència ciutadana recopilarà dades sobre la biodiversitat de les platges amb geolocalització, mapatge de vegetació i seguiment d'espècies a l'ecosistema platja-duna amb tecnologies per identificar-les.
-    """
-    )
 
 
 def create_header():
     with st.container():
-        # Título
         col1, col2 = st.columns([1, 15])
         with col1:
             st.image(f"{directory}/images/Logo_BioplatgesMet.png")
         with col2:
-            st.header(":blue[Panell de seguiment BioPlatgesMet]")
+            st.header(f":blue[{t('header.main_title')}]")
 
-
-# Columna izquierda
-create_sidebar()
 
 # Header
-
 components.html(matomo_script, height=0, width=0)
-
 create_header()
 
 # Error si no responde la API
@@ -155,65 +185,43 @@ with st.container():
     __, col1, col2, col3, col4, _ = st.columns([1, 1, 1, 1, 1, 1])
     with col1:
         st.metric(
-            ":camera_with_flash: Observacions",
+            f":camera_with_flash: {t('metrics.observations')}",
             f"{total_obs:,}".replace(",", " "),
-            f"+{total_obs - lw_obs} última setmana",
+            f"+{total_obs - lw_obs} {t('metrics.last_week')}",
         )
     with col2:
         st.metric(
-            ":ladybug: Espècies",
+            f":ladybug: {t('metrics.species')}",
             total_species,
-            f"+{total_species - lw_spe} última setmana",
+            f"+{total_species - lw_spe} {t('metrics.last_week')}",
         )
     with col3:
         st.metric(
-            ":eyes: Participants",
+            f":eyes: {t('metrics.participants')}",
             total_participants,
-            f"+{total_participants - lw_part} última setmana",
+            f"+{total_participants - lw_part} {t('metrics.last_week')}",
         )
     with col4:
         st.metric(
-            ":books: Persones idenficadores",
+            f":books: {t('metrics.identifiers')}",
             total_identifiers,
-            f"+{total_identifiers - lw_ident} última setmana",
+            f"+{total_identifiers - lw_ident} {t('metrics.last_week')}",
         )
     style_metric_cards(
         background_color="#fff",
-        # border_left_color="#C2C2C2",
         border_left_color=colors[1],
         box_shadow=False,
     )
 
 
-# Gráfico de columnas, acumulado mensual
+# Grafico de columnas, acumulado mensual
 with st.container():
-    df_cumulative_monthly = load_csv(
-        f"{directory}/data/cumulative_city_monthly_metrics.csv"
-    )
-    df_cum_monthly_general = df_cumulative_monthly[
-        df_cumulative_monthly.city == "BioPlatgesMet"
-    ].copy()
-    df_cum_monthly_general["month"] = df_cum_monthly_general["month"].astype(str)
-    df_cum_monthly_general.rename(
-        columns={
-            "city": "ciutat",
-            "month": "data",
-            "total_obs": "observacions",
-            "total_spe": "espècies",
-            "total_part": "participants",
-            "total_ident": "identificadores",
-        },
-        inplace=True,
-    )
-
-    # Resultados mensuales desde junio 2022
+    cum_monthly_result = load_and_process_cumulative_data()
 
     fecha_actual = datetime.now()
     month_year = fecha_actual.strftime("%Y-%m")
-
-    cum_monthly_result = df_cum_monthly_general.reset_index(drop=True).loc[5:]
     start_date, end_date = st.select_slider(
-        "**Selecciona un rang temporal per als gràfics:**",
+        f"**{t('ui.select_time_range')}**",
         options=cum_monthly_result.data.unique(),
         value=(
             "2022-06",
@@ -222,10 +230,10 @@ with st.container():
     )
     tab1, tab2, tab3, tab4 = st.tabs(
         [
-            "\tObservacions\t",
-            "\tEspècies\t",
-            "\tParticipants\t",
-            "\tPersones idenficadores\t",
+            f"\t{t('metrics.observations')}\t",
+            f"\t{t('metrics.species')}\t",
+            f"\t{t('metrics.participants')}\t",
+            f"\t{t('metrics.identifiers')}\t",
         ]
     )
 
@@ -233,7 +241,7 @@ with st.container():
         fig1b = fig_bars_months(
             cum_monthly_result,
             field="observacions",
-            title="Acumulat d'observacions per mes",
+            title=t("charts.observations_accumulated"),
             color=colors[0],
             start_date=start_date,
             end_date=end_date,
@@ -243,8 +251,8 @@ with st.container():
     with tab2:
         fig2b = fig_bars_months(
             cum_monthly_result,
-            field="espècies",
-            title="Acumulat d'espècies per mes",
+            field="especies",
+            title=t("charts.species_accumulated"),
             color=colors[1],
             start_date=start_date,
             end_date=end_date,
@@ -255,7 +263,7 @@ with st.container():
         fig3b = fig_bars_months(
             cum_monthly_result,
             field="participants",
-            title="Acumulat de participants per mes",
+            title=t("charts.participants_accumulated"),
             color=colors[2],
             start_date=start_date,
             end_date=end_date,
@@ -266,42 +274,35 @@ with st.container():
         fig4b = fig_bars_months(
             cum_monthly_result,
             field="identificadores",
-            title="Acumulat de persones identificadores per mes",
+            title=t("charts.identifiers_accumulated"),
             color=colors[3],
             start_date=start_date,
             end_date=end_date,
         )
         st.plotly_chart(fig4b, config=config_modebar, use_container_width=True)
 
-    csv2 = convert_df(cum_monthly_result)
+    # Cache de conversion CSV
+    if "csv2" not in st.session_state:
+        st.session_state.csv2 = convert_df(cum_monthly_result)
 
     st.download_button(
-        label="Descarrega les dades",
-        data=csv2,
+        label=t("ui.download_data"),
+        data=st.session_state.csv2,
         file_name="cum_monthly_result.csv",
         mime="text/csv",
     )
 
 
-# Gráfico de área, evolución por días
+# Grafico de area, evolucion por dias
 with st.container():
-    main_metrics = load_csv(f"{directory}/data/264_main_metrics.csv")
-    main_metrics.rename(
-        columns={
-            "date": "data",
-            "observations": "observacions",
-            "species": "espècies",
-            "identifiers": "identificadores",
-        },
-        inplace=True,
-    )
+    main_metrics = load_and_process_main_metrics()
 
     tab5, tab6, tab7, tab8 = st.tabs(
         [
-            "\tObservacions\t",
-            "\tEspècies\t",
-            "\tParticipants\t",
-            "\tPersones idenficadores\t",
+            f"\t{t('metrics.observations')}\t",
+            f"\t{t('metrics.species')}\t",
+            f"\t{t('metrics.participants')}\t",
+            f"\t{t('metrics.identifiers')}\t",
         ]
     )
 
@@ -309,7 +310,7 @@ with st.container():
         fig1 = fig_area_evolution(
             df=main_metrics,
             field="observacions",
-            title="Evolució del nombre d'observacions",
+            title=t("charts.observations_evolution"),
             color=colors[0],
             start_date=start_date,
             end_date=end_date,
@@ -317,11 +318,12 @@ with st.container():
 
         st.plotly_chart(fig1, config=config_modebar, use_container_width=True)
 
-        csv1 = convert_df(main_metrics)
+        if "csv1" not in st.session_state:
+            st.session_state.csv1 = convert_df(main_metrics)
 
         st.download_button(
-            label="Descarrega les dades",
-            data=csv1,
+            label=t("ui.download_data"),
+            data=st.session_state.csv1,
             file_name="main_metrics_by_day.csv",
             mime="text/csv",
         )
@@ -329,8 +331,8 @@ with st.container():
     with tab6:
         fig2 = fig_area_evolution(
             df=main_metrics,
-            field="espècies",
-            title="Evolució del nombre d'espècies",
+            field="especies",
+            title=t("charts.species_evolution"),
             color=colors[1],
             start_date=start_date,
             end_date=end_date,
@@ -341,7 +343,7 @@ with st.container():
         fig3 = fig_area_evolution(
             df=main_metrics,
             field="participants",
-            title="Evolució del nombre de participants",
+            title=t("charts.participants_evolution"),
             color=colors[2],
             start_date=start_date,
             end_date=end_date,
@@ -352,7 +354,7 @@ with st.container():
         fig4 = fig_area_evolution(
             df=main_metrics,
             field="identificadores",
-            title="Evolució del nombre de persones identificadores",
+            title=t("charts.identifiers_evolution"),
             color=colors[3],
             start_date=start_date,
             end_date=end_date,
@@ -363,52 +365,40 @@ with st.container():
 st.divider()
 
 with st.container():
-    st.header("Observacions per platja")
-    if "df" not in st.session_state:
-        st.session_state.df = load_csv(f"{directory}/data/{main_project}_obs.csv")
+    st.header(t("charts.observations_by_beach"))
 
-    df = st.session_state.df  # Reutiliza el dataframe
+    df = load_observations_data()
 
     map1, map2 = st.columns([10, 10], gap="small")
 
-    # Guardar el mapa en session_state para evitar que desaparezca
-    if "heatmap" not in st.session_state or st.session_state.heatmap is None:
-        st.session_state.heatmap = create_heatmap(
+    @st.cache_resource(ttl=3600, show_spinner=False)
+    def get_cached_maps(data_hash):
+        """Crea mapas con cache basado en hash de datos"""
+        heatmap = create_heatmap(df, center=[41.36174441599461, 2.108076037807884])
+        markermap = create_markercluster(
             df, center=[41.36174441599461, 2.108076037807884]
         )
+        return heatmap, markermap
 
-    if "markermap" not in st.session_state or st.session_state.markermap is None:
-        st.session_state.markermap = create_markercluster(
-            df, center=[41.36174441599461, 2.108076037807884]
-        )
+    data_hash = hash(str(df.shape) + str(df["id"].iloc[0] if len(df) > 0 else ""))
+    heatmap, markermap = get_cached_maps(data_hash)
+
     with map1:
-        # st_folium(st.session_state.heatmap, width=700, height=500, key="heatmap")
-        map_html1 = st.session_state.heatmap._repr_html_()
+        map_html1 = heatmap._repr_html_()
         components.html(map_html1, height=600)
     with map2:
-        map_html2 = st.session_state.markermap._repr_html_()
+        map_html2 = markermap._repr_html_()
         components.html(map_html2, height=600)
 
-    csv3 = convert_df(df)
+    if "csv3" not in st.session_state:
+        st.session_state.csv3 = convert_df(df)
 
     st.download_button(
-        label="Descarrega les dades",
-        data=csv3,
+        label=t("ui.download_data"),
+        data=st.session_state.csv3,
         file_name="observacions_bioplatgesmet.csv",
         mime="text/csv",
     )
 
-st.container(height=50, border=False)
-
-with st.container(border=True):
-    col1, __, col2 = st.columns([10, 1, 5], gap="small")
-    with col1:
-        st.markdown("##### Organitzadors")
-        st.image(
-            f"{directory}/images/organizadores_bioplatgesmet_logos2.png",
-        )
-    with col2:
-        st.markdown("##### Amb el finançament dels projectes europeus")
-        st.image(
-            f"{directory}/images/financiadores_bioplatgesmet_logos.png",
-        )
+# Footer
+create_footer()

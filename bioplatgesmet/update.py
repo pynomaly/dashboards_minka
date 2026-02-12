@@ -44,6 +44,25 @@ def get_month_dict(years: list) -> dict:
     return meses
 
 
+def _safe_get_total_results(session, url, max_retries=3):
+    """Helper function to safely get total_results with retries"""
+    for attempt in range(max_retries):
+        try:
+            response = session.get(url)
+            data = response.json()
+            return data["total_results"]
+        except KeyError:
+            if attempt < max_retries - 1:
+                print(f"KeyError: 'total_results' not found, waiting 2s before retry {attempt + 1}")
+                time.sleep(2)
+            else:
+                print(f"KeyError: 'total_results' not found after {max_retries} attempts")
+                raise
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            raise
+    return 0
+
 # acumulados mensuales
 def _get_totals(place_id, start_date, end_date, session=None):
     if session is None:
@@ -59,10 +78,10 @@ def _get_totals(place_id, start_date, end_date, session=None):
         url_part = f"{API_PATH}/observations/observers?project_id={main_project}&created_d1={start_date}&created_d2={end_date}"
         url_ident = f"{API_PATH}/observations/identifiers?project_id={main_project}&created_d1={start_date}&created_d2={end_date}"
     session = requests.Session()
-    total_obs = session.get(url_obs).json()["total_results"]
-    total_spe = session.get(url_spe).json()["total_results"]
-    total_part = session.get(url_part).json()["total_results"]
-    total_ident = session.get(url_ident).json()["total_results"]
+    total_obs = _safe_get_total_results(session, url_obs)
+    total_spe = _safe_get_total_results(session, url_spe)
+    total_part = _safe_get_total_results(session, url_part)
+    total_ident = _safe_get_total_results(session, url_ident)
 
     return total_obs, total_spe, total_part, total_ident
 
@@ -199,14 +218,15 @@ def update_main_metrics(proj_id, df_main_metrics, session=None):
         }
 
         # Utilizar la sesión para realizar las solicitudes
-        total_obs = session.get(observations, params=params).json()["total_results"]
-        total_species = session.get(species, params=params).json()["total_results"]
-        total_participants = session.get(observers, params=params).json()[
-            "total_results"
-        ]
-        total_identifiers = session.get(identifiers, params=params).json()[
-            "total_results"
-        ]
+        url_obs = observations + "&".join([f"{k}={v}" for k, v in params.items()])
+        url_species = species + "&".join([f"{k}={v}" for k, v in params.items()])
+        url_observers = observers + "&".join([f"{k}={v}" for k, v in params.items()])
+        url_identifiers = identifiers + "&".join([f"{k}={v}" for k, v in params.items()])
+        
+        total_obs = _safe_get_total_results(session, url_obs)
+        total_species = _safe_get_total_results(session, url_species)
+        total_participants = _safe_get_total_results(session, url_observers)
+        total_identifiers = _safe_get_total_results(session, url_identifiers)
 
         result = {
             "date": st_day,
@@ -241,13 +261,13 @@ def get_metrics_cities(main_project, places, session=None):
     for k, v in places.items():
         if len(v) == 1:
             url1 = f"{species}&project_id={main_project}&place_id={v[0]}"
-            total_species = session.get(url1).json()["total_results"]
+            total_species = _safe_get_total_results(session, url1)
 
             url2 = f"{observers}&project_id={main_project}&place_id={v[0]}"
-            total_participants = session.get(url2).json()["total_results"]
+            total_participants = _safe_get_total_results(session, url2)
 
             url3 = f"{observations}&project_id={main_project}&place_id={v[0]}"
-            total_obs = session.get(url3).json()["total_results"]
+            total_obs = _safe_get_total_results(session, url3)
 
         else:
             total_species = 0
@@ -256,13 +276,13 @@ def get_metrics_cities(main_project, places, session=None):
 
             for place_v in v:
                 url1 = f"{species}&project_id={main_project}&place_id={place_v}"
-                total_species += session.get(url1).json()["total_results"]
+                total_species += _safe_get_total_results(session, url1)
 
                 url2 = f"{observers}&project_id={main_project}&place_id={place_v}"
-                total_participants += session.get(url2).json()["total_results"]
+                total_participants += _safe_get_total_results(session, url2)
 
                 url3 = f"{observations}&project_id={main_project}&place_id={place_v}"
-                total_obs += session.get(url3).json()["total_results"]
+                total_obs += _safe_get_total_results(session, url3)
         data = {
             "ciutat": k,
             "espècies": total_species,
@@ -287,7 +307,7 @@ def get_num_species(main_project, session=None):
         date_str = current_date.strftime("%Y-%m-%d")
         url = f"{base_url}project_id={main_project}&introduced=true&d2={date_str}"
         try:
-            total_species = session.get(url).json()["total_results"]
+            total_species = _safe_get_total_results(session, url)
             datos = {"data": date_str, "introduced_species": total_species}
             num_species.append(datos)
         except Exception as e:
@@ -305,7 +325,8 @@ def _get_species(user_name, proj_id, session=None):
         session = requests.Session()
     species = f"{API_PATH}/observations/species_counts"
     params = {"project_id": proj_id, "user_login": user_name}
-    return session.get(species, params=params).json()["total_results"]
+    url = species + "?" + "&".join([f"{k}={v}" for k, v in params.items()])
+    return _safe_get_total_results(session, url)
 
 
 def _get_identifiers(df_users, proj_id, session=None):
@@ -346,14 +367,16 @@ def get_participation_df(main_project, session=None):
 def get_obs_by_place(place_id):
     observations = "https://api.minka-sdg.org/v1/observations?"
     url3 = f"{observations}&project_id={main_project}&place_id={place_id}"
-    total_obs = requests.get(url3).json()["total_results"]
+    session = requests.Session()
+    total_obs = _safe_get_total_results(session, url3)
     return total_obs
 
 
 def get_species_by_place(place_id):
     species = "https://api.minka-sdg.org/v1/observations/species_counts?"
     url3 = f"{species}&project_id={main_project}&place_id={place_id}"
-    total_obs = requests.get(url3).json()["total_results"]
+    session = requests.Session()
+    total_obs = _safe_get_total_results(session, url3)
     return total_obs
 
 
@@ -376,7 +399,8 @@ grupos_biologicos = {
 def get_obs_by_place_taxon(place_id, taxon_id):
     observations = "https://api.minka-sdg.org/v1/observations?"
     url3 = f"{observations}&project_id={main_project}&place_id={place_id}&taxon_id={taxon_id}"
-    total_obs = requests.get(url3).json()["total_results"]
+    session = requests.Session()
+    total_obs = _safe_get_total_results(session, url3)
     return total_obs
 
 

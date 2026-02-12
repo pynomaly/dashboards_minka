@@ -1,14 +1,18 @@
 import math
 import os
+import sys
 
 import pandas as pd
 import plotly.express as px
 import requests
 import streamlit as st
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from i18n import create_footer, init_i18n, t
 from utils import get_count_hour_per_day, heatmap_day_hour
 
 try:
-    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
+    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet_new"
 except KeyError:
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
@@ -23,16 +27,18 @@ st.markdown(
     f"""
     <style>
         [data-testid="stSidebar"] {{
-            width: 220px !important;
+            width: 300px !important;
         }}
         [data-testid="stSidebar"] > div:first-child {{
-            width: 220px !important;
+            width: 300px !important;
         }}
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+# Initialize i18n
+init_i18n(current_page="participants")
 
 # configuración de ModeBar
 config_modebar = {
@@ -63,12 +69,29 @@ def convert_df(df):
     return df.to_csv(index=False).encode("utf-8")
 
 
-@st.cache_data(ttl=3600)
+# Cacheado de datos optimizado
+@st.cache_data(ttl=3600, show_spinner=False)
 def load_csv(file_path):
     return pd.read_csv(file_path)
 
 
+@st.cache_data(ttl=1800, show_spinner=False)
+def load_participants_data():
+    """Carga datos de participantes con cache"""
+    return pd.read_csv(f"{directory}/data/{main_project}_participants.csv")
+
+
+@st.cache_data(ttl=1800, show_spinner=False)
+def load_observations_data():
+    """Carga datos de observaciones con cache"""
+    df_obs = pd.read_csv(f"{directory}/data/{main_project}_obs.csv")
+    df_obs["observed_on"] = pd.to_datetime(df_obs["observed_on"])
+    return df_obs
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
 def get_members_df(id_project):
+    """Obtiene miembros del proyecto con cache"""
     session = requests.Session()
     total_results = []
     url = f"https://api.minka-sdg.org/v1/projects/{id_project}/members"
@@ -330,19 +353,17 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/Logo_BioplatgesMet.png")
     with col2:
-        st.header(":blue[Anàlisi de la participació]")
+        st.header(f":blue[{t('header.participants_title')}]")
 
 
-users = load_csv(f"{directory}/data/{main_project}_participants.csv")
+users = load_participants_data()
 users["url"] = users["participant"].apply(lambda x: f"https://minka-sdg.org/users/{x}")
 
 # Ranking de usuarios por num_observaciones, num_identificaciones y num_especies
 with st.container():
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown(
-            "#### Usuaris per nombre d'observacions, identificacions i espècies"
-        )
+        st.markdown(f"#### {t('participants_page.users_by_observations')}")
         st.dataframe(
             users[["url", "observacions", "identificacions", "espècies"]],
             column_config={
@@ -358,9 +379,7 @@ with st.container():
             hide_index=True,
         )
     with col2:
-        st.markdown(
-            "#### Usuaris que s'han unit al projecte però no han pujat cap observació"
-        )
+        st.markdown(f"#### {t('participants_page.users_no_observations')}")
         df_observers = get_members_df(264)
         result = get_members_no_obs(df_observers, excluded)
         # Muestra el resultado
@@ -369,8 +388,8 @@ with st.container():
 
 st.divider()
 # observaciones activos por mes
-st.header("Nombre d'usuaris diferents que han pujat observacions per mes")
-df_obs = load_csv(f"{directory}/data/{main_project}_obs.csv")
+st.header(t("participants_page.active_users_by_month"))
+df_obs = load_observations_data()
 
 fig_active_users = get_active_users_per_month(df_obs)
 
@@ -379,13 +398,13 @@ st.plotly_chart(fig_active_users, config=config_modebar, use_container_width=Tru
 st.divider()
 
 # número de días que han subido observaciones
-st.header("Distribució d'usuaris per rangs de dies amb observacions")
+st.header(t("participants_page.users_by_days"))
 range_sums = get_users_days(df_obs)
 
 fig_days_per_user = get_bars(range_sums)
 st.plotly_chart(fig_days_per_user, config=config_modebar, use_container_width=True)
 
-st.markdown("Llistat d'usuaris en cada grup")
+st.markdown(t("participants_page.users_list_group"))
 range_groups = [""] + range_sums["days_range"].unique().tolist()
 
 col1, col2 = st.columns([1, 8])
@@ -422,21 +441,9 @@ st.divider()
 # observaciones por día de la semana y hora del día
 counts_day_hour = get_count_hour_per_day(df_obs)
 
-st.header("Distribució per hora i dia")
+st.header(t("participants_page.distribution_by_hour_day"))
 fig_heatmap = heatmap_day_hour(counts_day_hour)
 st.plotly_chart(fig_heatmap, config=config_modebar, use_container_width=True)
 
-st.container(height=50, border=False)
-
-with st.container(border=True):
-    col1, __, col2 = st.columns([10, 1, 5], gap="small")
-    with col1:
-        st.markdown("##### Organitzadors")
-        st.image(
-            f"{directory}/images/organizadores_bioplatgesmet_logos2.png",
-        )
-    with col2:
-        st.markdown("##### Amb el finançament dels projectes europeus")
-        st.image(
-            f"{directory}/images/financiadores_bioplatgesmet_logos.png",
-        )
+# Footer
+create_footer()
