@@ -2,18 +2,13 @@ import math
 import os
 import sys
 
-import pandas as pd
-import plotly.express as px
-import requests
 import streamlit as st
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from i18n import create_footer, init_i18n, t
-from utils import get_count_hour_per_day, heatmap_day_hour
-
+# Set page config FIRST, before any other st commands or local imports
 try:
     directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
 except KeyError:
+    directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
     )
@@ -23,6 +18,15 @@ st.set_page_config(
     page_icon=f"{directory}/images/minka-logo.png",
     page_title="Dashboard Bioplatgesmet",
 )
+
+# Now import the rest
+import pandas as pd
+import plotly.express as px
+import requests
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from i18n import create_footer, init_i18n, t
+from utils import get_count_hour_per_day, heatmap_day_hour
 st.markdown(
     f"""
     <style>

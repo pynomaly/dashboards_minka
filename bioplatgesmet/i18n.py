@@ -38,30 +38,39 @@ def load_translations(lang: str) -> dict:
 
 def get_lang() -> str:
     """Get current language from session state."""
-    if "lang" not in st.session_state:
-        st.session_state.lang = DEFAULT_LANG
-    return st.session_state.lang
+    try:
+        if "lang" not in st.session_state:
+            st.session_state.lang = DEFAULT_LANG
+        return st.session_state.lang
+    except Exception:
+        return DEFAULT_LANG
 
 
 def set_lang(lang: str) -> None:
     """Set current language in session state."""
-    if lang in LANGUAGES:
-        st.session_state.lang = lang
-        # Reload translations
-        st.session_state.translations = load_translations(lang)
+    try:
+        if lang in LANGUAGES:
+            st.session_state.lang = lang
+            # Reload translations
+            st.session_state.translations = load_translations(lang)
+    except Exception:
+        pass
 
 
 def get_translations() -> dict:
     """Get current translations dictionary."""
     current_lang = get_lang()
-    # Always reload if language changed or translations not loaded
-    if (
-        "translations" not in st.session_state
-        or st.session_state.get("_translations_lang") != current_lang
-    ):
-        st.session_state.translations = load_translations(current_lang)
-        st.session_state._translations_lang = current_lang
-    return st.session_state.translations
+    try:
+        # Always reload if language changed or translations not loaded
+        if (
+            "translations" not in st.session_state
+            or st.session_state.get("_translations_lang") != current_lang
+        ):
+            st.session_state.translations = load_translations(current_lang)
+            st.session_state._translations_lang = current_lang
+        return st.session_state.translations
+    except Exception:
+        return load_translations(current_lang)
 
 
 def t(key: str) -> str:

@@ -1,20 +1,13 @@
 import os
 import sys
 
-import folium
-import geopandas as gpd
-import numpy as np
-import pandas as pd
 import streamlit as st
-import streamlit.components.v1 as components
-from branca.colormap import LinearColormap
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from i18n import create_footer, init_i18n, t
-
+# Set page config FIRST, before any other st commands or local imports
 try:
     directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
 except KeyError:
+    directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
     )
@@ -24,6 +17,17 @@ st.set_page_config(
     page_icon=f"{directory}/images/minka-logo.png",
     page_title="Dashboard Bioplatgesmet",
 )
+
+# Now import the rest
+import folium
+import geopandas as gpd
+import numpy as np
+import pandas as pd
+import streamlit.components.v1 as components
+from branca.colormap import LinearColormap
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from i18n import create_footer, init_i18n, t
 
 # Reducimos ancho de la barra lateral
 st.markdown(

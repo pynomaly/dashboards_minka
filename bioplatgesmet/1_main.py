@@ -4,6 +4,7 @@ import os
 try:
     directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
 except KeyError:
+    directory = os.path.dirname(os.path.abspath(__file__))
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
     )

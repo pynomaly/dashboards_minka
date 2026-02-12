@@ -3,12 +3,11 @@ import sys
 
 import streamlit as st
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from i18n import create_footer, init_i18n, t
-
+# Set page config FIRST, before any other st commands or local imports
 try:
     directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
 except KeyError:
+    directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
     )
@@ -18,6 +17,10 @@ st.set_page_config(
     page_icon=f"{directory}/images/minka-logo.png",
     page_title="Dashboard Bioplatgesmet",
 )
+
+# Now import the rest
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from i18n import create_footer, init_i18n, t
 st.markdown(
     f"""
     <style>

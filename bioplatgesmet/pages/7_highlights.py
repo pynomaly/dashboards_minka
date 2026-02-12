@@ -3,20 +3,13 @@ import os
 import sys
 from datetime import date, datetime, timedelta
 
-import pandas as pd
-import requests
 import streamlit as st
-import streamlit.components.v1 as components
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from i18n import create_footer, init_i18n, t
-
-grupos = ["amenazadas", "exoticas", "invasoras", "protegidas"]
-main_project = 264
-
+# Set page config FIRST, before any other st commands or local imports
 try:
     directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
 except KeyError:
+    directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
     )
@@ -26,6 +19,17 @@ st.set_page_config(
     page_icon=f"{directory}/images/minka-logo.png",
     page_title="Dashboard Bioplatgesmet",
 )
+
+# Now import the rest
+import pandas as pd
+import requests
+import streamlit.components.v1 as components
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from i18n import create_footer, init_i18n, t
+
+grupos = ["amenazadas", "exoticas", "invasoras", "protegidas"]
+main_project = 264
 st.markdown(
     f"""
     <style>

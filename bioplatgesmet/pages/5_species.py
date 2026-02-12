@@ -2,9 +2,26 @@ import datetime
 import os
 import sys
 
+import streamlit as st
+
+# Set page config FIRST, before any other st commands or local imports
+try:
+    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
+except KeyError:
+    directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    print(
+        "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
+    )
+
+st.set_page_config(
+    layout="wide",
+    page_icon=f"{directory}/images/minka-logo.png",
+    page_title="Dashboard Bioplatgesmet",
+)
+
+# Now import the rest
 import numpy as np
 import pandas as pd
-import streamlit as st
 import streamlit.components.v1 as components
 from streamlit_extras.metric_cards import style_metric_cards
 
@@ -15,19 +32,6 @@ from utils import (
     fig_cols,
     fig_monthly_bars,
     get_photo_url_from_taxon,
-)
-
-try:
-    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
-except KeyError:
-    print(
-        "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
-    )
-
-st.set_page_config(
-    layout="wide",
-    page_icon=f"{directory}/images/minka-logo.png",
-    page_title="Dashboard Bioplatgesmet",
 )
 st.markdown(
     f"""
