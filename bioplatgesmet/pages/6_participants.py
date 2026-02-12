@@ -12,7 +12,7 @@ from i18n import create_footer, init_i18n, t
 from utils import get_count_hour_per_day, heatmap_day_hour
 
 try:
-    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet_new"
+    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
 except KeyError:
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."

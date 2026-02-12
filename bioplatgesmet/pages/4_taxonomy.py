@@ -12,7 +12,7 @@ from i18n import create_footer, init_i18n, t
 from utils import create_markercluster, get_number_species, get_photo_from_ob
 
 try:
-    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet_new"
+    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
 except KeyError:
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
