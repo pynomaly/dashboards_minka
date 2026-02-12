@@ -15,7 +15,7 @@ grupos = ["amenazadas", "exoticas", "invasoras", "protegidas"]
 main_project = 264
 
 try:
-    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet_new"
+    directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
 except KeyError:
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."

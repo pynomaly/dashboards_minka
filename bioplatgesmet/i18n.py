@@ -180,7 +180,7 @@ def create_sidebar_content():
 def create_footer():
     """Create the standard footer with organizers and funding logos."""
     try:
-        directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet_new"
+        directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
     except KeyError:
         directory = str(MODULE_DIR)
 
