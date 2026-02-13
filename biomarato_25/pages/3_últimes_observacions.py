@@ -1,26 +1,29 @@
 import os
-from datetime import datetime, timedelta
 
-import pandas as pd
-import requests
 import streamlit as st
-from markdownlit import mdlit
-from utils import get_last_obs, reindex
 
-# Variable de entorno para el directorio
+# Set page config FIRST, before any other st commands or local imports
 try:
     directory = f"{os.environ['DASHBOARDS']}/biomarato_25"
 except KeyError:
+    directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
     )
 
-# Configuración de la página
 st.set_page_config(
     layout="wide",
     page_icon=f"{directory}/images/minka-logo.png",
     page_title="Dashboard BioMARató 2025",
 )
+
+# Now import the rest
+from datetime import datetime, timedelta
+
+import pandas as pd
+import requests
+from markdownlit import mdlit
+from utils import get_last_obs, reindex
 
 # configuración de ModeBar
 config_modebar = {

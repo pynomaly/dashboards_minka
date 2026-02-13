@@ -105,14 +105,14 @@ exclude_users = [
 def _fetch_daily_metrics_batch(session, proj_id, day_batches, urls):
     """Fetch metrics for multiple days with parallel processing"""
     from concurrent.futures import ThreadPoolExecutor, as_completed
-    
+
     headers = {"Authorization": f"Bearer {access_token}"}
 
     def fetch_day_metrics(day_str):
         """Fetch all metrics for a single day"""
         params = {
             "project_id": proj_id,
-            "d2": day_str,
+            "created_d2": day_str,
             "order": "desc",
             "order_by": "created_at",
         }
@@ -143,9 +143,11 @@ def _fetch_daily_metrics_batch(session, proj_id, day_batches, urls):
         with ThreadPoolExecutor(max_workers=3) as executor:
             metric_futures = {
                 executor.submit(fetch_metric, (url, metric)): (url, metric)
-                for url, metric in zip(urls, ["species", "participants", "observations"])
+                for url, metric in zip(
+                    urls, ["species", "participants", "observations"]
+                )
             }
-            
+
             metrics = {}
             for future in as_completed(metric_futures):
                 metric_name, value = future.result()
@@ -160,8 +162,11 @@ def _fetch_daily_metrics_batch(session, proj_id, day_batches, urls):
 
     # Process all days in parallel
     with ThreadPoolExecutor(max_workers=5) as executor:
-        day_futures = {executor.submit(fetch_day_metrics, day_str): day_str for day_str in day_batches}
-        
+        day_futures = {
+            executor.submit(fetch_day_metrics, day_str): day_str
+            for day_str in day_batches
+        }
+
         results = []
         for future in as_completed(day_futures):
             results.append(future.result())
@@ -222,7 +227,7 @@ def update_main_metrics(proj_id: int) -> pd.DataFrame:
 def get_list_users(id_project):
     """Parallelized version using concurrent API calls"""
     from concurrent.futures import ThreadPoolExecutor
-    
+
     session = _get_global_session()
     headers = {"Authorization": f"Bearer {access_token}"}
 
@@ -243,10 +248,10 @@ def get_list_users(id_project):
         with ThreadPoolExecutor(max_workers=2) as executor:
             future_users = executor.submit(fetch_url, url1)
             future_identifiers = executor.submit(fetch_url, url2)
-            
+
             users_results = future_users.result()
             identifiers_results = future_identifiers.result()
-            
+
     except Exception as e:
         print(f"Error fetching user data for project {id_project}: {e}")
         return pd.DataFrame(
@@ -607,9 +612,9 @@ def _process_species_with_obs_concurrent(species_df, proj_id, session, type="pro
     """Concurrent species processing for better performance"""
     if species_df is None or len(species_df) == 0:
         return species_df
-    
+
     from concurrent.futures import ThreadPoolExecutor, as_completed
-    
+
     def fetch_single_observation(idx_row_tuple):
         idx, row = idx_row_tuple
         try:
@@ -618,20 +623,22 @@ def _process_species_with_obs_concurrent(species_df, proj_id, session, type="pro
         except Exception as e:
             print(f"Error fetching observation for taxon at index {idx}: {e}")
             return idx, [None, None, None, None]
-    
+
     species_copy = species_df.copy()
-    
+
     # Process observations concurrently with a reasonable thread limit
     with ThreadPoolExecutor(max_workers=5) as executor:
         future_to_idx = {
-            executor.submit(fetch_single_observation, (idx, row)): idx 
+            executor.submit(fetch_single_observation, (idx, row)): idx
             for idx, row in species_copy.iterrows()
         }
-        
+
         for future in as_completed(future_to_idx):
             idx, result = future.result()
-            species_copy.loc[idx, ["first_date", "author", "obs_id", "photo_url"]] = result
-    
+            species_copy.loc[idx, ["first_date", "author", "obs_id", "photo_url"]] = (
+                result
+            )
+
     return species_copy.sort_values(
         by=["first_date", "obs_id"], ascending=False, na_position="last"
     ).reset_index(drop=True)
@@ -677,23 +684,21 @@ if __name__ == "__main__":
 
     # Process species data with optimization
     from concurrent.futures import ThreadPoolExecutor, as_completed
-    
+
     def process_project_species(proj_id):
         """Process species for a single project"""
         try:
             print(f"Get species for project {proj_id}")
             species = get_list_species(proj_id)
-            downloaded_species = pd.read_csv(
-                f"{directory}/data/{proj_id}_species.csv"
-            )
+            downloaded_species = pd.read_csv(f"{directory}/data/{proj_id}_species.csv")
 
             if species is not None and len(species) != len(downloaded_species):
                 with requests.Session() as session:
                     session.headers.update({"Connection": "keep-alive"})
-                    species = _process_species_with_obs_concurrent(species, proj_id, session)
-                species.to_csv(
-                    f"{directory}/data/{proj_id}_species.csv", index=False
-                )
+                    species = _process_species_with_obs_concurrent(
+                        species, proj_id, session
+                    )
+                species.to_csv(f"{directory}/data/{proj_id}_species.csv", index=False)
                 print(f"Species updated for {proj_id}")
                 return f"Success: {proj_id}"
             return f"No update needed: {proj_id}"
@@ -704,9 +709,11 @@ if __name__ == "__main__":
 
     # Process project species concurrently
     with ThreadPoolExecutor(max_workers=3) as executor:
-        future_to_proj = {executor.submit(process_project_species, proj_id): proj_id 
-                         for proj_id in all_projects}
-        
+        future_to_proj = {
+            executor.submit(process_project_species, proj_id): proj_id
+            for proj_id in all_projects
+        }
+
         for future in as_completed(future_to_proj):
             result = future.result()
 
