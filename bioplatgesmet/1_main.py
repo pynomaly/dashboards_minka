@@ -52,14 +52,32 @@ config_modebar = {
     "displaylogo": False,
 }
 st.markdown(
-    f"""
+    """
     <style>
-        [data-testid="stSidebar"] {{
+        /* Force light theme */
+        :root {
+            color-scheme: light !important;
+        }
+        [data-testid="stAppViewContainer"],
+        [data-testid="stHeader"],
+        [data-testid="stSidebar"],
+        .stApp {
+            background-color: white !important;
+            color: #262730 !important;
+        }
+        [data-testid="stSidebar"] {
             width: 300px !important;
-        }}
-        [data-testid="stSidebar"] > div:first-child {{
+            background-color: #f0f2f6 !important;
+        }
+        [data-testid="stSidebar"] > div:first-child {
             width: 300px !important;
-        }}
+            background-color: #f0f2f6 !important;
+        }
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stMarkdownContainer"] span,
+        .stMarkdown, .stText {
+            color: #262730 !important;
+        }
     </style>
     """,
     unsafe_allow_html=True,
