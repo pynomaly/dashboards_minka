@@ -51,37 +51,6 @@ config_modebar = {
     ],
     "displaylogo": False,
 }
-st.markdown(
-    """
-    <style>
-        /* Force light theme */
-        :root {
-            color-scheme: light !important;
-        }
-        [data-testid="stAppViewContainer"],
-        [data-testid="stHeader"],
-        [data-testid="stSidebar"],
-        .stApp {
-            background-color: white !important;
-            color: #262730 !important;
-        }
-        [data-testid="stSidebar"] {
-            width: 300px !important;
-            background-color: #f0f2f6 !important;
-        }
-        [data-testid="stSidebar"] > div:first-child {
-            width: 300px !important;
-            background-color: #f0f2f6 !important;
-        }
-        [data-testid="stMarkdownContainer"] p,
-        [data-testid="stMarkdownContainer"] span,
-        .stMarkdown, .stText {
-            color: #262730 !important;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 
 # Initialize i18n
 init_i18n(current_page="main")
