@@ -1,10 +1,28 @@
 # Run as streamlit run app_biomarato.py --server.port 9003
 
 import os
+
+import streamlit as st
+
+# Set page config FIRST, before any other st commands or local imports
+try:
+    DIRECTORY = f"{os.environ['DASHBOARDS']}/marcolab"
+except KeyError:
+    DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+    print(
+        "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
+    )
+
+st.set_page_config(
+    layout="wide",
+    page_icon=f"{DIRECTORY}/images/minka-logo.png",
+    page_title="Dashboard MarCoLab",
+)
+
+# Now import the rest
 from datetime import datetime, timedelta
 
 import pandas as pd
-import streamlit as st
 import streamlit.components.v1 as components
 from streamlit_extras.metric_cards import style_metric_cards
 from utils import (
@@ -13,21 +31,6 @@ from utils import (
     get_grouped_monthly,
     get_last_week_metrics,
     get_main_metrics,
-)
-
-# Variable de entorno para el directorio
-try:
-    DIRECTORY = f"{os.environ['DASHBOARDS']}/marcolab"
-except KeyError:
-    print(
-        "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
-    )
-
-# Configuración de la página
-st.set_page_config(
-    layout="wide",
-    page_icon=f"{DIRECTORY}/images/minka-logo.png",
-    page_title="Dashboard MarCoLab",
 )
 
 

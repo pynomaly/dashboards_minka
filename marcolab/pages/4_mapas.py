@@ -1,25 +1,28 @@
 import os
-from functools import lru_cache
 
-import pandas as pd
 import streamlit as st
-import streamlit.components.v1 as components
-from utils import create_heatmap, create_markercluster
 
-# Variable de entorno para el directorio
+# Set page config FIRST, before any other st commands or local imports
 try:
     DIRECTORY = f"{os.environ['DASHBOARDS']}/marcolab"
 except KeyError:
+    DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
     )
 
-# Configuración de la página
 st.set_page_config(
     layout="wide",
     page_icon=f"{DIRECTORY}/images/minka-logo.png",
     page_title="Dashboard MarCoLab",
 )
+
+# Now import the rest
+from functools import lru_cache
+
+import pandas as pd
+import streamlit.components.v1 as components
+from utils import create_heatmap, create_markercluster
 
 # configuración de ModeBar
 config_modebar = {

@@ -1,30 +1,32 @@
-import datetime
 import os
 
-import numpy as np
-import pandas as pd
-import requests
 import streamlit as st
-from streamlit_extras.metric_cards import style_metric_cards
 
-base_url = "https://minka-sdg.org"
-api_path = "https://api.minka-sdg.org/v1"
-
-
-# Variable de entorno para el directorio
+# Set page config FIRST, before any other st commands or local imports
 try:
     DIRECTORY = f"{os.environ['DASHBOARDS']}/marcolab"
 except KeyError:
+    DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(
         "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
     )
 
-# Configuración de la página
 st.set_page_config(
     layout="wide",
     page_icon=f"{DIRECTORY}/images/minka-logo.png",
     page_title="Dashboard BioMARató 2025",
 )
+
+# Now import the rest
+import datetime
+
+import numpy as np
+import pandas as pd
+import requests
+from streamlit_extras.metric_cards import style_metric_cards
+
+base_url = "https://minka-sdg.org"
+api_path = "https://api.minka-sdg.org/v1"
 
 st.markdown(
     f"""
