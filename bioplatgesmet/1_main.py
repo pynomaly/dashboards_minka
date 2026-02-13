@@ -54,54 +54,28 @@ config_modebar = {
 st.markdown(
     """
     <style>
-        /* Force light theme - comprehensive */
+        /* Force light theme */
         :root {
-            color-scheme: light only !important;
-            --primary-color: #ff4b4b;
-            --background-color: #ffffff;
-            --secondary-background-color: #f0f2f6;
-            --text-color: #262730;
+            color-scheme: light !important;
         }
-        html, body, .stApp, [data-testid="stAppViewContainer"] {
-            background-color: #ffffff !important;
-            color: #262730 !important;
-        }
-        [data-testid="stHeader"] {
-            background-color: #ffffff !important;
-        }
+        [data-testid="stAppViewContainer"],
+        [data-testid="stHeader"],
         [data-testid="stSidebar"],
-        [data-testid="stSidebar"] > div,
-        [data-testid="stSidebarContent"] {
-            background-color: #f0f2f6 !important;
+        .stApp {
+            background-color: white !important;
             color: #262730 !important;
+        }
+        [data-testid="stSidebar"] {
             width: 300px !important;
-        }
-        /* All text elements */
-        p, span, label, h1, h2, h3, h4, h5, h6, li, a, div,
-        [data-testid="stMarkdownContainer"],
-        .stMarkdown, .stText, .stMetricValue, .stMetricLabel {
-            color: #262730 !important;
-        }
-        /* Tabs, buttons, inputs */
-        .stTabs [data-baseweb="tab-list"],
-        .stTabs [data-baseweb="tab"],
-        button, input, select, textarea {
-            background-color: #ffffff !important;
-            color: #262730 !important;
-        }
-        /* Data frames and tables */
-        .stDataFrame, [data-testid="stDataFrame"],
-        .dataframe, table, th, td {
-            background-color: #ffffff !important;
-            color: #262730 !important;
-        }
-        /* Expanders */
-        [data-testid="stExpander"] {
-            background-color: #ffffff !important;
-        }
-        /* Metric cards */
-        [data-testid="metric-container"] {
             background-color: #f0f2f6 !important;
+        }
+        [data-testid="stSidebar"] > div:first-child {
+            width: 300px !important;
+            background-color: #f0f2f6 !important;
+        }
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stMarkdownContainer"] span,
+        .stMarkdown, .stText {
             color: #262730 !important;
         }
     </style>
