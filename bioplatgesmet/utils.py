@@ -314,7 +314,7 @@ def create_markercluster(df, center=None, zoom=10):
         folium.Marker(
             location=locations[i],
             popup=folium.Popup(
-                f"<b>Taxon: </b>{df['taxon_name'].values[i]}<br><b>User: </b>{df['user_login'].values[i]}<br><a href='https://minka-sdg.org/observations/{df['id'].values[i]}' target='_blank'>Minka Observation</a>",
+                f"<b>Taxon: </b>{df['taxon_name'].values[i]}<br><b>User: </b>{df['user_login'].values[i]}<br><a href='https://minka-sdg.org/observations/{df['id'].values[i]}' target='_blank'>MINKA Observation</a>",
                 min_width=150,
                 max_width=150,
             ),
