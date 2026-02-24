@@ -446,7 +446,7 @@ with st.container():
         temporal_df["date"] = pd.to_datetime(temporal_df["observed_on_details.date"])
 
         # Filter from 25/02/2026 to today
-        start_date = pd.Timestamp("2025-01-25")
+        start_date = pd.Timestamp("2026-02-25")
         end_date = pd.Timestamp.today()
         temporal_df = temporal_df[
             (temporal_df["date"] >= start_date) & (temporal_df["date"] <= end_date)
