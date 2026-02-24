@@ -3,6 +3,7 @@ import sys
 
 import pandas as pd
 import plotly.express as px
+import requests
 import streamlit as st
 import streamlit.components.v1 as components
 from utils import create_heatmap, create_markercluster, get_photo_url_from_taxon
@@ -42,6 +43,8 @@ st.markdown(
 
 # Initialize i18n
 init_i18n(current_page="eada_contribution")
+API_PATH = "https://api.minka-sdg.org/v1"
+session = requests.Session()
 
 
 # Funciones
@@ -57,6 +60,21 @@ def load_observations_data():
         return pd.read_parquet(f"{directory}/data/eada/observations_eada.parquet")
     except:
         return pd.DataFrame()
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_total_metrics(df_accounts, proj_id, session=session):
+    user_ids = df_accounts["user_id"].to_list()
+    users_str = ",".join(user_ids)
+
+    url1 = f"{API_PATH}/observations?project_id={proj_id}&user_id={users_str}&order=desc&order_by=created_at"
+    url2 = f"{API_PATH}/observations/species_counts?project_id={proj_id}&user_id={users_str}"
+
+    obs = session.get(url1).json()["total_results"]
+    species = session.get(url2).json()["total_results"]
+    ids = df_accounts["identifications_proj"].sum()
+
+    return obs, species, ids
 
 
 @st.cache_resource(ttl=3600, show_spinner=False)
@@ -89,6 +107,30 @@ with st.container():
         st.markdown("")
         st.markdown("")
 
+# Total Contribution Metrics
+with st.container():
+    # Default values
+    total_obs = 0
+    total_species = 0
+    total_ids = 0
+
+    # Try to get metrics from API if accounts data is available
+    accounts_df = load_accounts_data()
+    if len(accounts_df) > 0 and "user_id" in accounts_df.columns:
+        try:
+            total_obs, total_species, total_ids = get_total_metrics(accounts_df, 264)
+        except:
+            pass
+
+    __, col1, col2, col3, __ = st.columns(5)
+    with col1:
+        st.metric(label="**Total Observations**", value=total_obs)
+    with col2:
+        st.metric(label="**Total Species**", value=total_species)
+    with col3:
+        st.metric(label="**Total Identifications**", value=int(total_ids))
+
+st.divider()
 
 # Participation and Contribution Metrics
 with st.container():
