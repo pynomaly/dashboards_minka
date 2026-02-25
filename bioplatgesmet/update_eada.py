@@ -287,7 +287,8 @@ def save_df_observations(results, file_path):
             "user.icon_url",
             "taxon",
             "taxon.default_photo",
-        ]
+        ],
+        errors="ignore",
     )
     df_results.to_parquet(file_path)
     return df_results
@@ -317,12 +318,6 @@ if __name__ == "__main__":
 
     # convertir columna user_id, por verificación
     df_accounts["user_id"] = df_accounts["user_id"].astype(int)
-
-    # crea columnas del diccionario
-    print("get_info_users")
-    df_accounts = df_accounts.join(
-        df_accounts["user_id"].apply(get_info_users).apply(pd.Series)
-    )
 
     # participation
 
@@ -358,12 +353,16 @@ if __name__ == "__main__":
 
     # Extraer identifiers dentro de la lista
     print("Get identifiers")
-    df_obs["identifiers_login"] = df_obs["non_owner_ids"].apply(
-        lambda lst: [d["user"]["login"] for d in lst] if lst else []
-    )
-    df_obs["identifiers_id"] = df_obs["non_owner_ids"].apply(
-        lambda lst: [d["user"]["id"] for d in lst] if lst else []
-    )
+    if "non_owner_ids" in df_obs.columns:
+        df_obs["identifiers_login"] = df_obs["non_owner_ids"].apply(
+            lambda lst: [d["user"]["login"] for d in lst] if lst else []
+        )
+        df_obs["identifiers_id"] = df_obs["non_owner_ids"].apply(
+            lambda lst: [d["user"]["id"] for d in lst] if lst else []
+        )
+    else:
+        df_obs["identifiers_login"] = [[] for _ in range(len(df_obs))]
+        df_obs["identifiers_id"] = [[] for _ in range(len(df_obs))]
 
     # True si ALGÚN id de la celda es una cuenta de EADA student
     eada_user_ids = set(df_accounts["user_id"].to_list())
@@ -373,8 +372,9 @@ if __name__ == "__main__":
 
     # get_taxonomy
     print("Get taxonomy")
-    taxonomy = df_obs["identifications"].apply(get_taxonomy).apply(pd.Series)
-    df_obs = pd.concat([df_obs, taxonomy], axis=1)
+    if "identifications" in df_obs.columns:
+        taxonomy = df_obs["identifications"].apply(get_taxonomy).apply(pd.Series)
+        df_obs = pd.concat([df_obs, taxonomy], axis=1)
 
     # save results
     df_obs.to_parquet(parquet_file)
