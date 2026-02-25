@@ -1,4 +1,3 @@
-import argparse
 import math
 import os
 
@@ -13,8 +12,12 @@ except KeyError:
     )
 
 API_PATH = "https://api.minka-sdg.org/v1"
-CODE_IN_EMAIL = "eada.edu"
 PROJECT_ID = 264
+CODE_IN_NAME = "_EADA"
+ACCOUNTS_FILE = f"{DIRECTORY}/data/eada/eada_users.csv"
+START_USER_ID = 18090  # Last registered user to start from
+
+session = requests.Session()
 
 taxon_groups = {
     12: "Plants",
@@ -29,10 +32,82 @@ taxon_groups = {
     6: "Reptilia",
     13: "Fungi",
 }
-session = requests.Session()
 
-# Change every day
-user_file = "get_user_list.csv"
+
+def get_users_created(session=session):
+    """
+    Search for users with CODE_IN_NAME in their real name.
+    Starts from the last known user_id in the CSV or from START_USER_ID.
+    Stops after 100 consecutive empty/non-existent user IDs.
+    """
+    # Try to load existing accounts
+    try:
+        df_accounts = pd.read_csv(ACCOUNTS_FILE)
+        # Start from the max user_id + 1 in the existing file
+        i = df_accounts["user_id"].max() + 1
+        print(f"Existing file found. Starting from user_id: {i}")
+    except FileNotFoundError:
+        i = START_USER_ID
+        df_accounts = pd.DataFrame()
+        print(f"No existing file. Starting from user_id: {i}")
+
+    max_empty = 100  # Maximum consecutive empty IDs before stopping
+    empty_count = 0
+    total = []
+
+    print(f"Searching for users with '{CODE_IN_NAME}' in their name...")
+
+    while empty_count < max_empty:
+        user_url = f"{API_PATH}/users/{i}"
+        try:
+            response = session.get(user_url)
+
+            if response.status_code != 200:
+                print(f"Error {response.status_code} at ID {i}, skipping...")
+                empty_count += 1
+                i += 1
+                continue
+
+            json_data = response.json()
+
+            if "results" not in json_data or not json_data["results"]:
+                empty_count += 1
+            else:
+                user_data = json_data["results"][0]
+                user_name = user_data.get("name", "") or ""  # Handle None
+
+                if CODE_IN_NAME in user_name:
+                    data = {
+                        "user_id": i,
+                        "user_name": user_data["login"],
+                        "real_name": user_name,
+                        "created_at": user_data["created_at"],
+                        "observations_count": user_data["observations_count"],
+                        "identifications_count": user_data["identifications_count"],
+                        "species_count": user_data["species_count"],
+                    }
+                    total.append(data)
+                    print(f"Found EADA user: {user_data['login']} (ID: {i})")
+                    empty_count = 0  # Reset counter when we find a valid user
+                else:
+                    empty_count += 1  # User exists but not EADA
+
+            i += 1
+
+        except requests.RequestException as e:
+            print(f"Request error: {e}")
+            break
+
+    if len(total) > 0:
+        new_users_df = pd.DataFrame(total)
+        df_accounts = pd.concat([df_accounts, new_users_df], ignore_index=True)
+        # Remove duplicates based on user_id
+        df_accounts = df_accounts.drop_duplicates(subset=["user_id"], keep="last")
+        print(f"Found {len(total)} new EADA users. Total: {len(df_accounts)}")
+    else:
+        print("No new EADA users found.")
+
+    return df_accounts
 
 
 # functions
@@ -47,7 +122,7 @@ def get_info_users(user_id, session=session) -> dict:
         json_data = response.json()
 
         if "results" not in json_data or not json_data["results"]:
-            empty_count += 1  # Incrementar si el usuario no existe
+            return None
         else:
             data = {
                 "created_at": json_data["results"][0]["created_at"],
@@ -227,63 +302,17 @@ def get_taxonomy(identifications):
 
 
 if __name__ == "__main__":
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(description="Update EADA data from Minka API")
-    parser.add_argument(
-        "--mode",
-        choices=["update_users", "test", "default"],
-        default="default",
-        help="Execution mode: 'update_users' to filter by email, 'test' for test users, 'default' to skip user update",
-    )
-    args = parser.parse_args()
 
-    try:
-        df_users = pd.read_csv(f"data/eada/{user_file}", sep=";")
+    df_accounts = get_users_created()
 
-    except:
-        print(f"No file found {user_file}. Exiting without creating files.")
+    if len(df_accounts) == 0:
+        print("No EADA users found. Exiting without creating files.")
         exit(0)
 
-    # Eliminamos última fila, que incluye los totales
-    df_users = df_users[:-1]
-
-    # seleccionamos estudiantes
-    if args.mode == "update_users":
-        df_accounts = df_users.loc[
-            df_users["email"].str.contains(CODE_IN_EMAIL), ["id", "login"]
-        ].reset_index(drop=True)
-
-        # Check if there are users that meet the condition
-        if len(df_accounts) == 0:
-            print(
-                f"No users found with email containing '{CODE_IN_EMAIL}'. Exiting without creating files."
-            )
-            exit(0)
-
-        df_accounts.columns = ["user_id", "user_name"]
-
-        # Dejamos las columnas útiles, eliminamos los emails por privacidad
-        df_accounts[["user_id", "user_name"]].to_csv(
-            "data/eada/get_user_list.csv", index=False
-        )
-
-    elif args.mode == "test":
-        # Para pruebas
-        df_accounts = df_users.loc[
-            df_users["login"].isin(
-                [
-                    "xasalva",
-                    "jaume-piera",
-                    "carlosrodero",
-                    "mediambient_ajelprat",
-                    "bertinhaco",
-                ]
-            ),
-            ["id", "login"],
-        ].reset_index(drop=True)
-
-    else:
-        print("Not updating new users.")
+    # Ensure directory exists and save users
+    os.makedirs(os.path.dirname(ACCOUNTS_FILE), exist_ok=True)
+    df_accounts.to_csv(ACCOUNTS_FILE, index=False)
+    print(f"Saved {len(df_accounts)} users to {ACCOUNTS_FILE}")
 
     # convertir columna user_id, por verificación
     df_accounts["user_id"] = df_accounts["user_id"].astype(int)
@@ -336,8 +365,9 @@ if __name__ == "__main__":
     )
 
     # True si ALGÚN id de la celda es una cuenta de EADA student
+    eada_user_ids = set(df_accounts["user_id"].to_list())
     df_obs["eada_identifier"] = df_obs["identifiers_id"].apply(
-        lambda x: bool(set(x) & set())
+        lambda x: bool(set(x) & eada_user_ids)
     )
 
     # get_taxonomy
