@@ -1,5 +1,6 @@
 import math
 import os
+import re
 
 import pandas as pd
 import requests
@@ -13,7 +14,7 @@ except KeyError:
 
 API_PATH = "https://api.minka-sdg.org/v1"
 PROJECT_ID = 264
-CODE_IN_NAME = "_EADA"
+CODE_IN_NAME = r"\bEADA\b"  # Match EADA as a complete word
 ACCOUNTS_FILE = f"{DIRECTORY}/data/eada/eada_users.csv"
 START_USER_ID = 18090  # Last registered user to start from
 
@@ -76,7 +77,7 @@ def get_users_created(session=session):
                 user_data = json_data["results"][0]
                 user_name = user_data.get("name", "") or ""  # Handle None
 
-                if CODE_IN_NAME in user_name:
+                if re.search(CODE_IN_NAME, user_name):
                     data = {
                         "user_id": i,
                         "user_name": user_data["login"],
