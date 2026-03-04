@@ -166,7 +166,7 @@ with st.container():
     with col_left:
         if len(observations_df) > 0:
             st.dataframe(
-                observations_df.sort_values(by="Observations"),
+                observations_df.sort_values(by="Observations", ascending=False),
                 use_container_width=True,
                 hide_index=True,
             )
