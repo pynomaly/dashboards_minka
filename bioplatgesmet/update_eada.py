@@ -17,6 +17,7 @@ PROJECT_ID = 264
 CODE_IN_NAME = r"\bEADA\b"  # Match EADA as a complete word
 ACCOUNTS_FILE = f"{DIRECTORY}/data/eada/eada_users.csv"
 START_USER_ID = 18090  # Last registered user to start from
+EMAIL_FILE = f"{DIRECTORY}/data/eada/get_user_list.csv"
 
 session = requests.Session()
 
@@ -33,6 +34,56 @@ taxon_groups = {
     6: "Reptilia",
     13: "Fungi",
 }
+
+
+def get_users_email_created(session=session):
+    try:
+        df_accounts = pd.read_csv(EMAIL_FILE)
+    except:
+        get_users_created()
+
+    condition1 = df_accounts["email"].str.contains("eada.net")
+    condition2 = df_accounts["name"].str.contains(CODE_IN_NAME)
+
+    eada_users = df_accounts.loc[(condition1 or condition2), "id"].to_list()
+
+    total = []
+    for eada_user in eada_users:
+        user_url = f"{API_PATH}/users/{i}"
+        try:
+            response = session.get(user_url)
+
+            if response.status_code != 200:
+                print(f"Error {response.status_code} at ID {i}, skipping...")
+                empty_count += 1
+                i += 1
+                continue
+
+            json_data = response.json()
+
+            if "results" not in json_data or not json_data["results"]:
+                empty_count += 1
+            else:
+                user_data = json_data["results"][0]
+                user_name = user_data.get("name", "") or ""  # Handle None
+
+                if re.search(CODE_IN_NAME, user_name):
+                    data = {
+                        "user_id": i,
+                        "user_name": user_data["login"],
+                        "real_name": user_name,
+                        "created_at": user_data["created_at"],
+                        "observations_count": user_data["observations_count"],
+                        "identifications_count": user_data["identifications_count"],
+                        "species_count": user_data["species_count"],
+                    }
+                    total.append(data)
+                    print(f"Found EADA user: {user_data['login']} (ID: {i})")
+        except:
+            print(f"Error with EADA user: {eada_user}")
+    users_df = pd.DataFrame(total)
+    users_df.drop_duplicates(inplace=True)
+    return users_df
 
 
 def get_users_created(session=session):

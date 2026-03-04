@@ -62,16 +62,13 @@ def load_observations_data():
         return pd.DataFrame()
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
-def get_total_metrics(df_accounts, proj_id, session=session):
-    user_ids = df_accounts["user_id"].to_list()
-    users_str = ",".join(user_ids)
+# @st.cache_data(ttl=3600, show_spinner=False)
+def get_total_metrics(df_accounts):
 
-    url1 = f"{API_PATH}/observations?project_id={proj_id}&user_id={users_str}&order=desc&order_by=created_at"
-    url2 = f"{API_PATH}/observations/species_counts?project_id={proj_id}&user_id={users_str}"
-
-    obs = session.get(url1).json()["total_results"]
-    species = session.get(url2).json()["total_results"]
+    # obs = session.get(url1).json()["total_results"]
+    obs = df_accounts["observations_proj"].sum()
+    # species = session.get(url2).json()["total_results"]
+    species = len(df_accounts["species_proj"].unique())
     ids = df_accounts["identifications_proj"].sum()
 
     return obs, species, ids
@@ -97,6 +94,8 @@ def load_accounts_data():
 
 
 # Header
+obs_eada_df = load_observations_data()
+
 with st.container():
     # Título
     col1, col2 = st.columns([1, 15])
@@ -118,25 +117,80 @@ with st.container():
     accounts_df = load_accounts_data()
     if len(accounts_df) > 0 and "user_id" in accounts_df.columns:
         try:
-            total_obs, total_species, total_ids = get_total_metrics(accounts_df, 264)
+            total_obs, total_species, total_ids = get_total_metrics(accounts_df)
         except:
             pass
 
     __, col1, col2, col3, __ = st.columns(5)
     with col1:
-        st.metric(label="**Total Observations**", value=total_obs)
+        st.metric(label="**Total observations**", value=total_obs.item())
     with col2:
-        st.metric(label="**Total Species**", value=total_species)
+        st.metric(label="**Total species**", value=total_species)
     with col3:
-        st.metric(label="**Total Identifications**", value=int(total_ids))
+        st.metric(label="**Total identifications**", value=total_ids.item())
 
 st.divider()
 
+
+# Spatial Distribution Metrics
+with st.container():
+    st.header("Spatial distribution metrics")
+
+    if len(obs_eada_df) == 0:
+        st.info("No observation data available for mapping.")
+    elif "geojson.coordinates" in obs_eada_df.columns:
+        # Prepare dataframe with latitude and longitude from geojson.coordinates
+        map_df = obs_eada_df.copy()
+        # Extract latitude and longitude from geojson.coordinates [lon, lat]
+        map_df["longitude"] = map_df["geojson.coordinates"].apply(
+            lambda x: x[0] if x is not None and len(x) >= 2 else None
+        )
+        map_df["latitude"] = map_df["geojson.coordinates"].apply(
+            lambda x: x[1] if x is not None and len(x) >= 2 else None
+        )
+        map_df = map_df.dropna(subset=["latitude", "longitude"])
+
+        # Rename columns to match expected format for create_markercluster
+        if "taxon.name" in map_df.columns:
+            map_df["taxon_name"] = map_df["taxon.name"]
+        if "user.login" in map_df.columns:
+            map_df["user_login"] = map_df["user.login"]
+
+        if len(map_df) > 0:
+            map1, map2 = st.columns([10, 10], gap="small")
+
+            # Calculate center from actual data
+            center_lat = map_df["latitude"].mean()
+            center_lon = map_df["longitude"].mean()
+
+            data_hash = hash(
+                str(map_df.shape) + str(map_df["id"].iloc[0] if len(map_df) > 0 else "")
+            )
+            heatmap = create_heatmap(map_df, center=[center_lat, center_lon])
+            markermap = create_markercluster(map_df, center=[center_lat, center_lon])
+
+            with map1:
+                st.markdown("**Heatmap**")
+                map_html1 = heatmap._repr_html_()
+                components.html(map_html1, height=500, scrolling=False)
+
+            with map2:
+                st.markdown("**Marker Map**")
+                map_html2 = markermap._repr_html_()
+                components.html(map_html2, height=500, scrolling=False)
+
+        else:
+            st.info("No location data available for mapping.")
+    else:
+        st.info("Geolocation data not available.")
+
+
 # Participation and Contribution Metrics
 with st.container():
-    st.header("Participation and Contribution Metrics")
+    st.header("Participation and contribution metrics")
 
     accounts_df = load_accounts_data()
+    accounts_df = accounts_df.sort_values(by="observations_proj", ascending=False)
 
     # Prepare dataframe with user, observations, identifications and species
     required_cols = [
@@ -179,19 +233,19 @@ with st.container():
 
     with col_right:
         st.metric(
-            label=" **Average Observations** per User", value=f"{mean_observations:.2f}"
+            label=" **Average observations** per user", value=f"{mean_observations:.2f}"
         )
         st.metric(
-            label="**Average Identifications** per User",
+            label="**Average identifications** per user",
             value=f"{mean_identifications:.2f}",
         )
-        st.metric(label="**Average Species** per User", value=f"{mean_species:.2f}")
+        st.metric(label="**Average species** per user", value=f"{mean_species:.2f}")
 
 st.divider()
 
 # Data Quality and Validation Metrics
 with st.container():
-    st.header("Data Quality and Validation Metrics")
+    st.header("Data quality and validation metrics")
 
     # Load observations data for peer interaction calculation
     obs_df_quality = load_observations_data()
@@ -212,14 +266,15 @@ with st.container():
 
     if len(quality_df) > 0:
         # Calculate Quality Rate (handle division by zero)
-        quality_df["Quality Rate"] = quality_df.apply(
+        quality_df["Quality rate"] = quality_df.apply(
             lambda row: (
                 f"{round((row['research_obs'] / row['observations_proj']) * 100, 2)}%"
                 if row["observations_proj"] > 0
-                else 0
+                else "0%"
             ),
             axis=1,
         )
+        quality_df = quality_df.sort_values(by="research_obs", ascending=False)
 
         # Calculate Peer Interaction Rate from identifiers_id field
         def count_peer_identifications(user_id):
@@ -249,17 +304,17 @@ with st.container():
             [
                 "user_name",
                 "research_obs",
-                "Quality Rate",
+                "Quality rate",
                 "peer_identifications",
                 "peer_interaction_rate",
             ]
         ].copy()
         quality_display_df.columns = [
             "User",
-            "Research Grade Obs.",
-            "Quality Rate",
-            "Peer Identifications",
-            "Peer Interaction Rate",
+            "Research grade obs.",
+            "Quality rate",
+            "Peer identifications",
+            "Peer interaction rate",
         ]
 
         avg_research_obs = quality_df["research_obs"].sum() / len(quality_df)
@@ -271,16 +326,16 @@ with st.container():
         quality_display_df = pd.DataFrame(
             columns=[
                 "User",
-                "Research Grade Obs.",
-                "Quality Rate",
-                "Peer Identifications",
-                "Peer Interaction Rate",
+                "Research grade obs.",
+                "Quality rate",
+                "Peer identifications",
+                "Peer interaction rate",
             ]
         )
         avg_research_obs = 0
         avg_peer_interaction = 0
 
-    col_left, __, col_right = st.columns([3, 1, 3])
+    col_left, __, col_right = st.columns([5, 1, 3])
 
     with col_left:
         st.dataframe(
@@ -290,20 +345,20 @@ with st.container():
         )
         st.caption(
             """
-            * **Research Grade Obs.**: Number of observations that have reached validated or research-grade status.
-            * **Quality Rate**: Ratio of research-grade observations to total observations.
-            * **Peer Identifications**: Number of observations from other users that this user has identified.
-            * **Peer Interaction Rate**: Ratio of peer identifications to the user's own observations.
+            * **Research grade obs.**: Number of observations that have reached validated or research-grade status.
+            * **Quality rate**: Ratio of research-grade observations to total observations.
+            * **Peer identifications**: Number of observations from other users that this user has identified.
+            * **Peer interaction rate**: Ratio of peer identifications to the user's own observations.
             """
         )
 
     with col_right:
         st.metric(
-            label="**Average Research Observations** per User",
+            label="**Average research observations** per user",
             value=f"{avg_research_obs:.2f}",
         )
         st.metric(
-            label="**Average Peer Interaction** per User",
+            label="**Average peer interaction** per user",
             value=f"{avg_peer_interaction:.2f}",
         )
 
@@ -312,7 +367,7 @@ st.divider()
 
 # Taxonomic Coverage Metrics
 with st.container():
-    st.header("Taxonomic Coverage Metrics")
+    st.header("Taxonomic coverage metrics")
 
     # Taxonomic groups mapping: taxon_id -> name
     taxon_groups = {
@@ -341,6 +396,7 @@ with st.container():
         if len(available_columns) > 1 and len(accounts_df) > 0:
             taxonomic_df = accounts_df[available_columns].copy()
             taxonomic_df.columns = ["User"] + available_columns[1:]
+
         else:
             # Show empty table with headers
             taxonomic_df = pd.DataFrame(columns=["User"] + list(taxon_groups.values()))
@@ -353,7 +409,7 @@ with st.container():
         )
 
     with col_right:
-        st.markdown("**Total Observations by Group**")
+        st.markdown("**Total observations by group**")
 
         # Calculate total observations per taxonomic group
         taxon_totals = []
@@ -388,9 +444,7 @@ with st.container():
 
 # Most Observed Species Gallery
 with st.container():
-    st.subheader("10 Most Observed Species")
-
-    obs_eada_df = load_observations_data()
+    st.subheader("10 Most observed species")
 
     if len(obs_eada_df) > 0 and "taxon.name" in obs_eada_df.columns:
         # Filter only species rank and count observations
@@ -804,60 +858,6 @@ with st.container():
         with col4:
             st.metric(label="**% Observations with IDs**", value="0.0%")
 
-st.divider()
-
-
-# Spatial Distribution Metrics
-with st.container():
-    st.header("Spatial Distribution Metrics")
-
-    if len(obs_eada_df) == 0:
-        st.info("No observation data available for mapping.")
-    elif "geojson.coordinates" in obs_eada_df.columns:
-        # Prepare dataframe with latitude and longitude from geojson.coordinates
-        map_df = obs_eada_df.copy()
-        # Extract latitude and longitude from geojson.coordinates [lon, lat]
-        map_df["longitude"] = map_df["geojson.coordinates"].apply(
-            lambda x: x[0] if x is not None and len(x) >= 2 else None
-        )
-        map_df["latitude"] = map_df["geojson.coordinates"].apply(
-            lambda x: x[1] if x is not None and len(x) >= 2 else None
-        )
-        map_df = map_df.dropna(subset=["latitude", "longitude"])
-
-        # Rename columns to match expected format for create_markercluster
-        if "taxon.name" in map_df.columns:
-            map_df["taxon_name"] = map_df["taxon.name"]
-        if "user.login" in map_df.columns:
-            map_df["user_login"] = map_df["user.login"]
-
-        if len(map_df) > 0:
-            map1, map2 = st.columns([10, 10], gap="small")
-
-            # Calculate center from actual data
-            center_lat = map_df["latitude"].mean()
-            center_lon = map_df["longitude"].mean()
-
-            data_hash = hash(
-                str(map_df.shape) + str(map_df["id"].iloc[0] if len(map_df) > 0 else "")
-            )
-            heatmap = create_heatmap(map_df, center=[center_lat, center_lon])
-            markermap = create_markercluster(map_df, center=[center_lat, center_lon])
-
-            with map1:
-                st.markdown("**Heatmap**")
-                map_html1 = heatmap._repr_html_()
-                components.html(map_html1, height=600)
-
-            with map2:
-                st.markdown("**Marker Map**")
-                map_html2 = markermap._repr_html_()
-                components.html(map_html2, height=600)
-
-        else:
-            st.info("No location data available for mapping.")
-    else:
-        st.info("Geolocation data not available.")
 
 # Footer
 create_footer()

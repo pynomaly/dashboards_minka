@@ -137,9 +137,9 @@ def create_nav_menu(current_page: str = None):
         "taxonomy": "pages/4_taxonomy.py",
         "species": "pages/5_species.py",
         "participants": "pages/6_participants.py",
-        "highlights": "pages/7_highlights.py",
-        "data_source": "pages/8_data_source.py",
-        "eada_contribution": "pages/9_EADA_contribution.py",
+        "eada_contribution": "pages/7_EADA_contribution.py",
+        "highlights": "pages/8_highlights.py",
+        "data_source": "pages/9_data_source.py",
     }
 
     st.sidebar.markdown("---")
@@ -193,7 +193,7 @@ def create_footer():
     except KeyError:
         directory = str(MODULE_DIR)
 
-    st.container(height=50, border=False)
+    st.container(height=30, border=False)
 
     with st.container(border=True):
         col1, __, col2 = st.columns([10, 1, 5], gap="small")
