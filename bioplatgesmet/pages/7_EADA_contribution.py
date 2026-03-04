@@ -44,6 +44,7 @@ st.markdown(
 # Initialize i18n
 init_i18n(current_page="eada_contribution")
 API_PATH = "https://api.minka-sdg.org/v1"
+PROJ_ID = 264
 session = requests.Session()
 
 
@@ -63,12 +64,16 @@ def load_observations_data():
 
 
 # @st.cache_data(ttl=3600, show_spinner=False)
-def get_total_metrics(df_accounts):
+def get_total_metrics(
+    df_accounts,
+):
 
     # obs = session.get(url1).json()["total_results"]
     obs = df_accounts["observations_proj"].sum()
     # species = session.get(url2).json()["total_results"]
-    species = len(df_accounts["species_proj"].unique())
+    user_ids = ",".join(df_accounts["user_id"].astype(str).to_list())
+    species_url = f"https://api.minka-sdg.org/v1/observations/species_counts?project_id={PROJ_ID}&user_id={user_ids}"
+    species = session.get(species_url).json()["total_results"]
     ids = df_accounts["identifications_proj"].sum()
 
     return obs, species, ids
@@ -114,18 +119,18 @@ with st.container():
     total_ids = 0
 
     # Try to get metrics from API if accounts data is available
-    accounts_df = load_accounts_data()
-    if len(accounts_df) > 0 and "user_id" in accounts_df.columns:
+    df_accounts = load_accounts_data()
+    if len(df_accounts) > 0 and "user_id" in df_accounts.columns:
         try:
-            total_obs, total_species, total_ids = get_total_metrics(accounts_df)
+            total_obs, total_species, total_ids = get_total_metrics(df_accounts)
         except:
             pass
 
     __, col1, col2, col3, __ = st.columns(5)
     with col1:
-        st.metric(label="**Total observations**", value=total_obs.item())
+        st.metric(label="**Total observations**", value=total_obs)
     with col2:
-        st.metric(label="**Total species**", value=total_species)
+        st.metric(label="**Different species**", value=total_species)
     with col3:
         st.metric(label="**Total identifications**", value=total_ids.item())
 
@@ -189,8 +194,8 @@ with st.container():
 with st.container():
     st.header("Participation and contribution metrics")
 
-    accounts_df = load_accounts_data()
-    accounts_df = accounts_df.sort_values(by="observations_proj", ascending=False)
+    df_accounts = load_accounts_data()
+    df_accounts = df_accounts.sort_values(by="observations_proj", ascending=False)
 
     # Prepare dataframe with user, observations, identifications and species
     required_cols = [
@@ -199,10 +204,10 @@ with st.container():
         "identifications_proj",
         "species_proj",
     ]
-    if len(accounts_df) > 0 and all(
-        col in accounts_df.columns for col in required_cols
+    if len(df_accounts) > 0 and all(
+        col in df_accounts.columns for col in required_cols
     ):
-        observations_df = accounts_df[required_cols].copy()
+        observations_df = df_accounts[required_cols].copy()
         observations_df.columns = ["User", "Observations", "Identifications", "Species"]
         mean_observations = observations_df["Observations"].mean()
         mean_identifications = observations_df["Identifications"].mean()
@@ -257,10 +262,10 @@ with st.container():
         "research_obs",
         "observations_proj",
     ]
-    if len(accounts_df) > 0 and all(
-        col in accounts_df.columns for col in required_quality_cols
+    if len(df_accounts) > 0 and all(
+        col in df_accounts.columns for col in required_quality_cols
     ):
-        quality_df = accounts_df[required_quality_cols].copy()
+        quality_df = df_accounts[required_quality_cols].copy()
     else:
         quality_df = pd.DataFrame(columns=required_quality_cols)
 
@@ -292,7 +297,7 @@ with st.container():
         )
         quality_df["peer_interaction_rate"] = quality_df.apply(
             lambda row: (
-                round(row["peer_identifications"] / row["observations_proj"], 2)
+                round((row["peer_identifications"] / row["observations_proj"]) * 100, 2)
                 if row["observations_proj"] > 0
                 else 0
             ),
@@ -319,7 +324,7 @@ with st.container():
 
         avg_research_obs = quality_df["research_obs"].sum() / len(quality_df)
         avg_peer_interaction = round(
-            quality_df["peer_identifications"].sum() / len(accounts_df),
+            quality_df["peer_identifications"].sum() / len(df_accounts),
             2,
         )
     else:
@@ -391,10 +396,10 @@ with st.container():
         taxonomic_columns = ["user_name"] + list(taxon_groups.values())
         # Filter only existing columns
         available_columns = [
-            col for col in taxonomic_columns if col in accounts_df.columns
+            col for col in taxonomic_columns if col in df_accounts.columns
         ]
-        if len(available_columns) > 1 and len(accounts_df) > 0:
-            taxonomic_df = accounts_df[available_columns].copy()
+        if len(available_columns) > 1 and len(df_accounts) > 0:
+            taxonomic_df = df_accounts[available_columns].copy()
             taxonomic_df.columns = ["User"] + available_columns[1:]
 
         else:
@@ -414,8 +419,8 @@ with st.container():
         # Calculate total observations per taxonomic group
         taxon_totals = []
         for taxon_id, taxon_name in taxon_groups.items():
-            if len(accounts_df) > 0 and taxon_name in accounts_df.columns:
-                total = accounts_df[taxon_name].sum()
+            if len(df_accounts) > 0 and taxon_name in df_accounts.columns:
+                total = df_accounts[taxon_name].sum()
             else:
                 total = 0
             taxon_totals.append(
@@ -441,6 +446,7 @@ with st.container():
             else:
                 st.markdown(f"- **{taxon_name}**: {total} observations")
 
+st.divider()
 
 # Most Observed Species Gallery
 with st.container():
@@ -488,7 +494,7 @@ st.divider()
 
 # Newly Recorded Species Gallery
 with st.container():
-    st.subheader("Newly Recorded Species")
+    st.subheader("Newly recorded species")
     st.markdown("5 species most recently added to the EADA observations dataset")
 
     if len(obs_eada_df) > 0 and "observed_on_details.date" in obs_eada_df.columns:
@@ -534,7 +540,7 @@ st.divider()
 
 # Temporal Distribution Metrics
 with st.container():
-    st.header("Temporal Distribution Metrics")
+    st.header("Temporal distribution metrics")
 
     if len(obs_eada_df) > 0 and "observed_on_details.date" in obs_eada_df.columns:
         # Prepare temporal data
@@ -550,7 +556,7 @@ with st.container():
 
         if len(temporal_df) > 0:
             # Chart 1: Total observations over time with aggregation selector
-            st.subheader("Total Observations Over Time")
+            st.subheader("Total observations over time")
 
             aggregation = st.selectbox(
                 "Aggregation",
@@ -592,7 +598,7 @@ with st.container():
             )
             fig1.update_layout(
                 xaxis_title="Date",
-                yaxis_title="Number of Observations",
+                yaxis_title="Number of observations",
                 hovermode="x unified",
                 yaxis=dict(rangemode="tozero"),
                 xaxis=dict(range=[start_date, end_date]),
@@ -602,7 +608,7 @@ with st.container():
             st.divider()
 
             # Chart 2: Observations by user over time
-            st.subheader("Observations by User Over Time")
+            st.subheader("Observations by user over time")
 
             # Get unique users
             if "user.login" in temporal_df.columns:
@@ -610,14 +616,14 @@ with st.container():
                 col_selector, _ = st.columns([1, 3])
                 with col_selector:
                     selected_user = st.selectbox(
-                        "Select User",
+                        "Select user",
                         options=["All Users"] + users,
                         index=0,
                         key="user_selector",
                     )
 
                 # Filter by user if selected
-                if selected_user != "All Users":
+                if selected_user != "All users":
                     user_temporal_df = temporal_df[
                         temporal_df["user.login"] == selected_user
                     ]
@@ -696,7 +702,7 @@ with st.container():
 
                 fig2.update_layout(
                     xaxis_title="Date",
-                    yaxis_title="Number of Observations",
+                    yaxis_title="Number of observations",
                     hovermode="x unified",
                     legend_title="User",
                 )
@@ -735,7 +741,7 @@ st.divider()
 
 # Learning and Engagement Indicators
 with st.container():
-    st.header("Learning and Engagement Indicators")
+    st.header("Learning and engagement indicators")
 
     if len(obs_eada_df) > 0 and "non_owner_ids" in obs_eada_df.columns:
         # Calculate response time for each observation
@@ -807,13 +813,13 @@ with st.container():
 
             with col1:
                 st.metric(
-                    label="**Average Response Time**",
+                    label="**Average response time**",
                     value=avg_display,
                     help="Average time from observation upload to first identification",
                 )
             with col2:
                 st.metric(
-                    label="**Median Response Time**",
+                    label="**Median response time**",
                     value=median_display,
                     help="Median time from observation upload to first identification",
                 )
@@ -832,16 +838,16 @@ with st.container():
 
             st.caption(
                 """
-                * **Response Time**: Time elapsed from when an observation is uploaded until it receives its first identification from another user.
+                * **Response time**: Time elapsed from when an observation is uploaded until it receives its first identification from another user.
                 """
             )
         else:
             # Show 0 metrics when no identification data
             col1, col2, col3, col4 = st.columns(4)
             with col1:
-                st.metric(label="**Average Response Time**", value="0 hours")
+                st.metric(label="**Average response time**", value="0 hours")
             with col2:
-                st.metric(label="**Median Response Time**", value="0 hours")
+                st.metric(label="**Median response time**", value="0 hours")
             with col3:
                 st.metric(label="**Observations with IDs**", value="0")
             with col4:
@@ -850,9 +856,9 @@ with st.container():
         # Show 0 metrics when no data available
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric(label="**Average Response Time**", value="0 hours")
+            st.metric(label="**Average response time**", value="0 hours")
         with col2:
-            st.metric(label="**Median Response Time**", value="0 hours")
+            st.metric(label="**Median response time**", value="0 hours")
         with col3:
             st.metric(label="**Observations with IDs**", value="0")
         with col4:
