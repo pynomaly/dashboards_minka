@@ -195,7 +195,10 @@ with st.container():
     st.header("Participation and contribution metrics")
 
     df_accounts = load_accounts_data()
-    df_accounts = df_accounts.sort_values(by="observations_proj", ascending=False)
+    df_accounts = df_accounts.sort_values(
+        by=["observations_proj", "species_proj", "identifications_proj"],
+        ascending=False,
+    ).reset_index(drop=True)
 
     # Prepare dataframe with user, observations, identifications and species
     required_cols = [
@@ -227,7 +230,7 @@ with st.container():
             st.dataframe(
                 observations_df.sort_values(by="Observations", ascending=False),
                 use_container_width=True,
-                hide_index=True,
+                hide_index=False,
             )
         else:
             st.dataframe(
