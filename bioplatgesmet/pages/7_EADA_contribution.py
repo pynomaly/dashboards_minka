@@ -626,7 +626,7 @@ with st.container():
                     )
 
                 # Filter by user if selected
-                if selected_user != "All users":
+                if selected_user != "All Users":
                     user_temporal_df = temporal_df[
                         temporal_df["user.login"] == selected_user
                     ]
