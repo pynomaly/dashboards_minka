@@ -117,22 +117,37 @@ with st.container():
     total_obs = 0
     total_species = 0
     total_ids = 0
+    total_accounts = 0
+    total_active_accounts = 0
 
     # Try to get metrics from API if accounts data is available
     df_accounts = load_accounts_data()
     if len(df_accounts) > 0 and "user_id" in df_accounts.columns:
         try:
             total_obs, total_species, total_ids = get_total_metrics(df_accounts)
+            total_accounts = len(df_accounts)
+            total_active_accounts = len(
+                df_accounts[df_accounts["observations_proj"] > 0]
+            )
+
         except:
             pass
 
-    __, col1, col2, col3, __ = st.columns(5)
+    __, col1, col2, col3, col4, col5, __ = st.columns(7)
     with col1:
         st.metric(label="**Total observations**", value=total_obs)
     with col2:
         st.metric(label="**Different species**", value=total_species)
     with col3:
-        st.metric(label="**Total identifications**", value=total_ids.item())
+        st.metric(label="**Total identifications**", value=total_ids)
+    with col4:
+        st.metric(label="**Number of participants**", value=total_accounts)
+    with col5:
+        st.metric(
+            label="**Participants with observations**",
+            value=total_active_accounts,
+        )
+
 
 st.divider()
 
