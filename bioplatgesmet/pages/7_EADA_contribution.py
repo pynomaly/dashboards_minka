@@ -74,7 +74,7 @@ def get_total_metrics(
     user_ids = ",".join(df_accounts["user_id"].astype(str).to_list())
     species_url = f"https://api.minka-sdg.org/v1/observations/species_counts?project_id={PROJ_ID}&user_id={user_ids}"
     species = session.get(species_url).json()["total_results"]
-    ids = df_accounts["identifications_proj"].sum()
+    ids = df_accounts["identifications_count"].sum()
 
     return obs, species, ids
 
@@ -196,7 +196,7 @@ with st.container():
 
     df_accounts = load_accounts_data()
     df_accounts = df_accounts.sort_values(
-        by=["observations_proj", "species_proj", "identifications_proj"],
+        by=["observations_proj", "species_proj", "identifications_count"],
         ascending=False,
     ).reset_index(drop=True)
 
@@ -204,7 +204,7 @@ with st.container():
     required_cols = [
         "user_name",
         "observations_proj",
-        "identifications_proj",
+        "identifications_count",
         "species_proj",
     ]
     if len(df_accounts) > 0 and all(
@@ -570,41 +570,102 @@ with st.container():
 
             # Aggregate data based on selection
             if aggregation == "Daily":
-                obs_by_time = (
+                # Create complete date range first
+                date_range = pd.date_range(start=start_date, end=end_date, freq="D")
+                date_df = pd.DataFrame({"date": date_range})
+
+                # Group observations by day
+                obs_counts = (
                     temporal_df.groupby(temporal_df["date"].dt.date)
                     .size()
-                    .reset_index(name="observations")
+                    .reset_index()
                 )
-                obs_by_time.columns = ["date", "observations"]
-            elif aggregation == "Weekly":
-                temporal_df["week"] = (
-                    temporal_df["date"].dt.to_period("W").dt.start_time
-                )
-                obs_by_time = (
-                    temporal_df.groupby("week").size().reset_index(name="observations")
-                )
-                obs_by_time.columns = ["date", "observations"]
-            else:  # Monthly
-                temporal_df["month"] = (
-                    temporal_df["date"].dt.to_period("M").dt.start_time
-                )
-                obs_by_time = (
-                    temporal_df.groupby("month").size().reset_index(name="observations")
-                )
-                obs_by_time.columns = ["date", "observations"]
+                obs_counts.columns = ["date", "observations"]
 
-            fig1 = px.area(
-                obs_by_time,
-                x="date",
-                y="observations",
-                labels={"date": "Date", "observations": "Observations"},
-            )
+                # Merge to fill missing dates with 0
+                obs_by_time = date_df.merge(
+                    obs_counts,
+                    left_on=date_df["date"].dt.date,
+                    right_on="date",
+                    how="left",
+                )
+                obs_by_time = obs_by_time[["date_x", "observations"]].rename(
+                    columns={"date_x": "date"}
+                )
+                obs_by_time["observations"] = (
+                    obs_by_time["observations"].fillna(0).astype(int)
+                )
+
+            elif aggregation == "Weekly":
+                # Find Monday of the week containing start_date
+                first_monday = start_date - pd.to_timedelta(
+                    start_date.weekday(), unit="D"
+                )
+                # Find Monday of the week containing end_date
+                last_monday = end_date - pd.to_timedelta(end_date.weekday(), unit="D")
+
+                # Create complete week range (all Mondays from first to last)
+                week_range = pd.date_range(
+                    start=first_monday, end=last_monday, freq="W-MON"
+                )
+                week_df = pd.DataFrame({"date": week_range})
+
+                # Assign each observation to a week (Monday of that week)
+                temporal_df["week_start"] = temporal_df["date"] - pd.to_timedelta(
+                    temporal_df["date"].dt.weekday, unit="D"
+                )
+                obs_counts = temporal_df.groupby("week_start").size().reset_index()
+                obs_counts.columns = ["date", "observations"]
+
+                # Merge to fill missing weeks with 0
+                obs_by_time = week_df.merge(obs_counts, on="date", how="left")
+                obs_by_time["observations"] = (
+                    obs_by_time["observations"].fillna(0).astype(int)
+                )
+
+            else:  # Monthly
+                # Create complete month range first (first day of each month)
+                # Find first day of start_date's month
+                first_month = pd.Timestamp(
+                    year=start_date.year, month=start_date.month, day=1
+                )
+                month_range = pd.date_range(start=first_month, end=end_date, freq="MS")
+                month_df = pd.DataFrame({"date": month_range})
+
+                # Assign each observation to a month (first day of that month)
+                temporal_df["month_start"] = (
+                    temporal_df["date"].dt.to_period("M").dt.to_timestamp()
+                )
+                obs_counts = temporal_df.groupby("month_start").size().reset_index()
+                obs_counts.columns = ["date", "observations"]
+
+                # Merge to fill missing months with 0
+                obs_by_time = month_df.merge(obs_counts, on="date", how="left")
+                obs_by_time["observations"] = (
+                    obs_by_time["observations"].fillna(0).astype(int)
+                )
+
+            # Create chart based on aggregation type
+            if aggregation == "Daily":
+                fig1 = px.area(
+                    obs_by_time,
+                    x="date",
+                    y="observations",
+                    labels={"date": "Date", "observations": "Observations"},
+                )
+            else:  # Weekly or Monthly - use bar chart
+                fig1 = px.bar(
+                    obs_by_time,
+                    x="date",
+                    y="observations",
+                    labels={"date": "Date", "observations": "Observations"},
+                )
+
             fig1.update_layout(
                 xaxis_title="Date",
                 yaxis_title="Number of observations",
                 hovermode="x unified",
                 yaxis=dict(rangemode="tozero"),
-                xaxis=dict(range=[start_date, end_date]),
             )
             st.plotly_chart(fig1, use_container_width=True)
 
@@ -644,39 +705,32 @@ with st.container():
                 obs_by_user.columns = ["date", "user", "observations"]
 
                 if selected_user == "All Users":
-                    # Get top 10 users by total observations
+                    # Get all users sorted by total observations
                     user_totals = (
                         obs_by_user.groupby("user")["observations"]
                         .sum()
                         .sort_values(ascending=False)
                     )
-                    top_users = user_totals.head(10).index.tolist()
-
-                    # Filter data to include only top 10 users
-                    obs_by_user_filtered = obs_by_user[
-                        obs_by_user["user"].isin(top_users)
-                    ]
+                    all_users = user_totals.index.tolist()
 
                     # Calculate daily totals for hover title
                     daily_totals = (
-                        obs_by_user_filtered.groupby("date")["observations"]
-                        .sum()
-                        .reset_index()
+                        obs_by_user.groupby("date")["observations"].sum().reset_index()
                     )
                     daily_totals.columns = ["date", "total"]
 
-                    # Add total column to filtered data for hover
-                    obs_by_user_filtered = obs_by_user_filtered.merge(
+                    # Add total column to data for hover
+                    obs_by_user_all = obs_by_user.merge(
                         daily_totals, on="date", how="left"
                     )
 
-                    # Stacked area chart for top users
+                    # Stacked area chart for all users
                     fig2 = px.area(
-                        obs_by_user_filtered,
+                        obs_by_user_all,
                         x="date",
                         y="observations",
                         color="user",
-                        category_orders={"user": top_users},
+                        category_orders={"user": all_users},
                         labels={
                             "date": "Date",
                             "observations": "Observations",
@@ -708,16 +762,15 @@ with st.container():
                     yaxis_title="Number of observations",
                     hovermode="x unified",
                     legend_title="User",
+                    xaxis=dict(
+                        range=[start_date, end_date],
+                        hoverformat="%Y-%m-%d",
+                        autorange=False,
+                    ),
                 )
                 # Update hover to show user and observations, with total in header
                 fig2.update_traces(
                     hovertemplate="%{fullData.name}: %{y}<extra></extra>"
-                )
-                # Update x-axis hover format to include total
-                fig2.update_layout(
-                    xaxis=dict(
-                        hoverformat="%Y-%m-%d",
-                    ),
                 )
                 # Add invisible trace for total that appears first in hover
                 if selected_user == "All Users":

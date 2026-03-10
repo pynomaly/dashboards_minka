@@ -379,7 +379,7 @@ if __name__ == "__main__":
     info = df_accounts["user_id"].apply(get_user_info_in_project).apply(pd.Series)
     df_accounts = pd.concat([df_accounts, info], axis=1)
 
-    # extraemos diccionario de identificaciones
+    # extraemos diccionario de identificaciones (observaciones identificadas)
     dict_identifications = get_identifications_by_user(PROJECT_ID)
     df_accounts["identifications_proj"] = df_accounts["user_id"].apply(
         lambda x: dict_identifications[x] if x in dict_identifications.keys() else 0
