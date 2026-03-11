@@ -148,7 +148,6 @@ with st.container():
             value=total_active_accounts,
         )
 
-
 st.divider()
 
 
@@ -245,7 +244,7 @@ with st.container():
             st.dataframe(
                 observations_df.sort_values(by="Observations", ascending=False),
                 use_container_width=True,
-                hide_index=False,
+                hide_index=True,
             )
         else:
             st.dataframe(
