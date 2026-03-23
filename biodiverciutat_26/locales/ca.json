@@ -1,0 +1,83 @@
+{
+  "nav": {
+    "main": "Resultats generals",
+    "municipalities": "Municipis",
+    "participants": "Participants",
+    "species": "Espècies",
+    "introduced": "Espècies introduïdes"
+  },
+  "sidebar": {
+    "title": "BioDiverCiutat",
+    "description": "És un esdeveniment de ciència ciutadana que forma part del City Nature Challenge, una competició internacional amistosa que destaca la importància de reportar la biodiversitat a les ciutats. Cada ciutat està \"custodiada\" per una entitat de recerca o naturalista. A Barcelona i tota l'àrea metropolitana, l'esdeveniment adopta el nom de BioDiverCiutat i l'organitza l'Institut de Ciències del Mar (ICM-CSIC).",
+    "participation": "Qualsevol persona amb interès en la natura pot unir-se al repte. A través de la plataforma MINKA es poden pujar les observacions de flora i fauna, de qualsevol ecosistema urbà, en aquest cas de Barcelona i de tots els municipis metropolitans (boscos de Collserola, parcs, jardins, rius, aiguamolls, dunes, platges i mar)."
+  },
+  "header": {
+    "main_title": "Resultats",
+    "subtitle": "Repte Naturalista Urbà - City Nature Challenge",
+    "municipalities_title": "Municipis participants a",
+    "participants_title": "Participants",
+    "species_title": "Espècies",
+    "introduced_title": "Espècies introduïdes"
+  },
+  "metrics": {
+    "observations": "Observacions",
+    "species": "Espècies",
+    "participants": "Participants"
+  },
+  "charts": {
+    "observations_per_day": "Observacions per dia",
+    "species_per_day": "Espècies per dia",
+    "participants_per_day": "Participants per dia",
+    "observations_count": "Nombre d'observacions",
+    "species_count": "Nombre d'espècies diferents",
+    "participants_count": "Nombre de participants"
+  },
+  "ui": {
+    "no_data": "Cap dada disponible",
+    "maps": "Mapes",
+    "no_observation": "Cap observació"
+  },
+  "municipalities": {
+    "most_active": "Quins municipis són els més actius?",
+    "paint_map": "Pintar el mapa per:"
+  },
+  "participants_page": {
+    "users_by_observations": "Usuaris per nombre d'observacions, identificacions i espècies",
+    "distribution_by_hour_day": "Distribució de participants per hora i dia",
+    "participants_per_day": "Nombre de participants per dia",
+    "participants_per_hour": "Nombre de participants per hora del dia",
+    "username": "Nom d'usuari"
+  },
+  "species_page": {
+    "by_taxonomic_rank": "Observacions per rang taxonòmic amb grau investigació",
+    "no_research_obs": "Cap observació amb grau investigació encara",
+    "click_to_expand": "Fes clic en un rang taxonòmic per veure'n el desglossament",
+    "first_observation_date": "Data de la primera observació",
+    "species_name": "nom de l'espècie",
+    "first_observation": "primera observació",
+    "last_species_added": "Últimes espècies incorporades",
+    "marine_terrestrial": "Espècies marines i terrestres",
+    "marine_species": "Espècies marines amb grau investigació",
+    "terrestrial_species": "Espècies terrestres amb grau investigació",
+    "num_species": "Nombre d'espècies",
+    "num_observations": "Nombre d'observacions",
+    "geographic_distribution": "Distribució geogràfica de cada espècie",
+    "observations_registered": "Nombre d'observacions registrades",
+    "taxon_link": "Tàxon link",
+    "see_species": "Veure espècie",
+    "name": "Nom"
+  },
+  "introduced_page": {
+    "title": "Espècies introduïdes",
+    "num_species": "Nombre d'espècies",
+    "first_observation_date": "Data de la primera observació",
+    "species_name": "Nom de l'espècie",
+    "first_observation": "Primera observació",
+    "link_observation": "Link a observació",
+    "geographic_distribution": "Distribució geogràfica de cada espècie",
+    "observations_registered": "Nombre d'observacions registrades",
+    "species_viewer": "Visor d'espècies introduïdes",
+    "no_introduced": "Cap espècie introduïda registrada",
+    "description": "Les espècies introduïdes, també anomenades exòtiques, són organismes que han estat transportats fora del seu rang natural i han establert poblacions en nous entorns. Poden tenir un impacte negatiu en els ecosistemes locals, competint amb les espècies natives per recursos com ara l'alimentació, l'espai i l'aigua. Això pot alterar l'equilibri ecològic i provocar canvis significatius en la biodiversitat i la dinàmica dels ecosistemes."
+  }
+}

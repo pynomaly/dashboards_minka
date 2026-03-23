@@ -1,0 +1,83 @@
+{
+  "nav": {
+    "main": "General results",
+    "municipalities": "Municipalities",
+    "participants": "Participants",
+    "species": "Species",
+    "introduced": "Introduced species"
+  },
+  "sidebar": {
+    "title": "BioDiverCiutat",
+    "description": "It is a citizen science event that is part of the City Nature Challenge, a friendly international competition that highlights the importance of reporting biodiversity in cities. Each city is \"guarded\" by a research or naturalist entity. In Barcelona and the entire metropolitan area, the event adopts the name BioDiverCiutat and is organized by the Institute of Marine Sciences (ICM-CSIC).",
+    "participation": "Anyone with an interest in nature can join the challenge. Through the MINKA platform, observations of flora and fauna can be uploaded from any urban ecosystem, in this case from Barcelona and all metropolitan municipalities (Collserola forests, parks, gardens, rivers, wetlands, dunes, beaches and sea)."
+  },
+  "header": {
+    "main_title": "Results",
+    "subtitle": "Urban Nature Challenge - City Nature Challenge",
+    "municipalities_title": "Participating municipalities in",
+    "participants_title": "Participants",
+    "species_title": "Species",
+    "introduced_title": "Introduced species"
+  },
+  "metrics": {
+    "observations": "Observations",
+    "species": "Species",
+    "participants": "Participants"
+  },
+  "charts": {
+    "observations_per_day": "Observations per day",
+    "species_per_day": "Species per day",
+    "participants_per_day": "Participants per day",
+    "observations_count": "Number of observations",
+    "species_count": "Number of different species",
+    "participants_count": "Number of participants"
+  },
+  "ui": {
+    "no_data": "No data available",
+    "maps": "Maps",
+    "no_observation": "No observation"
+  },
+  "municipalities": {
+    "most_active": "Which municipalities are the most active?",
+    "paint_map": "Paint map by:"
+  },
+  "participants_page": {
+    "users_by_observations": "Users by number of observations, identifications and species",
+    "distribution_by_hour_day": "Distribution of participants by hour and day",
+    "participants_per_day": "Number of participants per day",
+    "participants_per_hour": "Number of participants per hour of day",
+    "username": "Username"
+  },
+  "species_page": {
+    "by_taxonomic_rank": "Observations by taxonomic rank with research grade",
+    "no_research_obs": "No research grade observations yet",
+    "click_to_expand": "Click on a taxonomic rank to see its breakdown",
+    "first_observation_date": "Date of first observation",
+    "species_name": "species name",
+    "first_observation": "first observation",
+    "last_species_added": "Latest species added",
+    "marine_terrestrial": "Marine and terrestrial species",
+    "marine_species": "Marine species with research grade",
+    "terrestrial_species": "Terrestrial species with research grade",
+    "num_species": "Number of species",
+    "num_observations": "Number of observations",
+    "geographic_distribution": "Geographic distribution of each species",
+    "observations_registered": "Number of registered observations",
+    "taxon_link": "Taxon link",
+    "see_species": "See species",
+    "name": "Name"
+  },
+  "introduced_page": {
+    "title": "Introduced species",
+    "num_species": "Number of species",
+    "first_observation_date": "Date of first observation",
+    "species_name": "Species name",
+    "first_observation": "First observation",
+    "link_observation": "Link to observation",
+    "geographic_distribution": "Geographic distribution of each species",
+    "observations_registered": "Number of registered observations",
+    "species_viewer": "Introduced species viewer",
+    "no_introduced": "No introduced species registered",
+    "description": "Introduced species, also called exotic, are organisms that have been transported outside their natural range and have established populations in new environments. They can have a negative impact on local ecosystems, competing with native species for resources such as food, space and water. This can alter the ecological balance and cause significant changes in biodiversity and ecosystem dynamics."
+  }
+}

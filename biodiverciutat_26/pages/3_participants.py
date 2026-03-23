@@ -5,8 +5,6 @@ import pandas as pd
 import streamlit as st
 from utils import fig_cols, get_count_by_hour, get_count_per_day
 
-# variables
-
 try:
     directory = f"{os.environ['DASHBOARDS']}/{config.DIRECTORY}"
 except KeyError:
@@ -20,20 +18,38 @@ st.set_page_config(
     page_title=f"Dashboard {config.PROJ_NAME}",
 )
 
+from i18n import init_i18n, t
+
+# Initialize i18n
+init_i18n(current_page="participants")
+
 exclude_users = []
 
 
-# Columna izquierda
-st.sidebar.markdown("# Com s’hi pot participar?")
-st.sidebar.markdown(
-    f"""
-Qualsevol persona amb interès en la natura pot unir-se al repte. A través de la plataforma MINKA es poden pujar les observacions de flora i fauna, de qualsevol ecosistema urbà, en aquest cas de Barcelona i de tots els municipis metropolitans (boscos de Collserola, parcs, jardins, rius, aiguamolls, dunes, platges i mar).
+@st.cache_data(ttl=300, show_spinner=False)
+def load_users(path, exclude_list):
+    """Cache users CSV loading and transformation"""
+    users = pd.read_csv(path)
+    users = users[~users.participant.isin(exclude_list)].reset_index(drop=True)
+    users["link"] = "https://minka-sdg.org/users/" + users["participant"]
+    users.drop(columns="participant", inplace=True)
+    users = users[["link", "observacions", "identificacions", "espècies"]]
+    users.index += 1
+    return users
 
-Totes les observacions del perímetre dels municipis metropolitans que entrin a MINKA, del {config.PROJ_DATES} formaran part de l’esdeveniment.
-"""
-)
 
-# Ranking de participantes por obs, identificaciones y especies
+@st.cache_data(ttl=300, show_spinner=False)
+def load_observations(path):
+    """Cache observations CSV"""
+    return pd.read_csv(path)
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def get_cached_counts(_df_obs, mode):
+    """Cache count calculations"""
+    counts_per_day = get_count_per_day(_df_obs, mode=mode)
+    counts_per_hour = get_count_by_hour(_df_obs, mode=mode)
+    return counts_per_day, counts_per_hour
 
 # Cabecera
 with st.container():
@@ -41,34 +57,33 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(f":green[{config.PROJ_NAME}]")
+        st.header(f":green[{t('header.participants_title')} - {config.PROJ_NAME}]")
         st.markdown(f":green[{config.PROJ_DATES}]")
 
 with st.container():
-    st.markdown("## Usuaris per nombre d'observacions, identificacions i espècies")
+    st.markdown(f"## {t('participants_page.users_by_observations')}")
     users_path = f"{directory}/data/{config.MAIN_PROJ}_users.csv"
     if not os.path.exists(users_path):
-        st.warning("Cap dada disponible")
+        st.warning(t("ui.no_data"))
     else:
-        users = pd.read_csv(users_path)
-        users = users[-users.participant.isin(exclude_users)].reset_index(drop=True)
-        users["link"] = "https://minka-sdg.org/users/" + users["participant"]
-        users.drop(columns="participant", inplace=True)
-        users = users[["link", "observacions", "identificacions", "espècies"]]
-        users.index += 1
+        users = load_users(users_path, tuple(exclude_users))
 
         st.data_editor(
             users,
             column_config={
                 "link": st.column_config.LinkColumn(
-                    "Nom d'usuari",
+                    t("participants_page.username"),
                     validate="^https://minka-sdg\.org/users/[a-z]+$",
                     display_text=r"https://minka-sdg\.org/users/([^/]+)",
                     width="medium",
                 ),
-                "observacions": st.column_config.NumberColumn(width=100),
+                "observacions": st.column_config.NumberColumn(
+                    t("metrics.observations"), width=100
+                ),
                 "identificacions": st.column_config.NumberColumn(width=100),
-                "espècies": st.column_config.NumberColumn(width=100),
+                "espècies": st.column_config.NumberColumn(
+                    t("metrics.species"), width=100
+                ),
             },
             hide_index=False,
             disabled=True,
@@ -76,22 +91,21 @@ with st.container():
 st.divider()
 
 
-# observaciones por día de la semana y hora del día
-st.header("Distribució de participants per hora i dia")
+# Distribución por hora y día
+st.header(t("participants_page.distribution_by_hour_day"))
 
 obs_path = f"{directory}/data/{config.MAIN_PROJ}_obs.csv"
 if not os.path.exists(obs_path):
-    st.warning("Cap dada disponible")
+    st.warning(t("ui.no_data"))
 else:
-    df_obs = pd.read_csv(obs_path)
-    counts_per_day = get_count_per_day(df_obs, mode="users")
-    counts_per_hour = get_count_by_hour(df_obs, mode="users")
+    df_obs = load_observations(obs_path)
+    counts_per_day, counts_per_hour = get_cached_counts(df_obs, mode="users")
 
     fig_count_per_day = fig_cols(
         counts_per_day,
         x_field="day_of_week",
         y_field="count",
-        title="Nombre de participants per dia",
+        title=t("participants_page.participants_per_day"),
         color_field="count",
     )
 
@@ -99,7 +113,7 @@ else:
         counts_per_hour,
         x_field="hour_of_day",
         y_field="count",
-        title="Nombre de participants per hora del dia",
+        title=t("participants_page.participants_per_hour"),
         color_field="count",
     )
 

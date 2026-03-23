@@ -1,5 +1,3 @@
-# Run as streamlit run app_biomarato.py --server.port XXXX
-
 import os
 
 import config
@@ -21,38 +19,56 @@ st.set_page_config(
     page_title=f"Dashboard {config.PROJ_NAME}",
 )
 
+from i18n import init_i18n, t
+
+# Initialize i18n
+init_i18n(current_page="municipalities")
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def load_metrics_cities(path):
+    """Cache CSV loading for city metrics"""
+    return pd.read_csv(path)
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def get_cached_geo_df(main_proj):
+    """Cache GeoDataFrame creation (expensive: reads GeoJSON + CSV + merge)"""
+    return create_geo_df(main_proj)
+
 # Cabecera
 with st.container():
     col1, col2 = st.columns([1, 10])
     with col1:
         st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(f":green[Municipis participants a {config.PROJ_NAME}]")
+        st.header(f":green[{t('header.municipalities_title')} {config.PROJ_NAME}]")
         st.markdown(f":green[{config.PROJ_DATES}]")
 
-# Ranking by cities (incluye todos los usuarios y grado research)
+# Ranking by cities
 metrics_path = f"{directory}/data/{config.MAIN_PROJ}_main_metrics_projects.csv"
 if not os.path.exists(metrics_path):
-    st.warning("Cap dada disponible")
+    st.warning(t("ui.no_data"))
 else:
+    main_metrics_cities = load_metrics_cities(metrics_path)
+
     with st.container():
-        # Cabecera
+        st.subheader(t("municipalities.most_active"))
 
-        st.subheader("Quins municipis són els més actius?")
-        if "main_metrics_cities" not in st.session_state:
-            st.session_state.main_metrics_cities = pd.read_csv(metrics_path)
-
-        # Gráfico de barras
         fig1 = fig_cities(
-            st.session_state.main_metrics_cities, "observations", "Nombre d'observacions"
+            main_metrics_cities,
+            "observations",
+            t("charts.observations_count"),
         )
         fig2 = fig_cities(
-            st.session_state.main_metrics_cities, "species", "Nombre d'espècies diferents"
+            main_metrics_cities,
+            "species",
+            t("charts.species_count"),
         )
         fig3 = fig_cities(
-            st.session_state.main_metrics_cities,
+            main_metrics_cities,
             "participants",
-            "Nombre de participants",
+            t("charts.participants_count"),
         )
 
         col1, col2, col3 = st.columns(3)
@@ -69,13 +85,17 @@ else:
     with st.container():
         col1, col2 = st.columns([1, 3])
         with col1:
-            color_option = st.selectbox(
-                "Pintar el mapa per:", ("Observacions", "Espècies", "Participants")
+            options_map = {
+                t("metrics.observations"): "Observacions",
+                t("metrics.species"): "Espècies",
+                t("metrics.participants"): "Participants",
+            }
+            color_label = st.selectbox(
+                t("municipalities.paint_map"), list(options_map.keys())
             )
+            color_option = options_map[color_label]
 
-        # Especifica la ruta al archivo GeoJSON
-
-        datos_mapa = create_geo_df(config.MAIN_PROJ)
+        datos_mapa = get_cached_geo_df(config.MAIN_PROJ)
         fig = px.choropleth_map(
             data_frame=datos_mapa,
             geojson=datos_mapa.geometry.__geo_interface__,
@@ -92,7 +112,6 @@ else:
 
         fig.update_traces(
             hovertemplate="<b>%{hovertext}</b><br>"
-            + f"{color_option}: %{{z}}<extra></extra>"
+            + f"{color_label}: %{{z}}<extra></extra>"
         )
-        # Muestra el mapa
         st.plotly_chart(fig, use_container_width=True)

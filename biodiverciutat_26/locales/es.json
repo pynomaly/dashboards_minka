@@ -1,0 +1,83 @@
+{
+  "nav": {
+    "main": "Resultados generales",
+    "municipalities": "Municipios",
+    "participants": "Participantes",
+    "species": "Especies",
+    "introduced": "Especies introducidas"
+  },
+  "sidebar": {
+    "title": "BioDiverCiutat",
+    "description": "Es un evento de ciencia ciudadana que forma parte del City Nature Challenge, una competición internacional amistosa que destaca la importancia de reportar la biodiversidad en las ciudades. Cada ciudad está \"custodiada\" por una entidad de investigación o naturalista. En Barcelona y toda el área metropolitana, el evento adopta el nombre de BioDiverCiutat y lo organiza el Instituto de Ciencias del Mar (ICM-CSIC).",
+    "participation": "Cualquier persona con interés en la naturaleza puede unirse al reto. A través de la plataforma MINKA se pueden subir las observaciones de flora y fauna, de cualquier ecosistema urbano, en este caso de Barcelona y de todos los municipios metropolitanos (bosques de Collserola, parques, jardines, ríos, humedales, dunas, playas y mar)."
+  },
+  "header": {
+    "main_title": "Resultados",
+    "subtitle": "Reto Naturalista Urbano - City Nature Challenge",
+    "municipalities_title": "Municipios participantes en",
+    "participants_title": "Participantes",
+    "species_title": "Especies",
+    "introduced_title": "Especies introducidas"
+  },
+  "metrics": {
+    "observations": "Observaciones",
+    "species": "Especies",
+    "participants": "Participantes"
+  },
+  "charts": {
+    "observations_per_day": "Observaciones por día",
+    "species_per_day": "Especies por día",
+    "participants_per_day": "Participantes por día",
+    "observations_count": "Número de observaciones",
+    "species_count": "Número de especies diferentes",
+    "participants_count": "Número de participantes"
+  },
+  "ui": {
+    "no_data": "Sin datos disponibles",
+    "maps": "Mapas",
+    "no_observation": "Ninguna observación"
+  },
+  "municipalities": {
+    "most_active": "¿Qué municipios son los más activos?",
+    "paint_map": "Pintar el mapa por:"
+  },
+  "participants_page": {
+    "users_by_observations": "Usuarios por número de observaciones, identificaciones y especies",
+    "distribution_by_hour_day": "Distribución de participantes por hora y día",
+    "participants_per_day": "Número de participantes por día",
+    "participants_per_hour": "Número de participantes por hora del día",
+    "username": "Nombre de usuario"
+  },
+  "species_page": {
+    "by_taxonomic_rank": "Observaciones por rango taxonómico con grado investigación",
+    "no_research_obs": "Ninguna observación con grado investigación aún",
+    "click_to_expand": "Haz clic en un rango taxonómico para ver su desglose",
+    "first_observation_date": "Fecha de la primera observación",
+    "species_name": "nombre de la especie",
+    "first_observation": "primera observación",
+    "last_species_added": "Últimas especies incorporadas",
+    "marine_terrestrial": "Especies marinas y terrestres",
+    "marine_species": "Especies marinas con grado investigación",
+    "terrestrial_species": "Especies terrestres con grado investigación",
+    "num_species": "Número de especies",
+    "num_observations": "Número de observaciones",
+    "geographic_distribution": "Distribución geográfica de cada especie",
+    "observations_registered": "Número de observaciones registradas",
+    "taxon_link": "Enlace taxón",
+    "see_species": "Ver especie",
+    "name": "Nombre"
+  },
+  "introduced_page": {
+    "title": "Especies introducidas",
+    "num_species": "Número de especies",
+    "first_observation_date": "Fecha de la primera observación",
+    "species_name": "Nombre de la especie",
+    "first_observation": "Primera observación",
+    "link_observation": "Enlace a observación",
+    "geographic_distribution": "Distribución geográfica de cada especie",
+    "observations_registered": "Número de observaciones registradas",
+    "species_viewer": "Visor de especies introducidas",
+    "no_introduced": "Ninguna especie introducida registrada",
+    "description": "Las especies introducidas, también llamadas exóticas, son organismos que han sido transportados fuera de su rango natural y han establecido poblaciones en nuevos entornos. Pueden tener un impacto negativo en los ecosistemas locales, compitiendo con las especies nativas por recursos como la alimentación, el espacio y el agua. Esto puede alterar el equilibrio ecológico y provocar cambios significativos en la biodiversidad y la dinámica de los ecosistemas."
+  }
+}
