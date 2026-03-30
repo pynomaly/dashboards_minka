@@ -36,6 +36,7 @@ def get_cached_geo_df(main_proj):
     """Cache GeoDataFrame creation (expensive: reads GeoJSON + CSV + merge)"""
     return create_geo_df(main_proj)
 
+
 # Cabecera
 with st.container():
     col1, col2 = st.columns([1, 10])
@@ -115,3 +116,16 @@ else:
             + f"{color_label}: %{{z}}<extra></extra>"
         )
         st.plotly_chart(fig, use_container_width=True)
+
+# Footer con fondo de color
+image_footer = f"{directory}/images/footer.png"
+
+st.markdown(
+    f"""
+    <div style="background-color: {config.COLORS[1]}; padding: 10px; margin-top: 10px; border-radius: 10px;">
+        <img src="data:image/png;base64,{__import__('base64').b64encode(open(image_footer, 'rb').read()).decode()}"
+             style="width: 100%; display: block;">
+    </div>
+    """,
+    unsafe_allow_html=True,
+)

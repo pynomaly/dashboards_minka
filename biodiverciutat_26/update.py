@@ -168,7 +168,7 @@ def get_number_identifications(user_name, df_identifiers):
 
 
 def get_participation_df(main_project: int) -> pd.DataFrame:
-    df_obs = pd.read_csv(f"{config.DIRECTORY}/data/{main_project}_obs.csv")
+    df_obs = pd.read_csv(f"{directory}/data/{main_project}_obs.csv")
     pt_users = (
         df_obs["user_login"]
         .value_counts()
@@ -292,7 +292,7 @@ if __name__ == "__main__":
         df_photos.to_csv(f"{directory}/data/{config.MAIN_PROJ}_photos.csv", index=False)
 
         print("Sacando columna marine")
-        df_obs["taxon_id"] = df_obs["taxon_id"].replace("nan", None)
+        df_obs["taxon_id"] = pd.to_numeric(df_obs["taxon_id"], errors="coerce")
         df_filtered = df_obs[df_obs["taxon_id"].notnull()].copy()
         df_filtered["taxon_id"] = df_filtered["taxon_id"].astype(int)
 

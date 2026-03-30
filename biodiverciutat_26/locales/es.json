@@ -8,7 +8,7 @@
   },
   "sidebar": {
     "title": "BioDiverCiutat",
-    "description": "Es un evento de ciencia ciudadana que forma parte del City Nature Challenge, una competición internacional amistosa que destaca la importancia de reportar la biodiversidad en las ciudades. Cada ciudad está \"custodiada\" por una entidad de investigación o naturalista. En Barcelona y toda el área metropolitana, el evento adopta el nombre de BioDiverCiutat y lo organiza el Instituto de Ciencias del Mar (ICM-CSIC).",
+    "description": "Evento de ciencia ciudadana que forma parte del City Nature Challenge, una competición internacional amistosa que destaca la importancia de reportar la biodiversidad en las ciudades. Cada ciudad está \"custodiada\" por una entidad de investigación o naturalista. En Barcelona y toda el área metropolitana, el evento adopta el nombre de BioDiverCiutat y lo organiza el Instituto de Ciencias del Mar (ICM-CSIC).",
     "participation": "Cualquier persona con interés en la naturaleza puede unirse al reto. A través de la plataforma MINKA se pueden subir las observaciones de flora y fauna, de cualquier ecosistema urbano, en este caso de Barcelona y de todos los municipios metropolitanos (bosques de Collserola, parques, jardines, ríos, humedales, dunas, playas y mar)."
   },
   "header": {
@@ -39,7 +39,7 @@
   },
   "municipalities": {
     "most_active": "¿Qué municipios son los más activos?",
-    "paint_map": "Pintar el mapa por:"
+    "paint_map": "Representar en el mapa:"
   },
   "participants_page": {
     "users_by_observations": "Usuarios por número de observaciones, identificaciones y especies",
@@ -63,7 +63,7 @@
     "num_observations": "Número de observaciones",
     "geographic_distribution": "Distribución geográfica de cada especie",
     "observations_registered": "Número de observaciones registradas",
-    "taxon_link": "Enlace taxón",
+    "taxon_link": "Enlace a taxón",
     "see_species": "Ver especie",
     "name": "Nombre"
   },

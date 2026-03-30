@@ -106,7 +106,7 @@ def fig_area_evolution(df, field, title, color):
             tickvals=df["data"].to_list(),
             ticktext=df["data"].to_list(),
             tickfont=dict(size=14),
-            tickangle=-90,
+            tickangle=-30,
         ),
     )
     return fig
@@ -262,12 +262,12 @@ def create_markercluster(df, center=None, zoom=10.5):
 
 
 @st.cache_resource(ttl=60)
-def get_photo_from_ob(df, id_obs, session=None):
-    if session is None:
-        session = requests.Session()
+def get_photo_from_ob(_df, id_obs, _session=None):
+    if _session is None:
+        _session = requests.Session()
 
-    image = df.loc[df["id"] == id_obs, "photos_medium_url"].values[0]
-    response = session.get(image)
+    image = _df.loc[_df["id"] == id_obs, "photos_medium_url"].values[0]
+    response = _session.get(image)
     st.image(response.content)
     mdlit(f"@(https://minka-sdg.org/observations/{id_obs})")
 

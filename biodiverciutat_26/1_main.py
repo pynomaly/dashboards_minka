@@ -98,26 +98,40 @@ with st.container():
     with col1:
         st.metric(
             t("metrics.observations"),
-            f"{total_obs:,}".replace(",", " "),
+            f"{total_obs:,}".replace(",", "."),
+        )
+        st.markdown(
+            f"*{config.PROJ_2024}:* **{config.OBS_2024:,}**<br>"
+            f"*{config.PROJ_2025}:* **{config.OBS_2025:,}**".replace(",", "."),
+            unsafe_allow_html=True,
         )
     with col2:
         st.metric(
             t("metrics.species"),
-            f"{total_species:,}".replace(",", " "),
+            f"{total_species:,}".replace(",", "."),
+        )
+        st.markdown(
+            f"*{config.PROJ_2024}:* **{config.SPE_2024:,}**<br>"
+            f"*{config.PROJ_2025}:* **{config.SPE_2025:,}**".replace(",", "."),
+            unsafe_allow_html=True,
         )
     with col3:
         st.metric(
             t("metrics.participants"),
-            f"{total_participants:,}".replace(",", " "),
+            f"{total_participants:,}".replace(",", "."),
         )
-
+        st.markdown(
+            f"*{config.PROJ_2024}:* **{config.OBSERVERS_2024:,}**<br>"
+            f"*{config.PROJ_2025}:* **{config.OBSERVERS_2025:,}**".replace(",", "."),
+            unsafe_allow_html=True,
+        )
     style_metric_cards(
         background_color="#fff",
         border_left_color=f"{config.COLORS[1]}",
         box_shadow=False,
     )
 
-# Evolution lines (cached CSV)
+# Evolution bars (cached CSV)
 with st.container():
     metrics_path = f"{directory}/data/{config.MAIN_PROJ}_main_metrics.csv"
     if not os.path.exists(metrics_path):
@@ -178,3 +192,16 @@ with st.container():
                 st.warning(t("ui.no_observation"))
         except Exception:
             st.warning(t("ui.no_observation"))
+
+# Footer con fondo de color
+image_footer = f"{directory}/images/footer.png"
+
+st.markdown(
+    f"""
+    <div style="background-color: {config.COLORS[1]}; padding: 10px; margin-top: 10px; border-radius: 10px;">
+        <img src="data:image/png;base64,{__import__('base64').b64encode(open(image_footer, 'rb').read()).decode()}"
+             style="width: 100%; display: block;">
+    </div>
+    """,
+    unsafe_allow_html=True,
+)

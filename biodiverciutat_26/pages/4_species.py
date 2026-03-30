@@ -3,7 +3,6 @@ import os
 import config
 import pandas as pd
 import plotly.express as px
-import requests
 import streamlit as st
 
 try:
@@ -31,8 +30,6 @@ from utils import (
 
 # Initialize i18n
 init_i18n(current_page="species")
-
-session = requests.Session()
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -62,6 +59,7 @@ def get_cached_species_maps(_df_obs, species_name):
         df, zoom=9, center=[41.36174441599461, 2.108076037807884]
     )
     return heatmap._repr_html_(), markermap._repr_html_(), len(df)
+
 
 # Cabecera
 with st.container():
@@ -161,12 +159,13 @@ if len(df_obs) > 0:
         st.markdown(f"##### {t('species_page.last_species_added')}")
         c1, c2, c3 = st.columns(3)
         with c1:
-            get_photo_from_ob(df_photos, ids_obs[0], session=session)
+            get_photo_from_ob(df_photos, ids_obs[0])
         with c2:
-            get_photo_from_ob(df_photos, ids_obs[1], session=session)
+            get_photo_from_ob(df_photos, ids_obs[1])
         with c3:
-            get_photo_from_ob(df_photos, ids_obs[2], session=session)
+            get_photo_from_ob(df_photos, ids_obs[2])
 
+st.divider()
 # Especies marinas / especies terrestres
 st.markdown(f"### {t('species_page.marine_terrestrial')}")
 if len(df_obs) > 0:
@@ -266,3 +265,16 @@ if len(df_obs) > 0:
             components.html(map_html2, height=600)
 else:
     st.warning(t("ui.no_data"))
+
+# Footer con fondo de color
+image_footer = f"{directory}/images/footer.png"
+
+st.markdown(
+    f"""
+    <div style="background-color: {config.COLORS[1]}; padding: 10px; margin-top: 10px; border-radius: 10px;">
+        <img src="data:image/png;base64,{__import__('base64').b64encode(open(image_footer, 'rb').read()).decode()}"
+             style="width: 100%; display: block;">
+    </div>
+    """,
+    unsafe_allow_html=True,
+)

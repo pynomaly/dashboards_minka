@@ -8,11 +8,22 @@ COLORS = ["#4aae79", "#007d8a", "#00a3b4"]
 PROJ_NAME = "BioDiverCiutat 2026"
 
 PROJ_DATES = "24 - 27 d'abril de 2026"
+
 START_DAY = "2026-04-24"
 END_DAY = "2026-04-27"
 
-
 PROJ_LOGO = "LOGO OFICIAL_biodiverciutat_marca_rgbpositiu.png"
+
+PROJ_2024 = "BioDiverCiutat 2024"
+OBS_2024 = 3535
+SPE_2024 = 772
+OBSERVERS_2024 = 62
+
+PROJ_2025 = "BioDiverCiutat 2025"
+OBS_2025 = 4523
+SPE_2025 = 979
+OBSERVERS_2025 = 67
+
 
 MAIN_PROJ = 522
 
@@ -54,23 +65,4 @@ PROJECTS = {
     499: "Àrea marina Barcelona",
 }
 
-EXCLUDE_USERS = [
-    "xasalva",
-    "bertinhaco",
-    "andrea",
-    "laurabiomar",
-    "guillermoalvarez_fecdas",
-    "mediambient_ajelprat",
-    "fecdas_mediambient",
-    "planctondiving",
-    "marinagm",
-    "CEM",
-    "uri_domingo",
-    "mimo_fecdas",
-    "jaume-piera",
-    "adrisoacha",
-    "anellides",
-    "irodero",
-    "manelsalvador",
-    "sara_riera",
-]
+EXCLUDE_USERS = []

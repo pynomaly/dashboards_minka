@@ -23,8 +23,6 @@ from i18n import init_i18n, t
 # Initialize i18n
 init_i18n(current_page="participants")
 
-exclude_users = []
-
 
 @st.cache_data(ttl=300, show_spinner=False)
 def load_users(path, exclude_list):
@@ -51,6 +49,7 @@ def get_cached_counts(_df_obs, mode):
     counts_per_hour = get_count_by_hour(_df_obs, mode=mode)
     return counts_per_day, counts_per_hour
 
+
 # Cabecera
 with st.container():
     col1, col2 = st.columns([1, 10])
@@ -66,7 +65,7 @@ with st.container():
     if not os.path.exists(users_path):
         st.warning(t("ui.no_data"))
     else:
-        users = load_users(users_path, tuple(exclude_users))
+        users = load_users(users_path, tuple(config.EXCLUDE_USERS))
 
         st.data_editor(
             users,
@@ -123,3 +122,16 @@ else:
 
     with col2:
         st.plotly_chart(fig_count_per_hour, use_container_width=True)
+
+# Footer con fondo de color
+image_footer = f"{directory}/images/footer.png"
+
+st.markdown(
+    f"""
+    <div style="background-color: {config.COLORS[1]}; padding: 10px; margin-top: 10px; border-radius: 10px;">
+        <img src="data:image/png;base64,{__import__('base64').b64encode(open(image_footer, 'rb').read()).decode()}"
+             style="width: 100%; display: block;">
+    </div>
+    """,
+    unsafe_allow_html=True,
+)

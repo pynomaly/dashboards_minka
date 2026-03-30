@@ -153,9 +153,9 @@ if len(df_obs) > 0:
 
         map1, map2 = st.columns(2)
         with map1:
-            components.html(map_html1, height=300)
+            components.html(map_html1, height=500)
         with map2:
-            components.html(map_html2, height=300)
+            components.html(map_html2, height=500)
     st.divider()
 
     # Visor de especies introducidas
@@ -185,3 +185,16 @@ if len(df_obs) > 0:
 
 else:
     st.markdown(t("introduced_page.no_introduced"))
+
+# Footer con fondo de color
+image_footer = f"{directory}/images/footer.png"
+
+st.markdown(
+    f"""
+    <div style="background-color: {config.COLORS[1]}; padding: 10px; margin-top: 10px; border-radius: 10px;">
+        <img src="data:image/png;base64,{__import__('base64').b64encode(open(image_footer, 'rb').read()).decode()}"
+             style="width: 100%; display: block;">
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
