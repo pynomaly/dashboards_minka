@@ -5,9 +5,9 @@ import os
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-from utils import create_geo_df, fig_cities
 
 st.set_page_config(layout="wide")
+from utils import create_geo_df, fig_cities
 
 try:
     directory = f"{os.environ['DASHBOARDS']}/biodiverciutat_24"
@@ -63,8 +63,7 @@ projects = {
 
 # Columna izquierda
 st.sidebar.markdown("# Quins municipis hi participen?")
-st.sidebar.markdown(
-    """
+st.sidebar.markdown("""
 * [Badalona](https://minka-sdg.org/projects/biodiverciutat-2024-badalona-repte-naturalista-urba)
 * [Barberà del Vallès](https://minka-sdg.org/projects/biodiverciutat-2024-barbera-del-valles-repte-naturalista-urba)
 * [Barcelona](https://minka-sdg.org/projects/biodiverciutat-2024-barcelona-repte-naturalista-urba)
@@ -100,8 +99,7 @@ st.sidebar.markdown(
 * [Torrelles de Llobregat](https://minka-sdg.org/projects/biodiverciutat-2024-torrelles-de-llobregat-repte-naturalista-urba)
 * [Viladecans](https://minka-sdg.org/projects/biodiverciutat-2024-viladecans-repte-naturalista-urba)
 * [Àrea marina Barcelona](https://minka-sdg.org/projects/biodiverciutat-2024-area-marina-barcelona)
-"""
-)
+""")
 
 # Cabecera
 with st.container():

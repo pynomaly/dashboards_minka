@@ -3,6 +3,8 @@ import os
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+
+st.set_page_config(layout="wide")
 import streamlit.components.v1 as components
 from utils import (
     create_heatmap,
@@ -11,8 +13,6 @@ from utils import (
     get_number_species,
     get_photo_from_ob,
 )
-
-st.set_page_config(layout="wide")
 
 # variables
 colors = ["#009DE0", "#0081B8", "#00567A"]
@@ -70,11 +70,9 @@ projects = {
 
 # Columna izquierda
 st.sidebar.markdown("# Quines espècies busca el BioDiverCiutat?")
-st.sidebar.markdown(
-    """
+st.sidebar.markdown("""
 La idea del CNC és que totes les ciutats que se sumin al repte identifiquin qualsevol taxó d’ésser viu del seu entorn metropolità. En el cas de Barcelona, l’objectiu és registrar observacions d’espècies tant marines, costaneres com terrestres, ja que Barcelona inclou diverses àrees amb biodiversitat (platges, zones verdes, parcs i jardins, boscos de Collserola).
-"""
-)
+""")
 # Cabecera
 with st.container():
     col1, col2 = st.columns([1, 10])

@@ -70,7 +70,7 @@ projects = {
 # Sidebar
 st.sidebar.markdown(
     """
-Les espècies introduïdes, també anomenades exòtiques, són organismes que han estat transportats fora del seu rang natural i han establert poblacions en nous entorns. Poden tenir un impacte negatiu en els ecosistemes locals, competint amb les espècies natives per recursos com ara l'alimentació, l'espai i l'aigua. Això pot alterar l'equilibri ecològic i provocar canvis significatius en la biodiversitat i la dinàmica dels ecosistemes. 
+Les espècies introduïdes, també anomenades exòtiques, són organismes que han estat transportats fora del seu rang natural i han establert poblacions en nous entorns. Poden tenir un impacte negatiu en els ecosistemes locals, competint amb les espècies natives per recursos com ara l'alimentació, l'espai i l'aigua. Això pot alterar l'equilibri ecològic i provocar canvis significatius en la biodiversitat i la dinàmica dels ecosistemes.
 """
 )
 
