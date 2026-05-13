@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "main": "General results",
+    "provinces": "Results by province",
+    "observations": "Latest observations",
+    "maps": "Maps",
+    "species": "Species of interest"
+  },
+  "header": {
+    "main_title": "Results {project_name}",
+    "provinces_title": "Which province has been the most active?",
+    "observations_title": "Latest published observations",
+    "last_species_title": "Latest species registered by province",
+    "new_species_title": "New species in the BioMARató area in the last 30 days",
+    "maps_title": "Maps",
+    "species_title": "Species of interest",
+    "ranking_title": "Participants ranking",
+    "thanks_title": "Acknowledgements"
+  },
+  "metrics": {
+    "observations": "Observations",
+    "species": "Species",
+    "participants": "Participants",
+    "last_week": "last week",
+    "last_month": "last month"
+  },
+  "charts": {
+    "observations_count": "Number of observations",
+    "species_count": "Number of species",
+    "participants_count": "Number of participants",
+    "observations_by_month": "Observations per month",
+    "species_by_month": "Species per month",
+    "participants_by_month": "Participants per month",
+    "comparison_title": "Results comparison between BioMARatons (2022-{year})"
+  },
+  "provinces": {
+    "girona": "Girona",
+    "tarragona": "Tarragona",
+    "barcelona": "Barcelona",
+    "catalunya": "Catalonia",
+    "filter_label": "Filter by province:",
+    "observations_by_province": "Observations by province",
+    "species_different": "Different species"
+  },
+  "species_page": {
+    "exotic": "exotic",
+    "protected": "protected",
+    "exotic_species": "Exotic species",
+    "protected_species": "Protected species",
+    "num_species": "Number of species",
+    "species_name_col": "Species name",
+    "observations_count_col": "Number of observations",
+    "first_observation_col": "First observation",
+    "last_observation_col": "Last observation",
+    "observations_by_province": "Observations by province",
+    "species_summary": "Species summary:",
+    "no_observations": "No observations recorded.",
+    "no_photos": "No photos available",
+    "last_species_photos": "Photos of the latest species registered"
+  },
+  "ranking": {
+    "research_grade_note": "Number of observations with research grade.",
+    "no_participants": "No participants",
+    "participant": "participant",
+    "observations": "observations",
+    "species": "species"
+  },
+  "ui": {
+    "no_data_observations": "No observation data available",
+    "no_data_species": "No species data available",
+    "no_data_participants": "No participant data available",
+    "no_data_monthly_observations": "No monthly observation data",
+    "no_data_monthly_species": "No monthly species data",
+    "no_data_monthly_participants": "No monthly participant data",
+    "no_data_comparison_observations": "No comparative observation data",
+    "no_data_comparison_species": "No comparative species data",
+    "no_data_comparison_participants": "No comparative participant data",
+    "no_data_province_observations": "No observation data by province",
+    "no_data_province_species": "No species data by province",
+    "no_data_province_participants": "No participant data by province",
+    "no_observations_yet": "No observations available yet. Data will load when the project begins.",
+    "no_species_available": "No species available for {province}",
+    "no_data_available": "No data available for {province}",
+    "loading_metrics": "Loading main metrics...",
+    "loading_evolution": "Preparing evolution charts...",
+    "loading_monthly": "Loading monthly data...",
+    "loading_comparison": "Loading previous years comparisons...",
+    "loading_ranking": "Loading participant rankings...",
+    "loading_participants": "Loading participant list...",
+    "loading_province_metrics": "Loading metrics by province...",
+    "loading_province_rankings": "Loading participant rankings...",
+    "loading_province_charts": "Generating province charts...",
+    "loading_observations": "Loading latest observations...",
+    "loading_province_data": "Loading province data...",
+    "loading_species_data": "Loading species data...",
+    "loading_species_processing": "Processing species data...",
+    "loading_species_analysis": "Analyzing species...",
+    "loading_photos": "Loading photos...",
+    "loading_new_species": "Loading new species...",
+    "error_loading_data": "Error loading data",
+    "view_on_minka": "View on MINKA",
+    "view": "View"
+  },
+  "thanks": {
+    "intro": "The following have participated in the {year} Biomarató of Catalonia:"
+  },
+  "footer": {
+    "organizers": "Organizers:",
+    "funding": "With funding from European projects:"
+  },
+  "table": {
+    "observation_date": "Observation date",
+    "participant": "Participant",
+    "species_name": "Species name",
+    "link": "Link",
+    "image": "Image"
+  }
+}

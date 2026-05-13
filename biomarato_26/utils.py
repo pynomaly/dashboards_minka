@@ -57,7 +57,7 @@ def load_maps():
                 "heatmap": create_heatmap(df_map),
                 "markermap": create_markercluster(df_map),
             }
-        except FileNotFoundError:
+        except (FileNotFoundError, pd.errors.EmptyDataError):
             st.error(f"No s'han trobat dades per {project_name}")
             return
 
@@ -218,11 +218,14 @@ def fig_area_evolution(df, field, title, color):
         line_color=color,
     )
     fig.update_layout(
+        template="plotly_white",
         plot_bgcolor="white",
+        paper_bgcolor="white",
         xaxis_title="",
         yaxis_tickformat=",d",
         separators=". ",
-        title=dict(text=title, font_size=18),
+        title=dict(text=title, font_size=18, font_color="#262730"),
+        font_color="#262730",
     )
     return fig
 
@@ -260,9 +263,11 @@ def fig_bars_months(grouped: pd.DataFrame, field: str, title: str, color: str):
         textposition="inside",
     )
     fig.update_layout(
+        template="plotly_white",
         width=600,
         height=400,
         paper_bgcolor="white",
+        plot_bgcolor="white",
         font_color="rgb(8,48,107)",
         xaxis_title="",
         yaxis_title="",
@@ -322,9 +327,11 @@ def fig_provinces(main_metrics: pd.DataFrame, field: str, title: str):
         marker_line_width=2,
     )
     fig.update_layout(
+        template="plotly_white",
         width=600,
         height=400,
         paper_bgcolor="white",
+        plot_bgcolor="white",
         font_color="rgb(8,48,107)",
         hoverlabel=dict(bgcolor="white"),
         title=dict(text=f"{title}", font_size=22),
@@ -339,7 +346,7 @@ def get_last_obs(proj_id):
     try:
         last_obs = pd.read_csv(f"{directory}/data/{proj_id}_df_obs.csv")
         last_photos = pd.read_csv(f"{directory}/data/{proj_id}_df_photos.csv")
-    except FileNotFoundError:
+    except (FileNotFoundError, pd.errors.EmptyDataError):
         return pd.DataFrame()
 
     total = pd.merge(
@@ -399,9 +406,9 @@ def create_heatmap(df):
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <style>
             html, body {{ margin: 0; padding: 0; height: 100%; width: 100%; }}
-            #map {{ 
-                height: 600px !important; 
-                width: 100% !important; 
+            #map {{
+                height: 600px !important;
+                width: 100% !important;
                 position: relative;
                 aspect-ratio: 16/9;
                 min-width: 800px;
@@ -411,26 +418,26 @@ def create_heatmap(df):
     </head>
     <body>
         <div id="map"></div>
-        
+
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-        
+
         <script>
             var map = L.map('map', {{
                 crs: L.CRS.EPSG3857,
                 zoomControl: true
             }}).setView([{center[0]}, {center[1]}], 6);
-            
+
             // Force map resize after initialization
             setTimeout(function() {{
                 map.invalidateSize();
             }}, 100);
-            
+
             L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{
                 attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
                 maxZoom: 18
             }}).addTo(map);
-            
+
             // Create heatmap with same configuration as folium version
             var heat = L.heatLayer({json.dumps(locations)}, {{
                 radius: 10,
@@ -440,19 +447,19 @@ def create_heatmap(df):
                 minOpacity: 0.7,
                 gradient: {{
                     0.1: 'blue',
-                    0.2: 'cyan', 
+                    0.2: 'cyan',
                     0.4: 'lime',
                     0.6: 'orange',
                     0.8: 'red',
                     0.99: 'purple'
                 }}
             }}).addTo(map);
-            
+
             // Force final map resize for heatmap
             setTimeout(function() {{
                 map.invalidateSize();
             }}, 200);
-            
+
             console.log('Heatmap loaded with ' + {len(locations)} + ' points');
         </script>
     </body>
@@ -513,44 +520,44 @@ def _create_javascript_map(df, center):
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <style>
             html, body {{ margin: 0; padding: 0; height: 100%; width: 100%; }}
-            #map {{ 
-                height: 600px !important; 
-                width: 100% !important; 
+            #map {{
+                height: 600px !important;
+                width: 100% !important;
                 position: relative;
                 aspect-ratio: 16/9;
                 min-width: 800px;
                 max-height: 600px;
             }}
-            .loading {{ 
-                position: absolute; top: 10px; right: 10px; z-index: 1000; 
-                background: white; padding: 5px 10px; border-radius: 5px; 
-                font-family: Arial; font-size: 12px; 
+            .loading {{
+                position: absolute; top: 10px; right: 10px; z-index: 1000;
+                background: white; padding: 5px 10px; border-radius: 5px;
+                font-family: Arial; font-size: 12px;
             }}
         </style>
     </head>
     <body>
         <div id="map"></div>
         <div id="loading" class="loading">Carregant {len(markers_data):,} punts...</div>
-        
+
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-        
+
         <script>
             var map = L.map('map', {{
                 crs: L.CRS.EPSG3857,
                 zoomControl: true
             }}).setView([{center[0]}, {center[1]}], 6);
-            
+
             // Force map resize after initialization
             setTimeout(function() {{
                 map.invalidateSize();
             }}, 100);
-            
+
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
                 attribution: 'Tiles &copy; Esri',
                 maxZoom: 18
             }}).addTo(map);
-            
+
             // Ultra-optimized cluster settings
             var markers = L.markerClusterGroup({{
                 maxClusterRadius: 60,
@@ -563,17 +570,17 @@ def _create_javascript_map(df, center):
                 chunkDelay: 10,
                 animate: false
             }});
-            
+
             // Load markers in ultra-small chunks for responsiveness
             var markerData = {json.dumps(markers_data)};
             var batchSize = 500;
             var index = 0;
             var loadingDiv = document.getElementById('loading');
-            
+
             function addBatch() {{
                 var batch = markerData.slice(index, index + batchSize);
                 var tempMarkers = [];
-                
+
                 batch.forEach(function(point) {{
                     // Create custom green icon with binoculars using DivIcon
                     var binocularsIcon = L.divIcon({{
@@ -583,24 +590,24 @@ def _create_javascript_map(df, center):
                         popupAnchor: [0, -24],
                         className: 'custom-binoculars-icon'
                     }});
-                    
+
                     var marker = L.marker([point.lat, point.lng], {{
                         icon: binocularsIcon
                     }});
                     marker.bindPopup(
-                        '<b>Taxon:</b> ' + point.taxon + 
-                        '<br><b>User:</b> ' + point.user + 
+                        '<b>Taxon:</b> ' + point.taxon +
+                        '<br><b>User:</b> ' + point.user +
                         '<br><a href="https://minka-sdg.org/observations/' + point.id + '" target="_blank">🔗 Minka</a>'
                     );
                     tempMarkers.push(marker);
                 }});
-                
+
                 markers.addLayers(tempMarkers);
-                
+
                 index += batchSize;
                 var progress = Math.min(100, Math.round((index / markerData.length) * 100));
                 loadingDiv.innerHTML = 'Carregant ' + progress + '% (' + Math.min(index, markerData.length) + '/' + markerData.length + ')';
-                
+
                 if (index < markerData.length) {{
                     setTimeout(addBatch, 1); // Very small delay
                 }} else {{
@@ -613,7 +620,7 @@ def _create_javascript_map(df, center):
                     console.log('Loaded ' + markerData.length + ' markers successfully');
                 }}
             }}
-            
+
             // Start loading
             setTimeout(addBatch, 100);
         </script>
@@ -735,53 +742,27 @@ def get_grouped_monthly(project_id: int) -> pd.DataFrame:
 
 # Toma dataframe de main_metrics hasta día actual
 def get_previous_years(main_metrics_filtered):
-    # Datos de 2022
-    df_2022 = pd.read_csv(f"{directory}/data/2022_main_metrics.csv")
-    df_2022_filtered = df_2022.loc[: len(main_metrics_filtered) - 1, :].copy()
-    df_2022_filtered.rename(
-        columns={
-            "date": "data",
-            "observations": "observacions",
-            "species": "espècies",
-        },
-        inplace=True,
-    )
+    def load_year_data(year):
+        """Load and filter data for a specific year"""
+        try:
+            df = pd.read_csv(f"{directory}/data/{year}_main_metrics.csv")
+            df_filtered = df.loc[: len(main_metrics_filtered) - 1, :].copy()
+            df_filtered.rename(
+                columns={
+                    "date": "data",
+                    "observations": "observacions",
+                    "species": "espècies",
+                },
+                inplace=True,
+            )
+            return df_filtered
+        except (FileNotFoundError, pd.errors.EmptyDataError):
+            return pd.DataFrame()
 
-    # Datos de 2023
-    df_2023 = pd.read_csv(f"{directory}/data/2023_main_metrics.csv")
-    df_2023_filtered = df_2023.loc[: len(main_metrics_filtered) - 1, :].copy()
-    df_2023_filtered.rename(
-        columns={
-            "date": "data",
-            "observations": "observacions",
-            "species": "espècies",
-        },
-        inplace=True,
-    )
-
-    # Datos de 2024
-    df_2024 = pd.read_csv(f"{directory}/data/2024_main_metrics.csv")
-    df_2024_filtered = df_2024.loc[: len(main_metrics_filtered) - 1, :].copy()
-    df_2024_filtered.rename(
-        columns={
-            "date": "data",
-            "observations": "observacions",
-            "species": "espècies",
-        },
-        inplace=True,
-    )
-
-    # Datos de 2025
-    df_2025 = pd.read_csv(f"{directory}/data/2025_main_metrics.csv")
-    df_2025_filtered = df_2025.loc[: len(main_metrics_filtered) - 1, :].copy()
-    df_2025_filtered.rename(
-        columns={
-            "date": "data",
-            "observations": "observacions",
-            "species": "espècies",
-        },
-        inplace=True,
-    )
+    df_2022_filtered = load_year_data(2022)
+    df_2023_filtered = load_year_data(2023)
+    df_2024_filtered = load_year_data(2024)
+    df_2025_filtered = load_year_data(2025)
 
     return df_2022_filtered, df_2023_filtered, df_2024_filtered, df_2025_filtered
 
@@ -837,7 +818,10 @@ def fig_multi_year_comparison(df_list, years, field, colors):
 
     # Personalización
     fig.update_layout(
+        template="plotly_white",
         plot_bgcolor="white",
+        paper_bgcolor="white",
+        font_color="#262730",
         yaxis_title=field,
         yaxis_tickformat=",d",
         yaxis=dict(
@@ -851,7 +835,7 @@ def fig_multi_year_comparison(df_list, years, field, colors):
             gridwidth=0.3,  # Más delgado que el horizontal
             tickangle=-45,
         ),
-        title=dict(text=field, font_size=18),
+        title=dict(text=field, font_size=18, font_color="#262730"),
         legend_title_text="Any",
         hovermode="x unified",
         height=450,  # Altura ajustable

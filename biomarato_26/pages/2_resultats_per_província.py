@@ -21,6 +21,7 @@ st.set_page_config(
 # Now import the rest
 import pandas as pd
 import requests
+from i18n import create_footer, init_i18n, t
 from utils import fig_provinces, get_metrics_province
 
 # configuración de ModeBar
@@ -62,15 +63,18 @@ st.markdown(
     f"""
     <style>
         [data-testid="stSidebar"] {{
-            width: 220px !important;
+            width: 300px !important;
         }}
         [data-testid="stSidebar"] > div:first-child {{
-            width: 220px !important;
+            width: 300px !important;
         }}
     </style>
     """,
     unsafe_allow_html=True,
 )
+
+# Initialize i18n
+init_i18n(current_page="provinces")
 
 # Create session for image loading
 session = requests.Session()
@@ -105,7 +109,7 @@ with st.container():
                     lambda x: "{:,.0f}".format(x).replace(",", " ")
                 )
                 rankings[prov_name] = df
-            except FileNotFoundError:
+            except (FileNotFoundError, pd.errors.EmptyDataError):
                 rankings[prov_name] = pd.DataFrame()
 
         return rankings
@@ -119,15 +123,15 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Quina província ha estat la més activa?]")
+        st.header(f":orange[{t('header.provinces_title')}]")
 
     # Generate cached province charts
-    @st.cache_data(ttl=60, show_spinner="Generant gràfics de províncies...")
+    @st.cache_data(ttl=60, show_spinner=t("ui.loading_province_charts"))
     def generate_province_charts(metrics_df):
         """Generate all province charts with caching"""
-        fig1 = fig_provinces(metrics_df, "observacions", "Nombre d'observacions")
-        fig2 = fig_provinces(metrics_df, "espècies", "Espècies diferents")
-        fig3 = fig_provinces(metrics_df, "participants", "Participants")
+        fig1 = fig_provinces(metrics_df, "observacions", t("charts.observations_count"))
+        fig2 = fig_provinces(metrics_df, "espècies", t("provinces.species_different"))
+        fig3 = fig_provinces(metrics_df, "participants", t("metrics.participants"))
         return fig1, fig2, fig3
 
     fig1, fig2, fig3 = generate_province_charts(main_metrics_prov)
@@ -137,17 +141,17 @@ with st.container():
         if fig1 is not None:
             st.plotly_chart(fig1, config=config_modebar, use_container_width=True)
         else:
-            st.info("No hi ha dades d'observacions per província")
+            st.info(t("ui.no_data_province_observations"))
     with col2:
         if fig2 is not None:
             st.plotly_chart(fig2, config=config_modebar, use_container_width=True)
         else:
-            st.info("No hi ha dades d'espècies per província")
+            st.info(t("ui.no_data_province_species"))
     with col3:
         if fig3 is not None:
             st.plotly_chart(fig3, config=config_modebar, use_container_width=True)
         else:
-            st.info("No hi ha dades de participants per província")
+            st.info(t("ui.no_data_province_participants"))
 
     # Optimized trophy winners calculation
     @st.cache_data(ttl=900)
@@ -198,8 +202,8 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Rànquing de participants]")
-    st.markdown("Nombre d'observacions amb grau de recerca.")
+        st.header(f":orange[{t('header.ranking_title')}]")
+    st.markdown(t("ranking.research_grade_note"))
 
     col1, col2, col3 = st.columns(3)
 
@@ -236,7 +240,7 @@ with st.container():
                     except:
                         pass
         else:
-            st.info("No hi ha dades disponibles per Girona")
+            st.info(t("ui.no_data_available").replace("{province}", "Girona"))
 
         # Ranking Tarragona
         with col2:
@@ -271,7 +275,7 @@ with st.container():
                         except:
                             pass
             else:
-                st.info("No hi ha dades disponibles per Tarragona")
+                st.info(t("ui.no_data_available").replace("{province}", "Tarragona"))
 
         # Ranking Barcelona
         with col3:
@@ -306,19 +310,7 @@ with st.container():
                         except:
                             pass
             else:
-                st.info("No hi ha dades disponibles per Barcelona")
+                st.info(t("ui.no_data_available").replace("{province}", "Barcelona"))
 
-st.divider()
-
-# Logos
-with st.container():
-    col_1, col_2 = st.columns(2)
-    with col_1:
-        st.markdown("##### Organitzadors:")
-        col1, __ = st.columns([3, 1])
-        with col1:
-            st.image(f"{directory}/images/organizadores_2024_v2.png")
-
-    with col_2:
-        st.markdown("##### Amb el finançament dels projectes europeus:")
-        st.image(f"{directory}/images/logos_financiacion_biomarato_v2.png")
+# Footer with logos
+create_footer()

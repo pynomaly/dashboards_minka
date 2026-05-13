@@ -23,6 +23,7 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 import requests
+from i18n import create_footer, init_i18n, t
 from markdownlit import mdlit
 from utils import get_last_obs, reindex
 
@@ -65,15 +66,18 @@ st.markdown(
     f"""
     <style>
         [data-testid="stSidebar"] {{
-            width: 220px !important;
+            width: 300px !important;
         }}
         [data-testid="stSidebar"] > div:first-child {{
-            width: 220px !important;
+            width: 300px !important;
         }}
     </style>
     """,
     unsafe_allow_html=True,
 )
+
+# Initialize i18n
+init_i18n(current_page="observations")
 
 
 @st.cache_data(ttl=1800, show_spinner="🔍 Processant espècies...")
@@ -114,13 +118,12 @@ def get_last_species_from_obs(df_obs, df_photos):
         return pd.DataFrame()
 
 
-@st.cache_data(ttl=900)
 def show_last_species(df, provincia_name):
     """
-    Optimized display of last species with better error handling
+    Display last species - not cached (renders UI with translations)
     """
     if df is None or df.empty:
-        st.info(f"No hi ha espècies disponibles per {provincia_name}")
+        st.info(t("ui.no_species_available").replace("{province}", provincia_name))
         return
 
     try:
@@ -129,7 +132,9 @@ def show_last_species(df, provincia_name):
         # Convert dates efficiently
         df["observed_on"] = pd.to_datetime(df["observed_on"], errors="coerce")
         df["observed_on"] = df["observed_on"].dt.strftime("%d-%m-%Y")
-        df["obs_url"] = df["id"].apply(lambda x: f"{config.HOME_PATH}/observations/{x}")
+        df["obs_url"] = df["id"].apply(
+            lambda x: f"{config.HOME_PATH}/observations/{int(x)}"
+        )
 
         # Ensure we have enough data
         max_items = min(8, len(df))
@@ -141,10 +146,15 @@ def show_last_species(df, provincia_name):
         with col1sp:
             st.dataframe(
                 df_display[["taxon_name", "observed_on", "obs_url"]].rename(
-                    columns={"observed_on": "data"}
+                    columns={
+                        "taxon_name": t("table.species_name"),
+                        "observed_on": t("table.observation_date"),
+                    }
                 ),
                 column_config={
-                    "obs_url": st.column_config.LinkColumn("link", display_text="Veure")
+                    "obs_url": st.column_config.LinkColumn(
+                        t("table.link"), display_text=t("ui.view")
+                    )
                 },
                 use_container_width=True,
                 height=300,
@@ -207,7 +217,7 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Últimes observacions publicades]")
+        st.header(f":orange[{t('header.observations_title')}]")
 
     # Optimized image viewer with caching
     @st.cache_data(ttl=600, show_spinner="📷 Carregant darreres observacions...")
@@ -238,7 +248,7 @@ with st.container():
     results = process_gallery_results(last_total, max_per_user=3, total_limit=15)
 
     if results.empty:
-        st.info("No hi ha observacions disponibles encara. Les dades es carregaran quan comenci el projecte.")
+        st.info(t("ui.no_observations_yet"))
     else:
         # Optimized gallery using direct URLs instead of fetching content
         c1, c2, c3, c4, c5 = st.columns(5)
@@ -276,7 +286,7 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Últimes espècies registrades per província]")
+        st.header(f":orange[{t('header.last_species_title')}]")
 
     # usuarios excluidos
     excluded = []
@@ -329,7 +339,7 @@ with st.container():
 
 
 # Optimized new species section
-@st.cache_data(ttl=1800, show_spinner="🌱 Carregant noves espècies...")
+@st.cache_data(ttl=10, show_spinner="🌱 Carregant noves espècies...")
 def load_new_species_data(directory_path):
     """Load and process new species data with caching"""
     try:
@@ -365,20 +375,9 @@ def load_new_species_data(directory_path):
 
 
 with st.container():
-    st.header("Noves espècies a l'àrea BioMARató en els darrers 30 dies")
+    st.header(t("header.new_species_title"))
     new_species_data = load_new_species_data(directory)
     show_last_species(new_species_data, "BioMARató")
 
-# Logos
-st.divider()
-with st.container():
-    col_1, col_2 = st.columns(2)
-    with col_1:
-        st.markdown("##### Organitzadors:")
-        col1, __ = st.columns([3, 1])
-        with col1:
-            st.image(f"{directory}/images/organizadores_2024_v2.png")
-
-    with col_2:
-        st.markdown("##### Amb el finançament dels projectes europeus:")
-        st.image(f"{directory}/images/logos_financiacion_biomarato_v2.png")
+# Footer with logos
+create_footer()

@@ -1,4 +1,4 @@
-# Run as streamlit run app_biomarato.py --server.port 9003
+# Run as: streamlit run 1_resultats.py --server.port 9003 --theme.base=light
 
 import os
 
@@ -25,6 +25,7 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 import streamlit.components.v1 as components
+from i18n import create_footer, init_i18n, t
 from streamlit_extras.metric_cards import style_metric_cards
 from utils import (
     fig_area_evolution,
@@ -78,18 +79,21 @@ matomo_script = """
 
 # Reducimos ancho de la barra lateral
 st.markdown(
-    f"""
+    """
     <style>
-        [data-testid="stSidebar"] {{
-            width: 220px !important;
-        }}
-        [data-testid="stSidebar"] > div:first-child {{
-            width: 220px !important;
-        }}
+        [data-testid="stSidebar"] {
+            width: 300px !important;
+        }
+        [data-testid="stSidebar"] > div:first-child {
+            width: 300px !important;
+        }
     </style>
     """,
     unsafe_allow_html=True,
 )
+
+# Initialize i18n
+init_i18n(current_page="main")
 
 
 # Optimized data loading with caching
@@ -122,27 +126,29 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(f":orange[Resultats {config.PROJ_NAME}]")
+        st.header(
+            f":orange[{t('header.main_title').replace('{project_name}', config.PROJ_NAME)}]"
+        )
         st.markdown(f":orange[{config.PROJ_DATES}]")
 
     __, col1, col2, col3, _ = st.columns([1, 2, 2, 2, 1])
     with col1:
         st.metric(
-            ":camera_with_flash: Observacions",
+            f":camera_with_flash: {t('metrics.observations')}",
             f"{total_obs:,}".replace(",", " "),
-            f"+{total_obs - lw_obs:,} última setmana".replace(",", " "),
+            f"+{total_obs - lw_obs:,} {t('metrics.last_week')}".replace(",", " "),
         )
     with col2:
         st.metric(
-            ":ladybug: Espècies",
+            f":ladybug: {t('metrics.species')}",
             f"{total_species:,}".replace(",", " "),
-            f"+{total_species - lw_spe} última setmana",
+            f"+{total_species - lw_spe} {t('metrics.last_week')}",
         )
     with col3:
         st.metric(
-            ":eyes: Participants",
+            f":eyes: {t('metrics.participants')}",
             f"{total_participants:,}".replace(",", " "),
-            f"+{total_participants - lw_part} última setmana",
+            f"+{total_participants - lw_part} {t('metrics.last_week')}",
         )
 
     style_metric_cards(
@@ -183,37 +189,43 @@ with st.container():
         fig1 = fig_area_evolution(
             df=main_metrics_filtered,
             field="observacions",
-            title="Nombre d'observacions",
+            title=t("charts.observations_count"),
             color=config.COLORS[1],
         )
         if fig1 is not None:
-            st.plotly_chart(fig1, config=config_modebar, use_container_width=True)
+            st.plotly_chart(
+                fig1, config=config_modebar, use_container_width=True, theme=None
+            )
         else:
-            st.info("No hi ha dades d'observacions disponibles")
+            st.info(t("ui.no_data_observations"))
 
     with col2_line:
         fig2 = fig_area_evolution(
             df=main_metrics_filtered,
             field="espècies",
-            title="Nombre d'espècies",
+            title=t("charts.species_count"),
             color=config.COLORS[3],
         )
         if fig2 is not None:
-            st.plotly_chart(fig2, config=config_modebar, use_container_width=True)
+            st.plotly_chart(
+                fig2, config=config_modebar, use_container_width=True, theme=None
+            )
         else:
-            st.info("No hi ha dades d'espècies disponibles")
+            st.info(t("ui.no_data_species"))
 
     with col3_line:
         fig3 = fig_area_evolution(
             df=main_metrics_filtered,
             field="participants",
-            title="Nombre de participants",
+            title=t("charts.participants_count"),
             color=config.COLORS[4],
         )
         if fig3 is not None:
-            st.plotly_chart(fig3, config=config_modebar, use_container_width=True)
+            st.plotly_chart(
+                fig3, config=config_modebar, use_container_width=True, theme=None
+            )
         else:
-            st.info("No hi ha dades de participants disponibles")
+            st.info(t("ui.no_data_participants"))
 
 
 # Cached monthly data loading
@@ -232,37 +244,43 @@ with st.container():
         fig1b = fig_bars_months(
             grouped,
             field="observacions",
-            title="Observacions per mes",
+            title=t("charts.observations_by_month"),
             color=config.COLORS[1],
         )
         if fig1b is not None:
-            st.plotly_chart(fig1b, config=config_modebar, use_container_width=True)
+            st.plotly_chart(
+                fig1b, config=config_modebar, use_container_width=True, theme=None
+            )
         else:
-            st.info("No hi ha dades mensuals d'observacions")
+            st.info(t("ui.no_data_monthly_observations"))
 
     with col2_month:
         fig2b = fig_bars_months(
             grouped,
             field="espècies",
-            title="Espècies per mes",
+            title=t("charts.species_by_month"),
             color=config.COLORS[3],
         )
         if fig2b is not None:
-            st.plotly_chart(fig2b, config=config_modebar, use_container_width=True)
+            st.plotly_chart(
+                fig2b, config=config_modebar, use_container_width=True, theme=None
+            )
         else:
-            st.info("No hi ha dades mensuals d'espècies")
+            st.info(t("ui.no_data_monthly_species"))
 
     with col3_month:
         fig3b = fig_bars_months(
             grouped,
             field="participants",
-            title="Participants per mes",
+            title=t("charts.participants_by_month"),
             color=config.COLORS[4],
         )
         if fig3b is not None:
-            st.plotly_chart(fig3b, config=config_modebar, use_container_width=True)
+            st.plotly_chart(
+                fig3b, config=config_modebar, use_container_width=True, theme=None
+            )
         else:
-            st.info("No hi ha dades mensuals de participants")
+            st.info(t("ui.no_data_monthly_participants"))
 
 
 # Cached previous years data
@@ -274,7 +292,7 @@ def load_comparison_data(main_metrics_filtered):
 
 with st.container():
     st.subheader(
-        f":orange[Comparativa de resultats entre BioMARatons (2022-{config.YEAR})]"
+        f":orange[{t('charts.comparison_title').replace('{year}', str(config.YEAR))}]"
     )
     # Datos de años anteriores with caching
     df_2022_filtered, df_2023_filtered, df_2024_filtered, df_2025_filtered = (
@@ -303,9 +321,11 @@ with st.container():
             ],
         )
         if fig1_comp is not None:
-            st.plotly_chart(fig1_comp, config=config_modebar, use_container_width=True)
+            st.plotly_chart(
+                fig1_comp, config=config_modebar, use_container_width=True, theme=None
+            )
         else:
-            st.info("No hi ha dades comparatives d'observacions")
+            st.info(t("ui.no_data_comparison_observations"))
 
     with col2_comp:
         fig2_comp = fig_multi_year_comparison(
@@ -327,9 +347,11 @@ with st.container():
             ],
         )
         if fig2_comp is not None:
-            st.plotly_chart(fig2_comp, config=config_modebar, use_container_width=True)
+            st.plotly_chart(
+                fig2_comp, config=config_modebar, use_container_width=True, theme=None
+            )
         else:
-            st.info("No hi ha dades comparatives d'espècies")
+            st.info(t("ui.no_data_comparison_species"))
 
     with col3_comp:
         fig3_comp = fig_multi_year_comparison(
@@ -351,9 +373,11 @@ with st.container():
             ],
         )
         if fig3_comp is not None:
-            st.plotly_chart(fig3_comp, config=config_modebar, use_container_width=True)
+            st.plotly_chart(
+                fig3_comp, config=config_modebar, use_container_width=True, theme=None
+            )
         else:
-            st.info("No hi ha dades comparatives de participants")
+            st.info(t("ui.no_data_comparison_participants"))
 
 
 with st.container():
@@ -362,8 +386,8 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Rànquing de participants]")
-    st.markdown("Nombre d'observacions amb grau de recerca.")
+        st.header(f":orange[{t('header.ranking_title')}]")
+    st.markdown(t("ranking.research_grade_note"))
     try:
         pd.read_csv(f"{directory}/data/{config.MAIN_PROJ}_pt_users.csv")
         col0, col1, col2, col3 = st.columns([4, 1, 4, 1])
@@ -407,7 +431,7 @@ with st.container():
                     height=210,
                 )
             else:
-                st.info("No hi ha dades de participants disponibles")
+                st.info(t("ui.no_data_participants"))
         with col2:
             # Medallas
             col1b, __ = st.columns([10, 1])
@@ -424,8 +448,8 @@ with st.container():
                             st.subheader(
                                 f":{medals[i-1]}: [{nombre}]({config.HOME_PATH}/users/{nombre})"
                             )
-    except FileNotFoundError:
-        st.markdown("Cap participant")
+    except (FileNotFoundError, pd.errors.EmptyDataError):
+        st.markdown(t("ranking.no_participants"))
 
 st.divider()
 
@@ -436,7 +460,7 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Agraïments]")
+        st.header(f":orange[{t('header.thanks_title')}]")
 
     # Cached participants list loading
     @st.cache_data(ttl=1800, show_spinner="Carregant llista de participants...")
@@ -452,25 +476,14 @@ with st.container():
                 f"[{p}](https://minka-sdg.org/users/{p})" for p in list_participants
             ]
             return ", ".join(linked_list)
-        except FileNotFoundError:
-            return "No hi ha dades de participants disponibles"
+        except (FileNotFoundError, pd.errors.EmptyDataError):
+            return t("ui.no_data_participants")
         except Exception as e:
-            return f"Error carregant participants: {e}"
+            return f"{t('ui.error_loading_data')}: {e}"
 
-    st.markdown(f"A la Biomarató {config.YEAR} de Catalunya han participat:")
+    st.markdown(t("thanks.intro").replace("{year}", str(config.YEAR)))
     participants_text = load_participants_list(directory, config.MAIN_PROJ)
     st.markdown(participants_text)
 
-# Logos
-st.divider()
-with st.container():
-    col_1, col_2 = st.columns(2)
-    with col_1:
-        st.markdown("##### Organitzadors:")
-        col1, __ = st.columns([3, 1])
-        with col1:
-            st.image(f"{directory}/images/organizadores_2024_v2.png")
-
-    with col_2:
-        st.markdown("##### Amb el finançament dels projectes europeus:")
-        st.image(f"{directory}/images/logos_financiacion_biomarato_v2.png")
+# Footer with logos
+create_footer()

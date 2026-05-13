@@ -23,6 +23,7 @@ from functools import lru_cache
 
 import pandas as pd
 import streamlit.components.v1 as components
+from i18n import create_footer, init_i18n, t
 from utils import create_heatmap, create_markercluster
 
 # configuración de ModeBar
@@ -64,22 +65,25 @@ st.markdown(
     f"""
     <style>
         [data-testid="stSidebar"] {{
-            width: 220px !important;
+            width: 300px !important;
         }}
         [data-testid="stSidebar"] > div:first-child {{
-            width: 220px !important;
+            width: 300px !important;
         }}
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+# Initialize i18n
+init_i18n(current_page="maps")
+
 with st.container():
     col1, col2 = st.columns([1, 25])
     with col1:
         st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Mapes]")
+        st.header(f":orange[{t('header.maps_title')}]")
 
 # Project selection with performance hints
 project_options = {
@@ -110,7 +114,7 @@ def load_project_data(proj_id):
     """Load and cache project data"""
     try:
         return pd.read_csv(f"{directory}/data/{proj_id}_df_obs.csv")
-    except FileNotFoundError:
+    except (FileNotFoundError, pd.errors.EmptyDataError):
         return None
 
 
@@ -245,16 +249,5 @@ if map_key in st.session_state:
                 map_html = markermap._repr_html_()
                 components.html(markermap, height=600, width=None, scrolling=False)
 
-# Logos
-st.divider()
-with st.container():
-    col_1, col_2 = st.columns(2)
-    with col_1:
-        st.markdown("##### Organitzadors:")
-        col1, __ = st.columns([3, 1])
-        with col1:
-            st.image(f"{directory}/images/organizadores_2024_v2.png")
-
-    with col_2:
-        st.markdown("##### Amb el finançament dels projectes europeus:")
-        st.image(f"{directory}/images/logos_financiacion_biomarato_v2.png")
+# Footer with logos
+create_footer()

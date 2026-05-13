@@ -58,7 +58,7 @@ def _fetch_daily_metrics_batch(session, proj_id, day_batches, urls):
     """Fetch metrics for multiple days with parallel processing"""
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
-    headers = {"Authorization": f"Bearer {access_token}"}
+    # headers = {"Authorization": f"Bearer {access_token}"}
 
     def fetch_day_metrics(day_str):
         """Fetch all metrics for a single day"""
@@ -74,9 +74,7 @@ def _fetch_daily_metrics_batch(session, proj_id, day_batches, urls):
             retries = 3
             for attempt in range(retries):
                 try:
-                    response = session.get(
-                        url, headers=headers, params=params, timeout=10
-                    )
+                    response = session.get(url, params=params, timeout=10)
                     response.raise_for_status()
                     return metric, response.json()["total_results"]
                 except Exception as e:
@@ -183,14 +181,13 @@ def get_list_users(id_project):
     from concurrent.futures import ThreadPoolExecutor
 
     session = _get_global_session()
-    headers = {"Authorization": f"Bearer {access_token}"}
 
     url1 = f"{config.API_PATH}/observations/observers?project_id={id_project}&quality_grade=research"
     url2 = f"{config.API_PATH}/observations/identifiers?project_id={id_project}&quality_grade=research"
 
     def fetch_url(url):
         try:
-            response = session.get(url, headers=headers, timeout=15)
+            response = session.get(url, timeout=15)
             response.raise_for_status()
             return response.json()["results"]
         except Exception as e:
@@ -401,7 +398,6 @@ def get_ranking_users(proj_id, grade=None):
 
 def get_list_species(proj_id: int, type="project") -> Optional[pd.DataFrame]:
     """Optimized version with global session and chunked processing"""
-    headers = {"Authorization": f"Bearer {access_token}"}
     session = _get_global_session()
 
     if type == "project":
@@ -413,7 +409,7 @@ def get_list_species(proj_id: int, type="project") -> Optional[pd.DataFrame]:
 
     try:
         # Get total results first
-        initial_response = session.get(url, headers=headers, params=params, timeout=15)
+        initial_response = session.get(url, params=params, timeout=15)
         initial_response.raise_for_status()
         initial_data = initial_response.json()
         total_results = initial_data["total_results"]
@@ -431,9 +427,7 @@ def get_list_species(proj_id: int, type="project") -> Optional[pd.DataFrame]:
                 page_params["page"] = page
 
                 try:
-                    response = session.get(
-                        url, headers=headers, params=page_params, timeout=15
-                    )
+                    response = session.get(url, params=page_params, timeout=15)
                     response.raise_for_status()
                     all_results.extend(response.json()["results"])
                 except Exception as e:
@@ -467,7 +461,6 @@ def get_first_obs_taxon(taxon_id, proj_id, type="project", session=None):
     if session is None:
         session = requests.Session()
 
-    headers = {"Authorization": f"Bearer {access_token}"}
     url = f"{config.API_PATH}/observations"
     if type == "place":
         params = {
@@ -486,7 +479,7 @@ def get_first_obs_taxon(taxon_id, proj_id, type="project", session=None):
             "order": "asc",
         }
 
-    results = session.get(url, headers=headers, params=params).json()["results"]
+    results = session.get(url, params=params).json()["results"]
 
     if not results:
         return [None, None, None, None]
@@ -497,9 +490,7 @@ def get_first_obs_taxon(taxon_id, proj_id, type="project", session=None):
     author = primera_observacion["user"]["login"]
     obs_id = primera_observacion["id"]
 
-    results_photos = session.get(url, headers=headers, params={"id": obs_id}).json()[
-        "results"
-    ]
+    results_photos = session.get(url, params={"id": obs_id}).json()["results"]
     try:
         photo_url = results_photos[0]["photos"][0]["url"].replace("/square", "/large")
     except:
@@ -518,7 +509,10 @@ def _process_project(proj_id):
     try:
         # Check if file exists, if not start fresh
         if os.path.exists(obs_file):
-            downloaded_obs = pd.read_csv(obs_file)
+            try:
+                downloaded_obs = pd.read_csv(obs_file)
+            except:
+                downloaded_obs = pd.DataFrame()
             downloaded_count = len(downloaded_obs)
         else:
             downloaded_count = 0
@@ -645,7 +639,7 @@ if __name__ == "__main__":
     load_dotenv()
 
     # api_token = get_admin_token()
-    access_token = get_access_token()
+    # access_token = get_access_token()
 
     # Get main_metrics.csv
     main_metrics_df = update_main_metrics(config.MAIN_PROJ)

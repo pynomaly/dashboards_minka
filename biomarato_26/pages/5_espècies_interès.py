@@ -24,21 +24,25 @@ import datetime
 import numpy as np
 import pandas as pd
 import requests
+from i18n import create_footer, init_i18n, t
 from streamlit_extras.metric_cards import style_metric_cards
 
 st.markdown(
     f"""
     <style>
         [data-testid="stSidebar"] {{
-            width: 220px !important;
+            width: 300px !important;
         }}
         [data-testid="stSidebar"] > div:first-child {{
-            width: 220px !important;
+            width: 300px !important;
         }}
     </style>
     """,
     unsafe_allow_html=True,
 )
+
+# Initialize i18n
+init_i18n(current_page="species")
 
 # configuración de ModeBar
 config_modebar = {
@@ -65,7 +69,7 @@ def load_csv(file_path):
     """Load CSV with caching and error handling"""
     try:
         return pd.read_csv(file_path)
-    except FileNotFoundError:
+    except (FileNotFoundError, pd.errors.EmptyDataError):
         return pd.DataFrame()
 
 
@@ -193,7 +197,7 @@ def show_last_species(df):
     Optimized display of last species with better error handling
     """
     if df.empty:
-        st.info("No hi ha fotos disponibles")
+        st.info(t("species_page.no_photos"))
         return
 
     try:
@@ -231,16 +235,24 @@ with st.container():
     with col1:
         st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Espècies d'interès]")
+        st.header(f":orange[{t('header.species_title')}]")
 
 # Load all data once with caching
-with st.spinner("🔄 Carregant dades d'espècies..."):
+with st.spinner(t("ui.loading_species_data")):
     all_data = load_all_species_data(directory, config.MAIN_PROJ)
 
 # Define species groups and names
 species_groups = [
-    {"key": "exoticas", "name": "exòtiques", "title": "**Espècies exòtiques**"},
-    {"key": "protegidas", "name": "protegides", "title": "**Espècies protegides**"},
+    {
+        "key": "exoticas",
+        "name": t("species_page.exotic"),
+        "title": f"**{t('species_page.exotic_species')}**",
+    },
+    {
+        "key": "protegidas",
+        "name": t("species_page.protected"),
+        "title": f"**{t('species_page.protected_species')}**",
+    },
 ]
 
 counter = 0
@@ -270,9 +282,9 @@ for tab, group_info in zip(
                 if isinstance(table_species, pd.DataFrame) and not table_species.empty:
                     # Use the group name from our data structure
                     st.metric(
-                        f":ladybug: Nombre d'espècies {group_name}",
+                        f":ladybug: {t('species_page.num_species')} {group_name}",
                         len(table_species),
-                        f"+{len(table_species) - last_month_species} últim mes",
+                        f"+{len(table_species) - last_month_species} {t('metrics.last_month')}",
                     )
                     style_metric_cards(
                         background_color="#fff",
@@ -289,17 +301,19 @@ for tab, group_info in zip(
                         ],
                         column_config={
                             "taxon_url": st.column_config.LinkColumn(
-                                "Nom de l'espècie",
+                                t("species_page.species_name_col"),
                                 display_text=r"https://minka-sdg.org/taxa/(.*?)$",
                             ),
                             "count": st.column_config.NumberColumn(
-                                "Nombre d'observacions"
+                                t("species_page.observations_count_col")
                             ),
                             "first_observed": st.column_config.DateColumn(
-                                "Primera observació", format="DD-MM-YYYY"
+                                t("species_page.first_observation_col"),
+                                format="DD-MM-YYYY",
                             ),
                             "last_observed": st.column_config.DateColumn(
-                                "Darrera observació", format="DD-MM-YYYY"
+                                t("species_page.last_observation_col"),
+                                format="DD-MM-YYYY",
                             ),
                         },
                         hide_index=False,
@@ -310,9 +324,9 @@ for tab, group_info in zip(
                 pass
 
         with col3:
-            st.subheader("Observacions per província")
+            st.subheader(t("species_page.observations_by_province"))
             project_name = st.selectbox(
-                "Filtre per província:",
+                t("provinces.filter_label"),
                 config.PROJECTS_BY_NAME.keys(),
                 key=f"provincia_{counter}",
             )
@@ -371,16 +385,16 @@ for tab, group_info in zip(
                     ],
                     column_config={
                         "observed_on": st.column_config.DateColumn(
-                            "Data d'observació", format="DD-MM-YYYY"
+                            t("table.observation_date"), format="DD-MM-YYYY"
                         ),
                         "user_login": st.column_config.TextColumn(
-                            label="Participant", width="medium"
+                            label=t("table.participant"), width="medium"
                         ),
                         "taxon_name": st.column_config.TextColumn(
-                            label="Nom de l'espècie", width="medium"
+                            label=t("table.species_name"), width="medium"
                         ),
                         "url": st.column_config.LinkColumn(
-                            "Link",
+                            t("table.link"),
                             width="medium",
                             # display_text=r"https://minka-sdg.org/observations/(.*?)",
                         ),
@@ -390,10 +404,10 @@ for tab, group_info in zip(
                 )
 
             else:
-                st.markdown("Cap observació registrada.")
+                st.markdown(t("species_page.no_observations"))
 
         st.divider()
-        st.subheader(f"Fotos de les darreres espècies registrades")
+        st.subheader(t("species_page.last_species_photos"))
 
         # Use main project data for photos to get the latest species across all provinces
         main_last_obs = get_obs_by_species_group_optimized(df_main_project, df_especies)
@@ -420,16 +434,5 @@ for tab, group_info in zip(
 
 st.container(height=50, border=False)
 
-# Logos
-st.divider()
-with st.container():
-    col_1, col_2 = st.columns(2)
-    with col_1:
-        st.markdown("##### Organitzadors:")
-        col1, __ = st.columns([3, 1])
-        with col1:
-            st.image(f"{directory}/images/organizadores_2024_v2.png")
-
-    with col_2:
-        st.markdown("##### Amb el finançament dels projectes europeus:")
-        st.image(f"{directory}/images/logos_financiacion_biomarato_v2.png")
+# Footer with logos
+create_footer()

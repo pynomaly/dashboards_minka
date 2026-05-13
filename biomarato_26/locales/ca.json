@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "main": "Resultats generals",
+    "provinces": "Resultats per província",
+    "observations": "Últimes observacions",
+    "maps": "Mapes",
+    "species": "Espècies d'interès"
+  },
+  "header": {
+    "main_title": "Resultats {project_name}",
+    "provinces_title": "Quina província ha estat la més activa?",
+    "observations_title": "Últimes observacions publicades",
+    "last_species_title": "Últimes espècies registrades per província",
+    "new_species_title": "Noves espècies a l'àrea BioMARató en els darrers 30 dies",
+    "maps_title": "Mapes",
+    "species_title": "Espècies d'interès",
+    "ranking_title": "Rànquing de participants",
+    "thanks_title": "Agraïments"
+  },
+  "metrics": {
+    "observations": "Observacions",
+    "species": "Espècies",
+    "participants": "Participants",
+    "last_week": "última setmana",
+    "last_month": "últim mes"
+  },
+  "charts": {
+    "observations_count": "Nombre d'observacions",
+    "species_count": "Nombre d'espècies",
+    "participants_count": "Nombre de participants",
+    "observations_by_month": "Observacions per mes",
+    "species_by_month": "Espècies per mes",
+    "participants_by_month": "Participants per mes",
+    "comparison_title": "Comparativa de resultats entre BioMARatons (2022-{year})"
+  },
+  "provinces": {
+    "girona": "Girona",
+    "tarragona": "Tarragona",
+    "barcelona": "Barcelona",
+    "catalunya": "Catalunya",
+    "filter_label": "Filtre per província:",
+    "observations_by_province": "Observacions per província",
+    "species_different": "Espècies diferents"
+  },
+  "species_page": {
+    "exotic": "exòtiques",
+    "protected": "protegides",
+    "exotic_species": "Espècies exòtiques",
+    "protected_species": "Espècies protegides",
+    "num_species": "Nombre d'espècies",
+    "species_name_col": "Nom de l'espècie",
+    "observations_count_col": "Nombre d'observacions",
+    "first_observation_col": "Primera observació",
+    "last_observation_col": "Darrera observació",
+    "observations_by_province": "Observacions per província",
+    "species_summary": "Sumari d'espècies:",
+    "no_observations": "Cap observació registrada.",
+    "no_photos": "No hi ha fotos disponibles",
+    "last_species_photos": "Fotos de les darreres espècies registrades"
+  },
+  "ranking": {
+    "research_grade_note": "Nombre d'observacions amb grau de recerca.",
+    "no_participants": "Cap participant",
+    "participant": "participant",
+    "observations": "observacions",
+    "species": "espècies"
+  },
+  "ui": {
+    "no_data_observations": "No hi ha dades d'observacions disponibles",
+    "no_data_species": "No hi ha dades d'espècies disponibles",
+    "no_data_participants": "No hi ha dades de participants disponibles",
+    "no_data_monthly_observations": "No hi ha dades mensuals d'observacions",
+    "no_data_monthly_species": "No hi ha dades mensuals d'espècies",
+    "no_data_monthly_participants": "No hi ha dades mensuals de participants",
+    "no_data_comparison_observations": "No hi ha dades comparatives d'observacions",
+    "no_data_comparison_species": "No hi ha dades comparatives d'espècies",
+    "no_data_comparison_participants": "No hi ha dades comparatives de participants",
+    "no_data_province_observations": "No hi ha dades d'observacions per província",
+    "no_data_province_species": "No hi ha dades d'espècies per província",
+    "no_data_province_participants": "No hi ha dades de participants per província",
+    "no_observations_yet": "No hi ha observacions disponibles encara. Les dades es carregaran quan comenci el projecte.",
+    "no_species_available": "No hi ha espècies disponibles per {province}",
+    "no_data_available": "No hi ha dades disponibles per {province}",
+    "loading_metrics": "Carregant mètriques principals...",
+    "loading_evolution": "Preparant gràfics d'evolució...",
+    "loading_monthly": "Carregant dades mensuals...",
+    "loading_comparison": "Carregant comparatives d'anys anteriors...",
+    "loading_ranking": "Carregant rànquing de participants...",
+    "loading_participants": "Carregant llista de participants...",
+    "loading_province_metrics": "Carregant mètriques per província...",
+    "loading_province_rankings": "Carregant rànquings de participants...",
+    "loading_province_charts": "Generant gràfics de províncies...",
+    "loading_observations": "Carregant darreres observacions...",
+    "loading_province_data": "Carregant dades de províncies...",
+    "loading_species_data": "Carregant dades d'espècies...",
+    "loading_species_processing": "Processant dades d'espècies...",
+    "loading_species_analysis": "Analitzant espècies...",
+    "loading_photos": "Carregant fotos...",
+    "loading_new_species": "Carregant noves espècies...",
+    "error_loading_data": "Error carregant dades",
+    "view_on_minka": "Veure a MINKA",
+    "view": "Veure"
+  },
+  "thanks": {
+    "intro": "A la Biomarató {year} de Catalunya han participat:"
+  },
+  "footer": {
+    "organizers": "Organitzadors:",
+    "funding": "Amb el finançament dels projectes europeus:"
+  },
+  "table": {
+    "observation_date": "Data d'observació",
+    "participant": "Participant",
+    "species_name": "Nom de l'espècie",
+    "link": "Link",
+    "image": "Imatge"
+  }
+}
