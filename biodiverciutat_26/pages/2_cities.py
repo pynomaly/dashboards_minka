@@ -97,6 +97,8 @@ else:
             color_option = options_map[color_label]
 
         datos_mapa = get_cached_geo_df(config.MAIN_PROJ)
+        mask = datos_mapa["project"] != 499
+        datos_mapa = datos_mapa[mask]
         fig = px.choropleth_map(
             data_frame=datos_mapa,
             geojson=datos_mapa.geometry.__geo_interface__,
