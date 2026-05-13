@@ -2,7 +2,6 @@ import os
 
 import pandas as pd
 import streamlit as st
-from utils import fig_cols, get_count_by_hour, get_count_per_day
 
 # variables
 colors = ["#4aae79", "#00a3b4", "#265769"]
@@ -19,6 +18,7 @@ st.set_page_config(
     page_icon=f"{directory}/images/minka-logo.png",
     page_title="Dashboard BioDiverCiutat 2025",
 )
+from utils import fig_cols, get_count_by_hour, get_count_per_day
 
 api_path = "https://api.minka-sdg.org/v1"
 
@@ -89,13 +89,11 @@ exclude_users = []
 
 # Columna izquierda
 st.sidebar.markdown("# Com s’hi pot participar?")
-st.sidebar.markdown(
-    """
+st.sidebar.markdown("""
 Qualsevol persona amb interès en la natura pot unir-se al repte. A través de la plataforma MINKA es poden pujar les observacions de flora i fauna, de qualsevol ecosistema urbà, en aquest cas de Barcelona i de tots els municipis metropolitans (boscos de Collserola, parcs, jardins, rius, aiguamolls, dunes, platges i mar).
 
 Totes les observacions del perímetre dels municipis metropolitans que entrin a MINKA, del 26 d’abril a les 00:01 h al 29 d’abril a les 23:59 h formaran part de l’esdeveniment.
-"""
-)
+""")
 
 # Ranking de participantes por obs, identificaciones y especies
 

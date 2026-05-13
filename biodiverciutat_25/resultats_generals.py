@@ -2,8 +2,25 @@
 
 import os
 
-import pandas as pd
 import streamlit as st
+
+# Set page config FIRST, before any other st commands or imports that use streamlit
+try:
+    directory = f"{os.environ['DASHBOARDS']}/biodiverciutat_25"
+except KeyError:
+    directory = os.path.dirname(os.path.abspath(__file__))
+    print(
+        "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
+    )
+
+st.set_page_config(
+    layout="wide",
+    page_icon=f"{directory}/images/minka-logo.png",
+    page_title="Dashboard BioDiverCiutat 2025",
+)
+
+# Now import the rest (after set_page_config)
+import pandas as pd
 import streamlit.components.v1 as components
 from streamlit_extras.metric_cards import style_metric_cards
 from utils import (
@@ -14,19 +31,6 @@ from utils import (
 )
 
 bdc_colors = ["#4aae79", "#007d8a", "#00a3b4"]
-
-try:
-    directory = f"{os.environ['DASHBOARDS']}/biodiverciutat_25"
-except KeyError:
-    print(
-        "Configura la variable de entorno DASHBOARDS en .bashrc apuntando al directorio de los dashboards."
-    )
-
-st.set_page_config(
-    layout="wide",
-    page_icon=f"{directory}/images/minka-logo.png",
-    page_title="Dashboard BioDiverCiutat 2025",
-)
 
 exclude_users = [
     "xasalva",
@@ -100,15 +104,12 @@ def read_df(path: str) -> pd.DataFrame:
 
 
 # columna izquierda
-
 st.sidebar.markdown("# Què és BioDiverCiutat")
-st.sidebar.markdown(
-    """
+st.sidebar.markdown("""
 És un esdeveniment de ciència ciutadana que forma part del City Nature Challenge, una competició internacional amistosa que destaca la importància de reportar la biodiversitat a les ciutats. Cada ciutat està "custodiada" per una entitat de recerca o naturalista. A Barcelona i tota l’àrea metropolitana, l’esdeveniment adopta el nom de BioDiverCiutat i l’organitza l'Institut de Ciències del Mar (ICM-CSIC).
 
 Consisteix a registrar el màxim nombre d'espècies possible durant 4 dies consecutius: del 26 al 29 d’abril de 2024. És un bioblitz internacional, vol dir que ciutats de tot el món competeixen per reportar el major nombre d'observacions de biodiversitat en aquest període de temps.
-"""
-)
+""")
 
 
 # Cabecera

@@ -3,15 +3,6 @@ import os
 import pandas as pd
 import requests
 import streamlit as st
-import streamlit.components.v1 as components
-from markdownlit import mdlit
-from streamlit_extras.metric_cards import style_metric_cards
-from utils import (
-    create_heatmap,
-    create_markercluster,
-    get_introduced_df,
-    get_introduced_species,
-)
 
 # variables
 colors = ["#009DE0", "#0081B8", "#00567A"]
@@ -27,6 +18,15 @@ st.set_page_config(
     layout="wide",
     page_icon=f"{directory}/images/minka-logo.png",
     page_title="Dashboard BioDiverCiutat 2025",
+)
+import streamlit.components.v1 as components
+from markdownlit import mdlit
+from streamlit_extras.metric_cards import style_metric_cards
+from utils import (
+    create_heatmap,
+    create_markercluster,
+    get_introduced_df,
+    get_introduced_species,
 )
 
 api_path = "https://api.minka-sdg.org/v1"
@@ -72,11 +72,9 @@ projects = {
 }
 
 # Sidebar
-st.sidebar.markdown(
-    """
-Les espècies introduïdes, també anomenades exòtiques, són organismes que han estat transportats fora del seu rang natural i han establert poblacions en nous entorns. Poden tenir un impacte negatiu en els ecosistemes locals, competint amb les espècies natives per recursos com ara l'alimentació, l'espai i l'aigua. Això pot alterar l'equilibri ecològic i provocar canvis significatius en la biodiversitat i la dinàmica dels ecosistemes. 
-"""
-)
+st.sidebar.markdown("""
+Les espècies introduïdes, també anomenades exòtiques, són organismes que han estat transportats fora del seu rang natural i han establert poblacions en nous entorns. Poden tenir un impacte negatiu en els ecosistemes locals, competint amb les espècies natives per recursos com ara l'alimentació, l'espai i l'aigua. Això pot alterar l'equilibri ecològic i provocar canvis significatius en la biodiversitat i la dinàmica dels ecosistemes.
+""")
 
 
 # Cabecera
