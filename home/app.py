@@ -76,7 +76,7 @@ with col5:
 
 st.divider()
 
-col1, col2, col3, col4, col5 = st.columns([1, 10, 1, 4.5, 5.5])
+col1, col2, col3, col4, col5, col6 = st.columns([1, 10, 1, 4.5, 1, 4.5])
 with col1:
     st.image(f"{directory}/images/logo_biodiverciutat.png")
 with col2:
@@ -86,6 +86,8 @@ with col3:
 with col4:
     st.header("Bioplatgesmet")
 with col5:
+    st.image(f"{directory}/images/logo_arsinoe.png")
+with col6:
     st.header("Arsinoe")
 
 # Biomaratona
