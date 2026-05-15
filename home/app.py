@@ -38,11 +38,11 @@ st.divider()
 
 col1, col2, col3, col4 = st.columns([1, 10, 1, 10])
 with col1:
-    st.image("images/Biomarato_logo.png")
+    st.image(f"{directory}/images/Biomarato_logo.png")
 with col2:
     st.header("BioMARató")
 with col3:
-    st.image("images/Biomarato_logo.png")
+    st.image(f"{directory}/images/Biomarato_logo.png")
 with col4:
     st.header("Biomaratona Portugal")
 
@@ -52,25 +52,25 @@ col1, col2, col3, col4, col5 = st.columns([10, 10, 1, 10, 10])
 with col1:
     st.subheader("[2025](https://dashboard.minka-sdg.org/biomarato25/)")
     image_with_link(
-        "images/minka_biomarato_2025.png",
+        f"{directory}/images/minka_biomarato_2025.png",
         "https://dashboard.minka-sdg.org/biomarato25/",
     )
 with col2:
     st.subheader("[2026](https://dashboard.minka-sdg.org/biomarato26)")
     image_with_link(
-        "images/minka_biomarato_2026.png",
+        f"{directory}/images/minka_biomarato_2026.png",
         "https://dashboard.minka-sdg.org/biomarato26/",
     )
 with col4:
     st.subheader("[2025](https://dashboard.minka-sdg.org/biomaratona25/)")
     image_with_link(
-        "images/minka_biomaratona_25.png",
+        f"{directory}/images/minka_biomaratona_25.png",
         "https://dashboard.minka-sdg.org/biomaratona25/",
     )
 with col5:
     st.subheader("[2026](https://dashboard.minka-sdg.org/biomaratona26/)")
     image_with_link(
-        "images/minka_biomaratona_26.png",
+        f"{directory}/images/minka_biomaratona_26.png",
         "https://dashboard.minka-sdg.org/biomaratona26/",
     )
 
@@ -78,11 +78,11 @@ st.divider()
 
 col1, col2, col3, col4, col5 = st.columns([1, 10, 1, 4.5, 5.5])
 with col1:
-    st.image("images/logo_biodiverciutat.png")
+    st.image(f"{directory}/images/logo_biodiverciutat.png")
 with col2:
     st.header("Biodiverciutat")
 with col3:
-    st.image("images/Logo_BioplatgesMet.png")
+    st.image(f"{directory}/images/Logo_BioplatgesMet.png")
 with col4:
     st.header("Bioplatgesmet")
 with col5:
@@ -96,13 +96,13 @@ col1, col2, col3, col4, col5 = st.columns([10, 10, 1, 10, 10])
 with col1:
     st.subheader("[2025](https://dashboard.minka-sdg.org/biodiverciutat25/)")
     image_with_link(
-        "images/minka_biodiverciutat_2025.png",
+        f"{directory}/images/minka_biodiverciutat_2025.png",
         "https://dashboard.minka-sdg.org/biodiverciutat25/",
     )
 with col2:
     st.subheader("[2026](https://dashboard.minka-sdg.org/biodiverciutat26/)")
     image_with_link(
-        "images/minka_biodiverciutat_2026.png",
+        f"{directory}/images/minka_biodiverciutat_2026.png",
         "https://dashboard.minka-sdg.org/biodiverciutat26/",
     )
 
@@ -110,14 +110,15 @@ with col2:
 with col4:
     st.subheader("[Bioplatgesmet](https://dashboard.minka-sdg.org/bioplatgesmet)")
     image_with_link(
-        "images/minka_bioplatgesmet.png",
+        f"{directory}/images/minka_bioplatgesmet.png",
         "https://dashboard.minka-sdg.org/bioplatgesmet/",
     )
 
 with col5:
     st.subheader("[Arsinoe](https://dashboard.minka-sdg.org/arsinoe/)")
     image_with_link(
-        "images/minka_arsinoe.png", "https://dashboard.minka-sdg.org/arsinoe/"
+        f"{directory}/images/minka_arsinoe.png",
+        "https://dashboard.minka-sdg.org/arsinoe/",
     )
 
 st.divider()
