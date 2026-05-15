@@ -29,7 +29,7 @@ except KeyError:
 st.set_page_config(
     layout="wide",
     page_icon=f"{directory}/images/minka-logo.png",
-    page_title="Dashboard BioMARatona 2025",
+    page_title=f"Dashboard BioMARatona {config.YEAR}",
 )
 
 # Apply CSS only once per session for better performance
@@ -75,11 +75,12 @@ if "especies_config_modebar" not in st.session_state:
 COLORS = ("#5fbfbb", "#1e9ca3", "#0c6a83", "#de6719", "#fab954")  # Tuple is faster
 
 PROJECTS = {
+    config.MAIN_PROJ: config.PROJ_NAME,
     424: "BioMARatona 2025",
     452: "BioMARatona 2024",
 }
 
-MAIN_PROJECT = 424
+MAIN_PROJECT = config.MAIN_PROJ
 PROJECT_2024 = 452
 PROJECT_2025 = 424
 

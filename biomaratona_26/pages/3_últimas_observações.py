@@ -49,10 +49,10 @@ api_path = "https://api.minka-sdg.org/v1"
 
 
 projects = [
-    {"id": 424, "name": "BioMARatona 2025"},
+    {"id": config.MAIN_PROJ, "name": config.PROJ_NAME},
 ]
 
-main_project = 424
+main_project = config.MAIN_PROJ
 
 
 # Apply CSS only once per session
