@@ -121,6 +121,26 @@ def load_and_process_cumulative_data():
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
+def load_and_process_monthly_data():
+    """Carga y procesa datos mensuales (no acumulados)"""
+    df_monthly = pd.read_csv(f"{directory}/data/city_monthly_metrics.csv")
+    df_monthly_general = df_monthly[df_monthly.city == "BioPlatgesMet"].copy()
+    df_monthly_general["month"] = df_monthly_general["month"].astype(str)
+    df_monthly_general.rename(
+        columns={
+            "city": "ciutat",
+            "month": "data",
+            "total_obs": "observacions",
+            "total_spe": "especies",
+            "total_part": "participants",
+            "total_ident": "identificadores",
+        },
+        inplace=True,
+    )
+    return df_monthly_general.reset_index(drop=True).loc[5:]
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
 def load_and_process_main_metrics():
     """Carga y procesa metricas principales"""
     main_metrics = pd.read_csv(f"{directory}/data/264_main_metrics.csv")
@@ -204,9 +224,9 @@ with st.container():
     )
 
 
-# Grafico de columnas, acumulado mensual
+# Grafico de columnas mensual (no acumulado)
 with st.container():
-    cum_monthly_result = load_and_process_cumulative_data()
+    cum_monthly_result = load_and_process_monthly_data()
 
     fecha_actual = datetime.now()
     month_year = fecha_actual.strftime("%Y-%m")

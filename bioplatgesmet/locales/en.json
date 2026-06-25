@@ -36,10 +36,10 @@
     "last_month": "last month"
   },
   "charts": {
-    "observations_accumulated": "Accumulated observations per month",
-    "species_accumulated": "Accumulated species per month",
-    "participants_accumulated": "Accumulated participants per month",
-    "identifiers_accumulated": "Accumulated identifiers per month",
+    "observations_accumulated": "Observations per month",
+    "species_accumulated": "Species per month",
+    "participants_accumulated": "Participants per month",
+    "identifiers_accumulated": "Identifiers per month",
     "observations_evolution": "Evolution of number of observations",
     "species_evolution": "Evolution of number of species",
     "participants_evolution": "Evolution of number of participants",

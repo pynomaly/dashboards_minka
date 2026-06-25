@@ -28,7 +28,3 @@ x Mapa observaciones por ciudad
 * Mapa de calor de especies invasoras (posibilidad de consulta por año)
     * Select slider for years: https://docs.streamlit.io/library/api-reference/widgets/st.select_slider
     * Heatmap para ese año
-
-
-
-

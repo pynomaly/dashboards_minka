@@ -1,11 +1,17 @@
 import calendar
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
+from threading import Semaphore
 
 import pandas as pd
 import requests
 from mecoda_minka import get_dfs, get_obs
+
+# Rate limiting: máximo 10 requests por segundo
+API_RATE_LIMIT = 10
+_rate_semaphore = Semaphore(API_RATE_LIMIT)
 
 try:
     directory = f"{os.environ['DASHBOARDS']}/bioplatgesmet"
@@ -44,21 +50,47 @@ def get_month_dict(years: list) -> dict:
     return meses
 
 
-def _safe_get_total_results(session, url, max_retries=3):
-    """Helper function to safely get total_results with retries"""
+def _safe_get_total_results(session, url, max_retries=5):
+    """Helper function to safely get total_results with retries and rate limit handling"""
+    base_wait = 2  # segundos base de espera
+
     for attempt in range(max_retries):
         try:
             response = session.get(url)
+
+            # Manejar error 429 (Too Many Requests)
+            if response.status_code == 429:
+                wait_time = base_wait * (2 ** attempt)  # Backoff exponencial: 2, 4, 8, 16, 32s
+                print(f"Rate limit (429) alcanzado. Esperando {wait_time}s antes de reintentar...")
+                time.sleep(wait_time)
+                continue
+
+            # Manejar otros errores HTTP
+            if response.status_code != 200:
+                print(f"HTTP {response.status_code} en intento {attempt + 1}")
+                if attempt < max_retries - 1:
+                    time.sleep(base_wait)
+                    continue
+                else:
+                    raise Exception(f"HTTP error {response.status_code} after {max_retries} attempts")
+
             data = response.json()
             return data["total_results"]
+
         except KeyError:
             if attempt < max_retries - 1:
-                print(f"KeyError: 'total_results' not found, waiting 2s before retry {attempt + 1}")
-                time.sleep(2)
+                print(f"KeyError: 'total_results' not found, waiting {base_wait}s before retry {attempt + 1}")
+                time.sleep(base_wait)
             else:
                 print(f"KeyError: 'total_results' not found after {max_retries} attempts")
                 raise
         except Exception as e:
+            if "429" in str(e) or "rate" in str(e).lower():
+                wait_time = base_wait * (2 ** attempt)
+                print(f"Rate limit detectado. Esperando {wait_time}s...")
+                time.sleep(wait_time)
+                if attempt < max_retries - 1:
+                    continue
             print(f"Unexpected error: {e}")
             raise
     return 0
@@ -77,7 +109,7 @@ def _get_totals(place_id, start_date, end_date, session=None):
         url_spe = f"{API_PATH}/observations/species_counts?project_id={main_project}&created_d1={start_date}&created_d2={end_date}"
         url_part = f"{API_PATH}/observations/observers?project_id={main_project}&created_d1={start_date}&created_d2={end_date}"
         url_ident = f"{API_PATH}/observations/identifiers?project_id={main_project}&created_d1={start_date}&created_d2={end_date}"
-    session = requests.Session()
+    # Reutilizar sesión existente (bug fix: antes se creaba nueva sesión)
     total_obs = _safe_get_total_results(session, url_obs)
     total_spe = _safe_get_total_results(session, url_spe)
     total_part = _safe_get_total_results(session, url_part)
@@ -222,7 +254,7 @@ def update_main_metrics(proj_id, df_main_metrics, session=None):
         url_species = species + "&".join([f"{k}={v}" for k, v in params.items()])
         url_observers = observers + "&".join([f"{k}={v}" for k, v in params.items()])
         url_identifiers = identifiers + "&".join([f"{k}={v}" for k, v in params.items()])
-        
+
         total_obs = _safe_get_total_results(session, url_obs)
         total_species = _safe_get_total_results(session, url_species)
         total_participants = _safe_get_total_results(session, url_observers)
@@ -344,6 +376,15 @@ def _get_identifiers(df_users, proj_id, session=None):
     return df_users
 
 
+def _get_species_with_rate_limit(args):
+    """Wrapper para _get_species con rate limiting"""
+    user_name, proj_id = args
+    with _rate_semaphore:
+        result = _get_species(user_name, proj_id)
+        time.sleep(0.1)  # 100ms entre llamadas para no saturar la API
+    return user_name, result
+
+
 def get_participation_df(main_project, session=None):
     if session is None:
         session = requests.Session()
@@ -357,30 +398,35 @@ def get_participation_df(main_project, session=None):
     )
     pt_users = _get_identifiers(pt_users, main_project, session)
 
-    pt_users["espècies"] = pt_users["participant"].apply(
-        lambda x: _get_species(x, main_project, session)
-    )
+    # Paralelizar obtención de especies por usuario con rate limiting
+    users = pt_users["participant"].tolist()
+    species_dict = {}
+
+    print(f"Obteniendo especies para {len(users)} usuarios en paralelo...")
+
+    # Usar máximo 5 workers para no saturar la API
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = {
+            executor.submit(_get_species_with_rate_limit, (user, main_project)): user
+            for user in users
+        }
+
+        completed = 0
+        for future in as_completed(futures):
+            user_name, species_count = future.result()
+            species_dict[user_name] = species_count
+            completed += 1
+            if completed % 20 == 0:
+                print(f"  Procesados {completed}/{len(users)} usuarios...")
+
+    pt_users["espècies"] = pt_users["participant"].map(species_dict)
+    print(f"Completado: {len(users)} usuarios procesados")
     return pt_users
 
 
-# Parcelas
-def get_obs_by_place(place_id):
-    observations = "https://api.minka-sdg.org/v1/observations?"
-    url3 = f"{observations}&project_id={main_project}&place_id={place_id}"
-    session = requests.Session()
-    total_obs = _safe_get_total_results(session, url3)
-    return total_obs
+# Parcelas - sesión global para reutilizar
+_parcelas_session = None
 
-
-def get_species_by_place(place_id):
-    species = "https://api.minka-sdg.org/v1/observations/species_counts?"
-    url3 = f"{species}&project_id={main_project}&place_id={place_id}"
-    session = requests.Session()
-    total_obs = _safe_get_total_results(session, url3)
-    return total_obs
-
-
-main_project = 264
 grupos_biologicos = {
     "Plantes": 12,
     "Mamífers": 8,
@@ -395,13 +441,86 @@ grupos_biologicos = {
 }
 
 
-# observaciones de cada grupo biológico por parcela
-def get_obs_by_place_taxon(place_id, taxon_id):
-    observations = "https://api.minka-sdg.org/v1/observations?"
-    url3 = f"{observations}&project_id={main_project}&place_id={place_id}&taxon_id={taxon_id}"
-    session = requests.Session()
-    total_obs = _safe_get_total_results(session, url3)
-    return total_obs
+def _fetch_parcela_metric(args):
+    """Obtiene una métrica específica para una parcela con rate limiting"""
+    place_id, metric_type, taxon_id = args
+    global _parcelas_session
+    if _parcelas_session is None:
+        _parcelas_session = requests.Session()
+
+    with _rate_semaphore:
+        if metric_type == "obs":
+            url = f"{API_PATH}/observations?project_id={main_project}&place_id={place_id}"
+        elif metric_type == "species":
+            url = f"{API_PATH}/observations/species_counts?project_id={main_project}&place_id={place_id}"
+        elif metric_type == "taxon":
+            url = f"{API_PATH}/observations?project_id={main_project}&place_id={place_id}&taxon_id={taxon_id}"
+        else:
+            return place_id, metric_type, taxon_id, 0
+
+        result = _safe_get_total_results(_parcelas_session, url)
+        time.sleep(0.1)  # 100ms entre llamadas
+
+    return place_id, metric_type, taxon_id, result
+
+
+def get_all_parcelas_data(df_parcelas):
+    """Obtiene todos los datos de parcelas en paralelo"""
+    place_ids = df_parcelas["place_id"].tolist()
+
+    # Preparar todas las tareas: (place_id, metric_type, taxon_id)
+    tasks = []
+    for place_id in place_ids:
+        # Métricas básicas
+        tasks.append((place_id, "obs", None))
+        tasks.append((place_id, "species", None))
+        # Grupos biológicos
+        for grupo_name, taxon_id in grupos_biologicos.items():
+            tasks.append((place_id, "taxon", taxon_id))
+
+    total_tasks = len(tasks)
+    print(f"Procesando {total_tasks} llamadas API para {len(place_ids)} parcelas en paralelo...")
+
+    # Almacenar resultados
+    results = {place_id: {"num_obs": 0, "num_species": 0} for place_id in place_ids}
+    for place_id in place_ids:
+        for grupo_name in grupos_biologicos.keys():
+            results[place_id][grupo_name] = 0
+
+    # Mapeo de taxon_id a nombre de grupo
+    taxon_to_grupo = {v: k for k, v in grupos_biologicos.items()}
+
+    # Ejecutar en paralelo con 5 workers
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = {executor.submit(_fetch_parcela_metric, task): task for task in tasks}
+
+        completed = 0
+        for future in as_completed(futures):
+            place_id, metric_type, taxon_id, value = future.result()
+
+            if metric_type == "obs":
+                results[place_id]["num_obs"] = value
+            elif metric_type == "species":
+                results[place_id]["num_species"] = value
+            elif metric_type == "taxon":
+                grupo_name = taxon_to_grupo.get(taxon_id, "")
+                if grupo_name:
+                    results[place_id][grupo_name] = value
+
+            completed += 1
+            if completed % 50 == 0:
+                print(f"  Procesadas {completed}/{total_tasks} llamadas...")
+
+    # Actualizar DataFrame
+    for place_id in place_ids:
+        mask = df_parcelas["place_id"] == place_id
+        df_parcelas.loc[mask, "num_obs"] = results[place_id]["num_obs"]
+        df_parcelas.loc[mask, "num_species"] = results[place_id]["num_species"]
+        for grupo_name in grupos_biologicos.keys():
+            df_parcelas.loc[mask, grupo_name] = results[place_id][grupo_name]
+
+    print(f"Completado: {len(place_ids)} parcelas procesadas")
+    return df_parcelas
 
 
 if __name__ == "__main__":
@@ -464,17 +583,10 @@ if __name__ == "__main__":
     pt_users = get_participation_df(main_project)
     pt_users.to_csv(f"{directory}/data/{main_project}_participants.csv", index=False)
 
-    # update de parcelas
+    # update de parcelas (paralelizado)
     print("Actualizando datos de parcelas")
     df_parcelas = pd.read_csv(f"{directory}/data/parcelas.csv")
-    # Observaciones por parcela
-    df_parcelas["num_obs"] = df_parcelas["place_id"].apply(get_obs_by_place)
-    df_parcelas["num_species"] = df_parcelas["place_id"].apply(get_species_by_place)
-
-    for k, v in grupos_biologicos.items():
-        df_parcelas[k] = df_parcelas["place_id"].apply(
-            lambda x: get_obs_by_place_taxon(x, v)
-        )
+    df_parcelas = get_all_parcelas_data(df_parcelas)
 
     df_parcelas.to_csv(f"{directory}/data/parcelas.csv", index=False)
 
