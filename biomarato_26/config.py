@@ -52,6 +52,7 @@ EXCLUDE_USERS = [
     "carlosrodero",
     "lydia",
     "meri",
+    "tmadurell",
     # fecdas
     "ura4dive",
     "susi_carahuevo",
