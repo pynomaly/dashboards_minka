@@ -137,9 +137,9 @@ def get_species_table(df_obs, df_especies):
         "taxon_name"
     ].nunique()
 
-    # Optimized aggregation using groupby
+    # Optimized aggregation using groupby (include taxon_id for URL)
     species_stats = (
-        obs_result.groupby("taxon_name")["observed_on"]
+        obs_result.groupby(["taxon_name", "taxon_id"])["observed_on"]
         .agg([("count", "size"), ("first_observed", "min"), ("last_observed", "max")])
         .reset_index()
     )
@@ -147,9 +147,10 @@ def get_species_table(df_obs, df_especies):
     # Sort by count descending
     species_stats = species_stats.sort_values("count", ascending=False)
 
-    # Add taxon URLs efficiently
-    species_stats["taxon_url"] = species_stats["taxon_name"].apply(
-        lambda x: f"{config.HOME_PATH}/taxa/{x}"
+    # Add taxon URLs with project filter
+    species_stats["taxon_url"] = species_stats.apply(
+        lambda row: f"{config.HOME_PATH}/observations?place_id=any&project_id={config.MAIN_PROJ}&taxon_id={int(row['taxon_id'])}#{row['taxon_name']}",
+        axis=1,
     )
 
     return species_stats, last_month_species
@@ -178,7 +179,7 @@ def get_species_table_with_regulation(df_obs, df_especies):
     ].nunique()
 
     species_stats = (
-        obs_result.groupby("taxon_name")["observed_on"]
+        obs_result.groupby(["taxon_name", "taxon_id"])["observed_on"]
         .agg([("count", "size"), ("first_observed", "min"), ("last_observed", "max")])
         .reset_index()
     )
@@ -192,8 +193,10 @@ def get_species_table_with_regulation(df_obs, df_especies):
 
     species_stats = species_stats.sort_values("count", ascending=False)
 
-    species_stats["taxon_url"] = species_stats["taxon_name"].apply(
-        lambda x: f"{config.HOME_PATH}/taxa/{x}"
+    # Add taxon URLs with project filter
+    species_stats["taxon_url"] = species_stats.apply(
+        lambda row: f"{config.HOME_PATH}/observations?place_id=any&project_id={config.MAIN_PROJ}&taxon_id={int(row['taxon_id'])}#{row['taxon_name']}",
+        axis=1,
     )
 
     return species_stats, last_month_species
@@ -321,7 +324,7 @@ def display_species_column(df_especies, df_main_project, group_name):
             column_config={
                 "taxon_url": st.column_config.LinkColumn(
                     t("species_page.species_name_col"),
-                    display_text=r"https://minka-sdg.org/taxa/(.*?)$",
+                    display_text=r"#(.*)$",
                 ),
                 "count": st.column_config.NumberColumn(
                     t("species_page.observations_count_col")
@@ -376,7 +379,7 @@ def display_species_column_with_regulation(df_especies, df_main_project, group_n
             column_config={
                 "taxon_url": st.column_config.LinkColumn(
                     t("species_page.species_name_col"),
-                    display_text=r"https://minka-sdg.org/taxa/(.*?)$",
+                    display_text=r"#(.*)$",
                 ),
                 "count": st.column_config.NumberColumn(
                     t("species_page.observations_count_col")
