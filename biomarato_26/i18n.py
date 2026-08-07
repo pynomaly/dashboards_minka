@@ -131,11 +131,11 @@ def create_nav_menu(current_page: str = None):
     """
     # Page definitions with their file paths
     pages = {
-        "main": "1_resultats.py",
-        "provinces": "pages/2_resultats_per_província.py",
-        "observations": "pages/3_últimes_observacions.py",
-        "maps": "pages/4_mapes.py",
-        "species": "pages/5_espècies_interès.py",
+        "main": "1_results.py",
+        "provinces": "pages/2_provinces.py",
+        "observations": "pages/3_observations.py",
+        "maps": "pages/4_maps.py",
+        "species": "pages/5_species.py",
     }
 
     st.sidebar.markdown("---")
