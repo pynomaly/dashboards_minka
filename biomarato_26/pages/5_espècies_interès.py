@@ -263,7 +263,9 @@ def show_last_species(df):
                     obs_id = df.loc[idx, "id"]
                     user_login = df.loc[idx, "user_login"]
 
-                    st.markdown(f":link: [MINKA]({config.HOME_PATH}/observations/{obs_id})")
+                    st.markdown(
+                        f":link: [MINKA]({config.HOME_PATH}/observations/{obs_id})"
+                    )
 
                     if photo_url:
                         st.image(
@@ -350,7 +352,7 @@ def display_species_column_with_regulation(df_especies, df_main_project, group_n
 
     if isinstance(table_species, pd.DataFrame) and not table_species.empty:
         # Metric card at half width
-        col1, col2 = st.columns([1, 1])
+        col1, col2 = st.columns([1, 2])
 
         with col1:
             st.markdown(f"### {t('metrics.species')} {group_name}")
