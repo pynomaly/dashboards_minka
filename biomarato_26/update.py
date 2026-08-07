@@ -634,6 +634,23 @@ def get_access_token():
     return token
 
 
+def get_marine(taxon_name, session=_session_cache):
+    try:
+        name_clean = taxon_name.replace(" ", "+")
+        status = session.get(
+            f"https://www.marinespecies.org/rest/AphiaIDByName/{name_clean}?marine_only=true"
+        ).status_code
+        time.sleep(0.5)
+        if (status == 200) or (status == 206):
+            result = True
+        else:
+            result = False
+        print(taxon_name, result)
+        return result
+    except:
+        return None
+
+
 if __name__ == "__main__":
     start_time = time.time()
     load_dotenv()
@@ -682,10 +699,12 @@ if __name__ == "__main__":
                     species = _process_species_with_obs_concurrent(
                         species, proj_id, session
                     )
+
                 species.to_csv(species_file, index=False)
                 print(f"Species updated for {proj_id}")
                 return f"Success: {proj_id}"
             return f"No update needed: {proj_id}"
+
         except Exception as e:
             error_msg = f"Error processing species for project {proj_id}: {e}"
             print(error_msg)
@@ -729,6 +748,7 @@ if __name__ == "__main__":
                     species_biomarato = _process_species_with_obs_concurrent(
                         species_biomarato, place_biomarato, biomarato_session, "place"
                     )
+
                 species_biomarato.to_csv(
                     f"{directory}/data/place_species.csv", index=False
                 )
