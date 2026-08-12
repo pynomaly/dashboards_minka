@@ -50,6 +50,7 @@
     "vulnerable": "vulnerable",
     "extinct_breeder": "extinct as breeders",
     "trade_regulated": "trade regulated",
+    "trade_regulated_short": "trade regulated",
     "habitat_protected": "habitat protected",
     "regulation_col": "Regulation",
     "exotic_species": "Exotic species",

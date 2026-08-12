@@ -344,14 +344,14 @@ def display_species_column(df_especies, df_main_project, group_name):
 
 
 def display_species_column_with_regulation(df_especies, df_main_project, group_name):
-    """Helper function to display species data with regulation column"""
+    """Helper function to display species data with regulation column.
+    Returns True if content was displayed, False otherwise."""
     try:
         table_species, last_month_species = get_species_table_with_regulation(
             df_main_project, df_especies
         )
     except Exception as e:
-        st.markdown("Cap espècie registrada aquest any")
-        return
+        return False
 
     if isinstance(table_species, pd.DataFrame) and not table_species.empty:
         # Metric card at half width
@@ -401,6 +401,9 @@ def display_species_column_with_regulation(df_especies, df_main_project, group_n
             height=200,
             use_container_width=True,
         )
+        return True
+
+    return False
 
 
 def display_species_photos(df_main_project, df_especies):
@@ -464,26 +467,28 @@ with tab_protected:
     df_protected_all = all_data.get("species_protected", pd.DataFrame())
 
     # Define protected species categories
+    # NOTA: Los apóstrofes deben ser curvos (') U+2019, igual que en el CSV
     protected_categories = [
         ("En perill d'extinció", "species_page.endangered"),
         ("Vulnerable", "species_page.vulnerable"),
         ("Espècie protegida", "species_page.protected"),
         ("Extinta com a reproductora a Catalunya", "species_page.extinct_breeder"),
         (
-            "Espècie amb regulació de l'explotació o del comerç",
+            "Espècie amb regulació de l’explotació o del comerç",
             "species_page.trade_regulated",
         ),
-        ("Espècie amb protecció de l'hàbitat/ZEC", "species_page.habitat_protected"),
+        ("Espècie amb protecció de l’hàbitat/ZEC", "species_page.habitat_protected"),
     ]
 
     # Display each category vertically
     for category, translation_key in protected_categories:
         df_category = df_protected_all[df_protected_all["category"] == category]
         if not df_category.empty:
-            display_species_column_with_regulation(
+            displayed = display_species_column_with_regulation(
                 df_category, df_main_project, t(translation_key)
             )
-            st.divider()
+            if displayed:
+                st.divider()
 
     st.subheader(t("species_page.last_species_photos"))
     display_species_photos(df_main_project, df_protected_all)
