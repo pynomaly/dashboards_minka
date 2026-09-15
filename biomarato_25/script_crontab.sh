@@ -1,7 +1,7 @@
 #!/bin/bash
-echo 
-echo 
+echo
+echo
 date
-source /home/pynomaly/dashboards_minka/.env/bin/activate 
+source /home/pynomaly/dashboards_minka/.env/bin/activate
 export DASHBOARDS="/home/pynomaly/dashboards_minka"
 python /home/pynomaly/dashboards_minka/biomarato_25/update.py

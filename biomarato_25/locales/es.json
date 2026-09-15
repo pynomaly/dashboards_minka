@@ -1,0 +1,142 @@
+{
+  "nav": {
+    "main": "Resultados generales",
+    "provinces": "Resultados por provincia",
+    "observations": "Ultimas observaciones",
+    "maps": "Mapas",
+    "species": "Especies de interes"
+  },
+  "header": {
+    "main_title": "Resultados {project_name}",
+    "provinces_title": "Que provincia ha sido la mas activa?",
+    "observations_title": "Ultimas observaciones publicadas",
+    "last_species_title": "Ultimas especies registradas por provincia",
+    "new_species_title": "Nuevas especies en el area BioMARato en los ultimos 30 dias",
+    "maps_title": "Mapas",
+    "species_title": "Especies de interes",
+    "ranking_title": "Ranking de participantes",
+    "thanks_title": "Agradecimientos"
+  },
+  "metrics": {
+    "observations": "Observaciones",
+    "species": "Especies",
+    "participants": "Participantes",
+    "last_week": "ultima semana",
+    "last_month": "ultimo mes"
+  },
+  "charts": {
+    "observations_count": "Numero de observaciones",
+    "species_count": "Numero de especies",
+    "participants_count": "Numero de participantes",
+    "observations_by_month": "Observaciones por mes",
+    "species_by_month": "Especies por mes",
+    "participants_by_month": "Participantes por mes",
+    "comparison_title": "Comparativa de resultados entre BioMARatons (2022-{year})",
+    "day": "Día",
+    "year": "Año"
+  },
+  "provinces": {
+    "girona": "Girona",
+    "tarragona": "Tarragona",
+    "barcelona": "Barcelona",
+    "catalunya": "Cataluna",
+    "filter_label": "Filtro por provincia:",
+    "observations_by_province": "Observaciones por provincia",
+    "species_different": "Especies diferentes"
+  },
+  "species_page": {
+    "exotic": "exoticas",
+    "exotic_invasive": "exoticas invasoras",
+    "protected": "protegidas",
+    "endangered": "en peligro de extincion",
+    "vulnerable": "vulnerables",
+    "extinct_breeder": "extintas como reproductoras",
+    "trade_regulated": "con regulacion del comercio",
+    "trade_regulated_short": "con regulacion del comercio",
+    "habitat_protected": "con proteccion del habitat",
+    "regulation_col": "Normativa",
+    "exotic_species": "Especies exoticas",
+    "protected_species": "Especies protegidas",
+    "num_species": "Numero de especies",
+    "species_name_col": "Nombre de la especie",
+    "observations_count_col": "Numero de observaciones",
+    "first_observation_col": "Primera observacion",
+    "last_observation_col": "Ultima observacion",
+    "observations_by_province": "Observaciones por provincia",
+    "species_summary": "Resumen de especies:",
+    "no_observations": "Ninguna observacion registrada.",
+    "no_photos": "No hay fotos disponibles",
+    "last_species_photos": "Fotos de las ultimas especies registradas"
+  },
+  "ranking": {
+    "research_grade_note": "Numero de observaciones con grado de investigacion.",
+    "no_participants": "Ningun participante",
+    "participant_col": "Participante",
+    "observations_col": "Observaciones",
+    "species_col": "Especies"
+  },
+  "ui": {
+    "no_data_observations": "No hay datos de observaciones disponibles",
+    "no_data_species": "No hay datos de especies disponibles",
+    "no_data_participants": "No hay datos de participantes disponibles",
+    "no_data_monthly_observations": "No hay datos mensuales de observaciones",
+    "no_data_monthly_species": "No hay datos mensuales de especies",
+    "no_data_monthly_participants": "No hay datos mensuales de participantes",
+    "no_data_comparison_observations": "No hay datos comparativos de observaciones",
+    "no_data_comparison_species": "No hay datos comparativos de especies",
+    "no_data_comparison_participants": "No hay datos comparativos de participantes",
+    "no_data_province_observations": "No hay datos de observaciones por provincia",
+    "no_data_province_species": "No hay datos de especies por provincia",
+    "no_data_province_participants": "No hay datos de participantes por provincia",
+    "no_observations_yet": "No hay observaciones disponibles todavia. Los datos se cargaran cuando comience el proyecto.",
+    "no_species_available": "No hay especies disponibles para {province}",
+    "no_data_available": "No hay datos disponibles para {province}",
+    "loading_metrics": "Cargando metricas principales...",
+    "loading_evolution": "Preparando graficos de evolucion...",
+    "loading_monthly": "Cargando datos mensuales...",
+    "loading_comparison": "Cargando comparativas de anos anteriores...",
+    "loading_ranking": "Cargando ranking de participantes...",
+    "loading_participants": "Cargando lista de participantes...",
+    "loading_province_metrics": "Cargando metricas por provincia...",
+    "loading_province_rankings": "Cargando rankings de participantes...",
+    "loading_province_charts": "Generando graficos de provincias...",
+    "loading_observations": "Cargando ultimas observaciones...",
+    "loading_province_data": "Cargando datos de provincias...",
+    "loading_species_data": "Cargando datos de especies...",
+    "loading_species_processing": "Procesando datos de especies...",
+    "loading_species_analysis": "Analizando especies...",
+    "loading_photos": "Cargando fotos...",
+    "loading_new_species": "Cargando nuevas especies...",
+    "error_loading_data": "Error cargando datos",
+    "view_on_minka": "Ver en MINKA",
+    "view": "Ver"
+  },
+  "thanks": {
+    "intro": "En la Biomarato {year} de Cataluna han participado:"
+  },
+  "footer": {
+    "organizers": "Organizadores:",
+    "funding": "Con la financiacion de los proyectos europeos:"
+  },
+  "table": {
+    "observation_date": "Fecha de observacion",
+    "participant": "Participante",
+    "species_name": "Nombre de la especie",
+    "link": "Enlace",
+    "image": "Imagen",
+    "photo_by": "Foto"
+  },
+  "maps_page": {
+    "project_select_label": "Proyecto a mostrar en el mapa",
+    "project_select_help": "Cataluna puede tardar mas en cargar por la cantidad de datos",
+    "visualization_type": "Tipo de visualizacion:",
+    "both_maps": "Ambos mapas",
+    "heatmap_only": "Solo mapa de calor",
+    "markers_only": "Solo mapa de marcadores",
+    "heatmap": "Mapa de calor",
+    "markers": "Mapa de marcadores",
+    "maps_loaded": "Mapas cargados para {project} ({count} observaciones)",
+    "maps_error": "No se han podido cargar los mapas",
+    "no_data_for": "No se han encontrado datos para {project}"
+  }
+}

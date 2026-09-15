@@ -1,10 +1,11 @@
 import os
 
+import config
 import streamlit as st
 
 # Set page config FIRST, before any other st commands or local imports
 try:
-    directory = f"{os.environ['DASHBOARDS']}/biomarato_25"
+    directory = f"{os.environ['DASHBOARDS']}/{config.DIRECTORY}"
 except KeyError:
     directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(
@@ -14,7 +15,7 @@ except KeyError:
 st.set_page_config(
     layout="wide",
     page_icon=f"{directory}/images/minka-logo.png",
-    page_title="Dashboard BioMARató 2025",
+    page_title=f"Dashboard {config.PROJ_NAME}",
 )
 
 # Now import the rest
@@ -22,73 +23,31 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 import requests
+from i18n import create_footer, init_i18n, t
 from markdownlit import mdlit
 from utils import get_last_obs, reindex
 
-# configuración de ModeBar
+# configuracion de ModeBar
 config_modebar = {
-    "displayModeBar": True,  # Mostrar u ocultar la ModeBar
-    "modeBarButtonsToRemove": [  # Lista de botones a remover
-        "zoom2d",  # Eliminar el botón de zoom
-        "pan2d",  # Eliminar el botón de paneo
-        "lasso2d",  # Eliminar el botón de lazo
-        "autoScale2d",  # Eliminar el botón de autoescalar
-        "resetScale2d",  # Eliminar el botón de resetear escala
-        "hoverClosestCartesian",  # Eliminar el botón de acercar el hover
-        "hoverCompareCartesian",  # Eliminar el botón de comparar en hover
-        "zoomIn2d",  # Eliminar el botón de zoom +
-        "zoomOut2d",  # Eliminar el botón de zoom -
+    "displayModeBar": True,
+    "modeBarButtonsToRemove": [
+        "zoom2d",
+        "pan2d",
+        "lasso2d",
+        "autoScale2d",
+        "resetScale2d",
+        "hoverClosestCartesian",
+        "hoverCompareCartesian",
+        "zoomIn2d",
+        "zoomOut2d",
     ],
-    "displaylogo": False,  # Ocultar el logo de Plotly
+    "displaylogo": False,
 }
 
-exclude_users = [
-    "xasalva",
-    "bertinhaco",
-    "andrea",
-    "laurabiomar",
-    "guillermoalvarez_fecdas",
-    "mediambient_ajelprat",
-    "fecdas_mediambient",
-    "planctondiving",
-    "marinagm",
-    "CEM",
-    "jaume-piera",
-    "sonialinan",
-    "adrisoacha",
-    "anellides",
-    "irodero",
-    "manelsalvador",
-    "sara_riera",
-    "anomalia",
-    "amaliacardenas",
-    "aluna",
-    "carlosrodero",
-    "lydia",
-    "elibonfill",
-    "marinatorresgi",
-    "meri",
-    "monyant",
-    "ura4dive",
-    "lauracoro",
-    "pirotte_",
-    "oceanicos",
-    "abril",
-    "alba_barrera",
-    "amb_platges",
-    "daniel_palacios",
-    "davidpiquer",
-    "laiamanyer",
-    "rogerpuig",
-    "guillemdavila",
-    # vanessa,
-    # teresa,
-]
 matomo_script = """
     <!-- Matomo -->
     <script>
     var _paq = window._paq = window._paq || [];
-    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
     _paq.push(['trackPageView']);
     _paq.push(['enableLinkTracking']);
     (function() {
@@ -102,38 +61,25 @@ matomo_script = """
     <!-- End Matomo Code -->
 """
 
-base_url = "https://minka-sdg.org"
-api_path = "https://api.minka-sdg.org/v1"
-
-
-projects = [
-    {"id": 418, "name": "Girona"},
-    {"id": 419, "name": "Tarragona"},
-    {"id": 420, "name": "Barcelona"},
-    {"id": 417, "name": "Catalunya"},
-]
-
-main_project = 417
-project_id_gir = next((p["id"] for p in projects if p["name"] == "Girona"), None)
-project_id_tarr = next((p["id"] for p in projects if p["name"] == "Tarragona"), None)
-project_id_bcn = next((p["id"] for p in projects if p["name"] == "Barcelona"), None)
-
 st.markdown(
     f"""
     <style>
         [data-testid="stSidebar"] {{
-            width: 220px !important;
+            width: 300px !important;
         }}
         [data-testid="stSidebar"] > div:first-child {{
-            width: 220px !important;
+            width: 300px !important;
         }}
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+# Initialize i18n
+init_i18n(current_page="observations")
 
-@st.cache_data(ttl=1800, show_spinner="🔍 Processant espècies...")
+
+@st.cache_data(ttl=1800, show_spinner=True)
 def get_last_species_from_obs(df_obs, df_photos):
     """Optimized species processing with caching"""
     if df_obs.empty or df_photos.empty:
@@ -171,13 +117,12 @@ def get_last_species_from_obs(df_obs, df_photos):
         return pd.DataFrame()
 
 
-@st.cache_data(ttl=900)
 def show_last_species(df, provincia_name):
     """
-    Optimized display of last species with better error handling
+    Display last species - not cached (renders UI with translations)
     """
     if df is None or df.empty:
-        st.info(f"No hi ha espècies disponibles per {provincia_name}")
+        st.info(t("ui.no_species_available").replace("{province}", provincia_name))
         return
 
     try:
@@ -187,7 +132,7 @@ def show_last_species(df, provincia_name):
         df["observed_on"] = pd.to_datetime(df["observed_on"], errors="coerce")
         df["observed_on"] = df["observed_on"].dt.strftime("%d-%m-%Y")
         df["obs_url"] = df["id"].apply(
-            lambda x: f"https://minka-sdg.org/observations/{x}"
+            lambda x: f"{config.HOME_PATH}/observations/{int(x)}"
         )
 
         # Ensure we have enough data
@@ -200,10 +145,15 @@ def show_last_species(df, provincia_name):
         with col1sp:
             st.dataframe(
                 df_display[["taxon_name", "observed_on", "obs_url"]].rename(
-                    columns={"observed_on": "data"}
+                    columns={
+                        "taxon_name": t("table.species_name"),
+                        "observed_on": t("table.observation_date"),
+                    }
                 ),
                 column_config={
-                    "obs_url": st.column_config.LinkColumn("link", display_text="Veure")
+                    "obs_url": st.column_config.LinkColumn(
+                        t("table.link"), display_text=t("ui.view")
+                    )
                 },
                 use_container_width=True,
                 height=300,
@@ -221,17 +171,17 @@ def show_last_species(df, provincia_name):
                     attribution = row.get("attribution", "Unknown")
 
                     st.markdown(
-                        f":link: [MINKA](https://minka-sdg.org/observations/{int(row['id'])})"
+                        f":link: [MINKA]({config.HOME_PATH}/observations/{int(row['id'])})"
                     )
 
                     if photo_url and pd.notna(photo_url):
                         st.image(
                             photo_url,
-                            caption=f"{taxon_name} | Foto: {attribution}",
+                            caption=f"{taxon_name} | {t('table.photo_by')}: {attribution}",
                             use_container_width=True,
                         )
                     else:
-                        st.info(f"Sense foto\n{taxon_name}")
+                        st.info(f"{t('species_page.no_photos')}\n{taxon_name}")
 
         # Images - second row
         for i, col in enumerate([col1sp, col2sp, col3sp, col4sp], 4):
@@ -243,40 +193,38 @@ def show_last_species(df, provincia_name):
                     attribution = row.get("attribution", "Unknown")
 
                     st.markdown(
-                        f":link: [MINKA](https://minka-sdg.org/observations/{row['id']})"
+                        f":link: [MINKA]({config.HOME_PATH}/observations/{row['id']})"
                     )
 
                     if photo_url and pd.notna(photo_url):
                         st.image(
                             photo_url,
-                            caption=f"{taxon_name} | Foto: {attribution}",
+                            caption=f"{taxon_name} | {t('table.photo_by')}: {attribution}",
                             use_container_width=True,
                         )
                     else:
-                        st.info(f"Sense foto\n{taxon_name}")
+                        st.info(f"{t('species_page.no_photos')}\n{taxon_name}")
 
     except Exception as e:
-        st.error(f"Error mostrant espècies de {provincia_name}: {e}")
+        st.error(f"Error mostrant especies de {provincia_name}: {e}")
 
 
-# Carrusel de últimas observaciones,
-# con grado research, excluidos xasalva y mediambient_ajelprat
+# Carrusel de ultimas observaciones
 with st.container():
     col1, col2 = st.columns([1, 25])
     with col1:
-        st.image(f"{directory}/images/Biomarato_logo_100.png")
+        st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Últimes observacions publicades]")
+        st.header(f":orange[{t('header.observations_title')}]")
 
     # Optimized image viewer with caching
-    @st.cache_data(ttl=600, show_spinner="📷 Carregant darreres observacions...")
+    @st.cache_data(ttl=600, show_spinner=True)
     def load_recent_observations(project_id):
         """Load and process recent observations with caching"""
         return get_last_obs(project_id)
 
-    # Visor de imágenes: 15 imágenes, máximo 3 por usuario
-    # Excluye a Xavi y a mediambient_ajelprat en la función
-    last_total = load_recent_observations(main_project)
+    # Visor de imagenes: 15 imagenes, maximo 3 por usuario
+    last_total = load_recent_observations(config.MAIN_PROJ)
 
     # Optimized results processing with vectorized operations
     @st.cache_data(ttl=300)
@@ -293,73 +241,60 @@ with st.container():
 
         return results.reset_index(drop=True)
 
-    # convertimos el df para que sólo aparezcan 3 obs de cada usuario como máximo
+    # convertimos el df para que solo aparezcan 3 obs de cada usuario como maximo
     results = process_gallery_results(last_total, max_per_user=3, total_limit=15)
 
-    # Optimized gallery using direct URLs instead of fetching content
-    c1, c2, c3, c4, c5 = st.columns(5)
-    col = 0
+    if results.empty:
+        st.info(t("ui.no_observations_yet"))
+    else:
+        # Optimized gallery using direct URLs instead of fetching content
+        c1, c2, c3, c4, c5 = st.columns(5)
+        cols = [c1, c2, c3, c4, c5]
+        col_idx = 0
 
-    for index, row in results.iterrows():
-        image_url = row["photos_medium_url"]
-        id_obs = row["id"]
-        taxon_name = row.taxon_name
+        for index, row in results.iterrows():
+            image_url = row["photos_medium_url"]
+            id_obs = row["id"]
+            taxon_name = row.taxon_name
+            attribution = row.get("attribution", "")
 
-        # Skip if no image URL
-        if not image_url:
-            continue
+            # Skip if no image URL
+            if not image_url:
+                continue
 
-        if col == 0:
-            with c1:
-                st.image(image_url, caption=taxon_name)
-                mdlit(f"@(https://minka-sdg.org/observations/{id_obs})")
-            col += 1
-        elif col == 1:
-            with c2:
-                st.image(image_url, caption=taxon_name)
-                mdlit(f"@(https://minka-sdg.org/observations/{id_obs})")
-            col += 1
-        elif col == 2:
-            with c3:
-                st.image(image_url, caption=taxon_name)
-                mdlit(f"@(https://minka-sdg.org/observations/{id_obs})")
-            col += 1
-        elif col == 3:
-            with c4:
-                st.image(image_url, caption=taxon_name)
-                mdlit(f"@(https://minka-sdg.org/observations/{id_obs})")
-            col += 1
-        elif col == 4:
-            with c5:
-                st.image(image_url, caption=taxon_name)
-                mdlit(f"@(https://minka-sdg.org/observations/{id_obs})")
-            col = 0
+            with cols[col_idx]:
+                st.markdown(
+                    f":link: [MINKA]({config.HOME_PATH}/observations/{int(id_obs)})"
+                )
+                st.image(
+                    image_url,
+                    caption=f"{taxon_name} | {t('table.photo_by')}: {attribution}",
+                    use_container_width=True,
+                )
+
+            col_idx = (col_idx + 1) % 5
 
 
 st.divider()
 
-# Últimas especies incorporadas
+# Ultimas especies incorporadas
 with st.container():
     col1, col2 = st.columns([1, 25])
     with col1:
-        st.image(f"{directory}/images/Biomarato_logo_100.png")
+        st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Últimes espècies registrades per província]")
+        st.header(f":orange[{t('header.last_species_title')}]")
 
     # usuarios excluidos
     excluded = []
-    # excluded = ["xasalva", "mediambient_ajelprat"]
 
-    # Optimized province data loading without ThreadPoolExecutor to avoid ScriptRunContext warning
-    @st.cache_data(ttl=1800, show_spinner="Carregant dades de províncies...")
+    # Optimized province data loading
+    @st.cache_data(ttl=1800, show_spinner=True)
     def load_all_province_data(directory_path, excluded_users):
         """Load all province species data with caching and sequential processing"""
         provinces = {
-            "Girona": project_id_gir,
-            "Tarragona": project_id_tarr,
-            "Barcelona": project_id_bcn,
+            k: v for k, v in config.PROJECTS_BY_NAME.items() if v != config.MAIN_PROJ
         }
-
         results = {}
 
         for prov_name, prov_id in provinces.items():
@@ -400,7 +335,7 @@ with st.container():
 
 
 # Optimized new species section
-@st.cache_data(ttl=1800, show_spinner="🌱 Carregant noves espècies...")
+@st.cache_data(ttl=10, show_spinner=True)
 def load_new_species_data(directory_path):
     """Load and process new species data with caching"""
     try:
@@ -431,25 +366,14 @@ def load_new_species_data(directory_path):
     except FileNotFoundError:
         return pd.DataFrame()
     except Exception as e:
-        st.error(f"Error carregant noves espècies: {e}")
+        st.error(f"Error carregant noves especies: {e}")
         return pd.DataFrame()
 
 
 with st.container():
-    st.header("Noves espècies a l'àrea Biomarató en els darrers 30 dies")
+    st.header(t("header.new_species_title"))
     new_species_data = load_new_species_data(directory)
-    show_last_species(new_species_data, "BioMARató")
+    show_last_species(new_species_data, "BioMARato")
 
-# Logos
-st.divider()
-with st.container():
-    col_1, col_2 = st.columns(2)
-    with col_1:
-        st.markdown("##### Organitzadors:")
-        col1, __ = st.columns([3, 1])
-        with col1:
-            st.image(f"{directory}/images/organizadores_2024_v2.png")
-
-    with col_2:
-        st.markdown("##### Amb el finançament dels projectes europeus:")
-        st.image(f"{directory}/images/logos_financiacion_biomarato_v2.png")
+# Footer with logos
+create_footer()

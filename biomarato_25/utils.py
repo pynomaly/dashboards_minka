@@ -389,13 +389,13 @@ def create_heatmap(df):
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-        <title>Mapa de Calor - {len(locations):,} punts</title>
+        <title>Heatmap - {len(locations):,} points</title>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <style>
             html, body {{ margin: 0; padding: 0; height: 100%; width: 100%; }}
-            #map {{ 
-                height: 600px !important; 
-                width: 100% !important; 
+            #map {{
+                height: 600px !important;
+                width: 100% !important;
                 position: relative;
                 aspect-ratio: 16/9;
                 min-width: 800px;
@@ -405,26 +405,26 @@ def create_heatmap(df):
     </head>
     <body>
         <div id="map"></div>
-        
+
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-        
+
         <script>
             var map = L.map('map', {{
                 crs: L.CRS.EPSG3857,
                 zoomControl: true
             }}).setView([{center[0]}, {center[1]}], 6);
-            
+
             // Force map resize after initialization
             setTimeout(function() {{
                 map.invalidateSize();
             }}, 100);
-            
-            L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-                maxZoom: 18
+
+            L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 19
             }}).addTo(map);
-            
+
             // Create heatmap with same configuration as folium version
             var heat = L.heatLayer({json.dumps(locations)}, {{
                 radius: 10,
@@ -434,19 +434,19 @@ def create_heatmap(df):
                 minOpacity: 0.7,
                 gradient: {{
                     0.1: 'blue',
-                    0.2: 'cyan', 
+                    0.2: 'cyan',
                     0.4: 'lime',
                     0.6: 'orange',
                     0.8: 'red',
                     0.99: 'purple'
                 }}
             }}).addTo(map);
-            
+
             // Force final map resize for heatmap
             setTimeout(function() {{
                 map.invalidateSize();
             }}, 200);
-            
+
             console.log('Heatmap loaded with ' + {len(locations)} + ' points');
         </script>
     </body>
@@ -500,51 +500,51 @@ def _create_javascript_map(df, center):
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-        <title>Mapa Biomarató - {len(markers_data):,} punts</title>
+        <title>Map - {len(markers_data):,} points</title>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <style>
             html, body {{ margin: 0; padding: 0; height: 100%; width: 100%; }}
-            #map {{ 
-                height: 600px !important; 
-                width: 100% !important; 
+            #map {{
+                height: 600px !important;
+                width: 100% !important;
                 position: relative;
                 aspect-ratio: 16/9;
                 min-width: 800px;
                 max-height: 600px;
             }}
-            .loading {{ 
-                position: absolute; top: 10px; right: 10px; z-index: 1000; 
-                background: white; padding: 5px 10px; border-radius: 5px; 
-                font-family: Arial; font-size: 12px; 
+            .loading {{
+                position: absolute; top: 10px; right: 10px; z-index: 1000;
+                background: white; padding: 5px 10px; border-radius: 5px;
+                font-family: Arial; font-size: 12px;
             }}
         </style>
     </head>
     <body>
         <div id="map"></div>
-        <div id="loading" class="loading">Carregant {len(markers_data):,} punts...</div>
-        
+        <div id="loading" class="loading">Loading {len(markers_data):,} points...</div>
+
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-        
+
         <script>
             var map = L.map('map', {{
                 crs: L.CRS.EPSG3857,
                 zoomControl: true
             }}).setView([{center[0]}, {center[1]}], 6);
-            
+
             // Force map resize after initialization
             setTimeout(function() {{
                 map.invalidateSize();
             }}, 100);
-            
+
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
                 attribution: 'Tiles &copy; Esri',
                 maxZoom: 18
             }}).addTo(map);
-            
+
             // Ultra-optimized cluster settings
             var markers = L.markerClusterGroup({{
                 maxClusterRadius: 60,
@@ -557,17 +557,17 @@ def _create_javascript_map(df, center):
                 chunkDelay: 10,
                 animate: false
             }});
-            
+
             // Load markers in ultra-small chunks for responsiveness
             var markerData = {json.dumps(markers_data)};
             var batchSize = 500;
             var index = 0;
             var loadingDiv = document.getElementById('loading');
-            
+
             function addBatch() {{
                 var batch = markerData.slice(index, index + batchSize);
                 var tempMarkers = [];
-                
+
                 batch.forEach(function(point) {{
                     // Create custom green icon with binoculars using DivIcon
                     var binocularsIcon = L.divIcon({{
@@ -577,24 +577,24 @@ def _create_javascript_map(df, center):
                         popupAnchor: [0, -24],
                         className: 'custom-binoculars-icon'
                     }});
-                    
+
                     var marker = L.marker([point.lat, point.lng], {{
                         icon: binocularsIcon
                     }});
                     marker.bindPopup(
-                        '<b>Taxon:</b> ' + point.taxon + 
-                        '<br><b>User:</b> ' + point.user + 
+                        '<b>Taxon:</b> ' + point.taxon +
+                        '<br><b>User:</b> ' + point.user +
                         '<br><a href="https://minka-sdg.org/observations/' + point.id + '" target="_blank">🔗 Minka</a>'
                     );
                     tempMarkers.push(marker);
                 }});
-                
+
                 markers.addLayers(tempMarkers);
-                
+
                 index += batchSize;
                 var progress = Math.min(100, Math.round((index / markerData.length) * 100));
-                loadingDiv.innerHTML = 'Carregant ' + progress + '% (' + Math.min(index, markerData.length) + '/' + markerData.length + ')';
-                
+                loadingDiv.innerHTML = 'Loading ' + progress + '% (' + Math.min(index, markerData.length) + '/' + markerData.length + ')';
+
                 if (index < markerData.length) {{
                     setTimeout(addBatch, 1); // Very small delay
                 }} else {{
@@ -607,7 +607,7 @@ def _create_javascript_map(df, center):
                     console.log('Loaded ' + markerData.length + ' markers successfully');
                 }}
             }}
-            
+
             // Start loading
             setTimeout(addBatch, 100);
         </script>
@@ -767,7 +767,7 @@ def get_previous_years(main_metrics_filtered):
     return df_2022_filtered, df_2023_filtered, df_2024_filtered
 
 
-def fig_multi_year_comparison(df_list, years, field, colors):
+def fig_multi_year_comparison(df_list, years, field, colors, day_label="Day", title=None, year_label="Year"):
     """
     Compara múltiples años alineados por posición (día 1 vs día 1, etc.).
 
@@ -775,9 +775,13 @@ def fig_multi_year_comparison(df_list, years, field, colors):
     - df_list: Lista de DataFrames [df_2022, df_2023, df_2024, df_2025].
     - years: Lista de etiquetas para los años (ej: ["2022", "2023", "2024", "2025"]).
     - field: Columna a comparar (ej: "ventas").
-    - title: Título del gráfico.
     - colors: Lista de colores para cada año (ej: ["#FF9E4A", "#1F77B4", "#2CA02C", "#D62728"]).
+    - day_label: Translated label for "Day" (ej: "Dia", "Day").
+    - title: Chart title (if None, uses field name).
+    - year_label: Translated label for "Year" legend (ej: "Any", "Año", "Year").
     """
+    # Use field as title if not provided
+    chart_title = title if title else field
     if len(df_list) != len(years) or len(df_list) != len(colors):
         raise ValueError(
             "Las listas de DataFrames, años y colores deben tener la misma longitud."
@@ -785,13 +789,15 @@ def fig_multi_year_comparison(df_list, years, field, colors):
 
     # Crear secuencia de posiciones (ej: Día 1, Día 2, ...)
     max_length = max(len(df) for df in df_list)
-    positions = [f"Dia {i+1}" for i in range(max_length)]
+    positions = [f"{day_label} {i+1}" for i in range(max_length)]
 
     fig = px.area()  # Figura vacía
 
     # Añadir cada año como un área
-    for df, year, color in zip(df_list, years, colors):
+    for i, (df, year, color) in enumerate(zip(df_list, years, colors)):
         df = df.reset_index(drop=True)  # Ignorar fechas
+        # Last year gets a thicker line
+        line_width = 3 if i == len(years) - 1 else 2
         fig.add_trace(
             px.line(
                 df,
@@ -803,7 +809,7 @@ def fig_multi_year_comparison(df_list, years, field, colors):
             .update_traces(
                 name=year,
                 showlegend=True,
-                line_width=2,
+                line_width=line_width,
                 # marker_size=4,
                 hovertemplate=(
                     f"<b>{year}</b>=%{{y:,}}<extra></extra>"  # Año en negrita
@@ -815,7 +821,7 @@ def fig_multi_year_comparison(df_list, years, field, colors):
     # Personalización
     fig.update_layout(
         plot_bgcolor="white",
-        yaxis_title=field,
+        yaxis_title=chart_title,
         yaxis_tickformat=",d",
         yaxis=dict(
             showgrid=True,  # Activar grid
@@ -828,8 +834,8 @@ def fig_multi_year_comparison(df_list, years, field, colors):
             gridwidth=0.3,  # Más delgado que el horizontal
             tickangle=-45,
         ),
-        title=dict(text=field, font_size=18),
-        legend_title_text="Any",
+        title=dict(text=chart_title, font_size=18),
+        legend_title_text=year_label,
         hovermode="x unified",
         height=450,  # Altura ajustable
     )

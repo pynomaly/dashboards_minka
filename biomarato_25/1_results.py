@@ -1,12 +1,13 @@
-# Run as streamlit run app_biomarato.py --server.port 9003
+# Run as: streamlit run 1_resultats.py --server.port 9003 --theme.base=light
 
 import os
 
+import config
 import streamlit as st
 
 # Set page config FIRST, before any other st commands or local imports
 try:
-    directory = f"{os.environ['DASHBOARDS']}/biomarato_25"
+    directory = f"{os.environ['DASHBOARDS']}/{config.DIRECTORY}"
 except KeyError:
     directory = os.path.dirname(os.path.abspath(__file__))
     print(
@@ -16,7 +17,7 @@ except KeyError:
 st.set_page_config(
     layout="wide",
     page_icon=f"{directory}/images/minka-logo.png",
-    page_title="Dashboard BioMARató 2025",
+    page_title=f"Dashboard {config.PROJ_NAME}",
 )
 
 # Now import the rest
@@ -24,6 +25,7 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 import streamlit.components.v1 as components
+from i18n import create_footer, init_i18n, t
 from streamlit_extras.metric_cards import style_metric_cards
 from utils import (
     fig_area_evolution,
@@ -35,67 +37,23 @@ from utils import (
     get_previous_years,
 )
 
-# configuración de ModeBar
+# configuracion de ModeBar
 config_modebar = {
     "displayModeBar": True,  # Mostrar u ocultar la ModeBar
     "modeBarButtonsToRemove": [  # Lista de botones a remover
-        "zoom2d",  # Eliminar el botón de zoom
-        "pan2d",  # Eliminar el botón de paneo
-        "lasso2d",  # Eliminar el botón de lazo
-        "autoScale2d",  # Eliminar el botón de autoescalar
-        "resetScale2d",  # Eliminar el botón de resetear escala
-        "hoverClosestCartesian",  # Eliminar el botón de acercar el hover
-        "hoverCompareCartesian",  # Eliminar el botón de comparar en hover
-        "zoomIn2d",  # Eliminar el botón de zoom +
-        "zoomOut2d",  # Eliminar el botón de zoom -
+        "zoom2d",  # Eliminar el boton de zoom
+        "pan2d",  # Eliminar el boton de paneo
+        "lasso2d",  # Eliminar el boton de lazo
+        "autoScale2d",  # Eliminar el boton de autoescalar
+        "resetScale2d",  # Eliminar el boton de resetear escala
+        "hoverClosestCartesian",  # Eliminar el boton de acercar el hover
+        "hoverCompareCartesian",  # Eliminar el boton de comparar en hover
+        "zoomIn2d",  # Eliminar el boton de zoom +
+        "zoomOut2d",  # Eliminar el boton de zoom -
     ],
     "displaylogo": False,  # Ocultar el logo de Plotly
 }
 
-colors = ["#5fbfbb", "#1e9ca3", "#0c6a83", "#de6719", "#fab954"]
-
-exclude_users = [
-    "xasalva",
-    "bertinhaco",
-    "andrea",
-    "laurabiomar",
-    "guillermoalvarez_fecdas",
-    "mediambient_ajelprat",
-    "fecdas_mediambient",
-    "planctondiving",
-    "marinagm",
-    "CEM",
-    "jaume-piera",
-    "sonialinan",
-    "adrisoacha",
-    "anellides",
-    "irodero",
-    "manelsalvador",
-    "sara_riera",
-    "anomalia",
-    "amaliacardenas",
-    "aluna",
-    "carlosrodero",
-    "lydia",
-    "elibonfill",
-    "marinatorresgi",
-    "meri",
-    "monyant",
-    "ura4dive",
-    "lauracoro",
-    "pirotte_",
-    "oceanicos",
-    "abril",
-    "alba_barrera",
-    "amb_platges",
-    "daniel_palacios",
-    "davidpiquer",
-    "laiamanyer",
-    "rogerpuig",
-    "guillemdavila",
-    # vanessa,
-    # teresa,
-]
 matomo_script = """
     <!-- Matomo -->
     <script>
@@ -114,41 +72,27 @@ matomo_script = """
     <!-- End Matomo Code -->
 """
 
-base_url = "https://minka-sdg.org"
-api_path = "https://api.minka-sdg.org/v1"
-
-
-projects = [
-    {"id": 418, "name": "Girona"},
-    {"id": 419, "name": "Tarragona"},
-    {"id": 420, "name": "Barcelona"},
-    {"id": 417, "name": "Catalunya"},
-]
-
-main_project = 417
-project_id_gir = next((p["id"] for p in projects if p["name"] == "Girona"), None)
-project_id_tarr = next((p["id"] for p in projects if p["name"] == "Tarragona"), None)
-project_id_bcn = next((p["id"] for p in projects if p["name"] == "Barcelona"), None)
-
-
 # Reducimos ancho de la barra lateral
 st.markdown(
-    f"""
+    """
     <style>
-        [data-testid="stSidebar"] {{
-            width: 220px !important;
-        }}
-        [data-testid="stSidebar"] > div:first-child {{
-            width: 220px !important;
-        }}
+        [data-testid="stSidebar"] {
+            width: 300px !important;
+        }
+        [data-testid="stSidebar"] > div:first-child {
+            width: 300px !important;
+        }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+# Initialize i18n
+init_i18n(current_page="main")
+
 
 # Optimized data loading with caching
-@st.cache_data(ttl=300, show_spinner="Carregant mètriques principals...")
+@st.cache_data(ttl=300, show_spinner=True)
 def load_main_dashboard_data(project_id):
     """Load and cache main dashboard data"""
     try:
@@ -162,7 +106,7 @@ def load_main_dashboard_data(project_id):
 
 # Load main metrics with caching
 total_species, total_participants, total_obs, lw_obs, lw_spe, lw_part = (
-    load_main_dashboard_data(main_project)
+    load_main_dashboard_data(config.MAIN_PROJ)
 )
 
 # Load Matomo tracking asynchronously
@@ -175,40 +119,42 @@ if "matomo_loaded" not in st.session_state:
 with st.container():
     col1, col2 = st.columns([1, 14])
     with col1:
-        st.image(f"{directory}/images/Biomarato_logo_100.png")
+        st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Resultats BioMARató 2025]")
-        st.markdown(":orange[May 3, 2025 - Oct 15, 2025]")
+        st.header(
+            f":orange[{t('header.main_title').replace('{project_name}', config.PROJ_NAME)}]"
+        )
+        st.markdown(f":orange[{config.PROJ_DATES}]")
 
     __, col1, col2, col3, _ = st.columns([1, 2, 2, 2, 1])
     with col1:
         st.metric(
-            ":camera_with_flash: Observacions",
+            f":camera_with_flash: {t('metrics.observations')}",
             f"{total_obs:,}".replace(",", " "),
-            f"+{total_obs - lw_obs:,} última setmana".replace(",", " "),
+            f"+{total_obs - lw_obs:,} {t('metrics.last_week')}".replace(",", " "),
         )
     with col2:
         st.metric(
-            ":ladybug: Espècies",
+            f":ladybug: {t('metrics.species')}",
             f"{total_species:,}".replace(",", " "),
-            f"+{total_species - lw_spe} última setmana",
+            f"+{total_species - lw_spe} {t('metrics.last_week')}",
         )
     with col3:
         st.metric(
-            ":eyes: Participants",
+            f":eyes: {t('metrics.participants')}",
             f"{total_participants:,}".replace(",", " "),
-            f"+{total_participants - lw_part} última setmana",
+            f"+{total_participants - lw_part} {t('metrics.last_week')}",
         )
 
     style_metric_cards(
-        background_color="#fef7eb",
-        border_left_color="#f9b853",
+        background_color=f"{config.COLORS[5]}",
+        border_left_color=f"{config.COLORS[4]}",
         box_shadow=False,
     )
 
 
 # Cached data loading for evolution charts
-@st.cache_data(ttl=600, show_spinner="Preparant gràfics d'evolució...")
+@st.cache_data(ttl=600, show_spinner=True)
 def load_main_metrics_data(directory_path):
     """Load and process main metrics data with caching"""
     main_metrics = pd.read_csv(f"{directory_path}/data/main_metrics.csv")
@@ -238,32 +184,47 @@ with st.container():
         fig1 = fig_area_evolution(
             df=main_metrics_filtered,
             field="observacions",
-            title="Nombre d'observacions",
-            color="#089aa2",
+            title=t("charts.observations_count"),
+            color=config.COLORS[1],
         )
-        st.plotly_chart(fig1, config=config_modebar, use_container_width=True)
+        if fig1 is not None:
+            st.plotly_chart(
+                fig1, config=config_modebar, use_container_width=True
+            )
+        else:
+            st.info(t("ui.no_data_observations"))
 
     with col2_line:
         fig2 = fig_area_evolution(
             df=main_metrics_filtered,
             field="espècies",
-            title="Nombre d'espècies",
-            color="#dc6619",
+            title=t("charts.species_count"),
+            color=config.COLORS[3],
         )
-        st.plotly_chart(fig2, config=config_modebar, use_container_width=True)
+        if fig2 is not None:
+            st.plotly_chart(
+                fig2, config=config_modebar, use_container_width=True
+            )
+        else:
+            st.info(t("ui.no_data_species"))
 
     with col3_line:
         fig3 = fig_area_evolution(
             df=main_metrics_filtered,
             field="participants",
-            title="Nombre de participants",
-            color="#f9b853",
+            title=t("charts.participants_count"),
+            color=config.COLORS[4],
         )
-        st.plotly_chart(fig3, config=config_modebar, use_container_width=True)
+        if fig3 is not None:
+            st.plotly_chart(
+                fig3, config=config_modebar, use_container_width=True
+            )
+        else:
+            st.info(t("ui.no_data_participants"))
 
 
 # Cached monthly data loading
-@st.cache_data(ttl=1800, show_spinner="Carregant dades mensuals...")
+@st.cache_data(ttl=1800, show_spinner=True)
 def load_monthly_data(project_id, year):
     """Load monthly grouped data with caching"""
     return get_grouped_monthly(project_id=project_id, year=year)
@@ -271,47 +232,64 @@ def load_monthly_data(project_id, year):
 
 with st.container():
     # Resultados mensuales with caching
-    grouped = load_monthly_data(main_project, "2025")
+    grouped = load_monthly_data(config.MAIN_PROJ, str(config.YEAR))
     # Monthly charts - always visible
     col1_month, col2_month, col3_month = st.columns(3)
     with col1_month:
         fig1b = fig_bars_months(
             grouped,
             field="observacions",
-            title="Observacions per mes",
-            color="#089aa2",
+            title=t("charts.observations_by_month"),
+            color=config.COLORS[1],
         )
-        st.plotly_chart(fig1b, config=config_modebar, use_container_width=True)
+        if fig1b is not None:
+            st.plotly_chart(
+                fig1b, config=config_modebar, use_container_width=True
+            )
+        else:
+            st.info(t("ui.no_data_monthly_observations"))
 
     with col2_month:
         fig2b = fig_bars_months(
             grouped,
             field="espècies",
-            title="Espècies per mes",
-            color="#dc6619",
+            title=t("charts.species_by_month"),
+            color=config.COLORS[3],
         )
-        st.plotly_chart(fig2b, config=config_modebar, use_container_width=True)
+        if fig2b is not None:
+            st.plotly_chart(
+                fig2b, config=config_modebar, use_container_width=True
+            )
+        else:
+            st.info(t("ui.no_data_monthly_species"))
 
     with col3_month:
         fig3b = fig_bars_months(
             grouped,
             field="participants",
-            title="Participants per mes",
-            color="#f9b853",
+            title=t("charts.participants_by_month"),
+            color=config.COLORS[4],
         )
-        st.plotly_chart(fig3b, config=config_modebar, use_container_width=True)
+        if fig3b is not None:
+            st.plotly_chart(
+                fig3b, config=config_modebar, use_container_width=True
+            )
+        else:
+            st.info(t("ui.no_data_monthly_participants"))
 
 
 # Cached previous years data
-@st.cache_data(ttl=3600, show_spinner="Carregant comparatives d'anys anteriors...")
+@st.cache_data(ttl=3600, show_spinner=True)
 def load_comparison_data(main_metrics_filtered):
     """Load previous years data for comparison with caching"""
     return get_previous_years(main_metrics_filtered)
 
 
 with st.container():
-    st.subheader(":orange[Comparativa de resultats entre BioMARatons (2022-2025)]")
-    # Datos de años anteriores with caching
+    st.subheader(
+        f":orange[{t('charts.comparison_title').replace('{year}', str(config.YEAR))}]"
+    )
+    # Datos de anos anteriores with caching
     df_2022_filtered, df_2023_filtered, df_2024_filtered = load_comparison_data(
         main_metrics_filtered
     )
@@ -327,15 +305,23 @@ with st.container():
                 main_metrics_filtered,
             ],
             years=["2022", "2023", "2024", "2025"],
-            field="observacions",  # Columna a comparar
+            field="observacions",
             colors=[
                 "#FF9E4A",
                 "#1F77B4",
                 "#2CA02C",
                 "#D62728",
-            ],  # Naranja, azul, verde, rojo
+            ],
+            day_label=t("charts.day"),
+            title=t("charts.observations_count"),
+            year_label=t("charts.year"),
         )
-        st.plotly_chart(fig1_comp, config=config_modebar, use_container_width=True)
+        if fig1_comp is not None:
+            st.plotly_chart(
+                fig1_comp, config=config_modebar, use_container_width=True
+            )
+        else:
+            st.info(t("ui.no_data_comparison_observations"))
 
     with col2_comp:
         fig2_comp = fig_multi_year_comparison(
@@ -346,15 +332,23 @@ with st.container():
                 main_metrics_filtered,
             ],
             years=["2022", "2023", "2024", "2025"],
-            field="espècies",  # Columna a comparar
+            field="espècies",
             colors=[
                 "#FF9E4A",
                 "#1F77B4",
                 "#2CA02C",
                 "#D62728",
-            ],  # Naranja, azul, verde, rojo
+            ],
+            day_label=t("charts.day"),
+            title=t("charts.species_count"),
+            year_label=t("charts.year"),
         )
-        st.plotly_chart(fig2_comp, config=config_modebar, use_container_width=True)
+        if fig2_comp is not None:
+            st.plotly_chart(
+                fig2_comp, config=config_modebar, use_container_width=True
+            )
+        else:
+            st.info(t("ui.no_data_comparison_species"))
 
     with col3_comp:
         fig3_comp = fig_multi_year_comparison(
@@ -365,43 +359,49 @@ with st.container():
                 main_metrics_filtered,
             ],
             years=["2022", "2023", "2024", "2025"],
-            field="participants",  # Columna a comparar
+            field="participants",
             colors=[
                 "#FF9E4A",
                 "#1F77B4",
                 "#2CA02C",
                 "#D62728",
-            ],  # Naranja, azul, verde, rojo
+            ],
+            day_label=t("charts.day"),
+            title=t("charts.participants_count"),
+            year_label=t("charts.year"),
         )
-        st.plotly_chart(fig3_comp, config=config_modebar, use_container_width=True)
+        if fig3_comp is not None:
+            st.plotly_chart(
+                fig3_comp, config=config_modebar, use_container_width=True
+            )
+        else:
+            st.info(t("ui.no_data_comparison_participants"))
 
 
 with st.container():
     # Header participantes
     col1, col2 = st.columns([1, 25])
     with col1:
-        st.image(f"{directory}/images/Biomarato_logo_100.png")
+        st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Rànquing de participants]")
-    st.markdown("Nombre d'observacions amb grau de recerca.")
+        st.header(f":orange[{t('header.ranking_title')}]")
+    st.markdown(t("ranking.research_grade_note"))
     try:
-        pd.read_csv(f"{directory}/data/{main_project}_pt_users.csv")
+        pd.read_csv(f"{directory}/data/{config.MAIN_PROJ}_pt_users.csv")
         col0, col1, col2, col3 = st.columns([4, 1, 4, 1])
 
         # Optimized ranking with better caching
         with col0:
             # Cached user ranking processing
-            @st.cache_data(
-                ttl=600, show_spinner="Carregant rànquing de participants..."
-            )
-            def load_user_ranking(directory_path, project_id, exclude_users_list):
+            @st.cache_data(ttl=600, show_spinner=True)
+            def load_user_ranking(directory_path, project_id):
                 """Load and process user ranking data with caching"""
                 try:
                     pt_users = pd.read_csv(
                         f"{directory_path}/data/{project_id}_pt_users.csv"
                     )
                     pt_users = pt_users[
-                        ~pt_users.participant.isin(exclude_users_list)
+                        ~pt_users.participant.isin(config.EXCLUDE_USERS)
                     ].reset_index(drop=True)
                     pt_users.index = range(
                         pt_users.index.start + 1,
@@ -416,18 +416,23 @@ with st.container():
                     return pd.DataFrame()
 
             # Load ranking data
-            pt_users_data = load_user_ranking(directory, main_project, exclude_users)
+            pt_users_data = load_user_ranking(directory, config.MAIN_PROJ)
 
             # Tabla
 
             if not pt_users_data.empty:
                 st.dataframe(
                     pt_users_data[["participant", "observacions", "espècies"]],
+                    column_config={
+                        "participant": t("ranking.participant_col"),
+                        "observacions": t("ranking.observations_col"),
+                        "espècies": t("ranking.species_col"),
+                    },
                     use_container_width=True,
                     height=210,
                 )
             else:
-                st.info("No hi ha dades de participants disponibles")
+                st.info(t("ui.no_data_participants"))
         with col2:
             # Medallas
             col1b, __ = st.columns([10, 1])
@@ -442,10 +447,10 @@ with st.container():
                         if i in pt_users_data.index:
                             nombre = pt_users_data.loc[i, "participant"]
                             st.subheader(
-                                f":{medals[i-1]}: [{nombre}](https://minka-sdg.org/users/{nombre})"
+                                f":{medals[i-1]}: [{nombre}]({config.HOME_PATH}/users/{nombre})"
                             )
-    except FileNotFoundError:
-        st.markdown("Cap participant")
+    except (FileNotFoundError, pd.errors.EmptyDataError):
+        st.markdown(t("ranking.no_participants"))
 
 st.divider()
 
@@ -454,12 +459,12 @@ with st.container():
 
     col1, col2 = st.columns([1, 25])
     with col1:
-        st.image(f"{directory}/images/Biomarato_logo_100.png")
+        st.image(f"{directory}/images/{config.PROJ_LOGO}")
     with col2:
-        st.header(":orange[Agraïments]")
+        st.header(f":orange[{t('header.thanks_title')}]")
 
     # Cached participants list loading
-    @st.cache_data(ttl=1800, show_spinner="Carregant llista de participants...")
+    @st.cache_data(ttl=1800, show_spinner=True)
     def load_participants_list(directory_path, project_id):
         """Load and process participants list with caching"""
         try:
@@ -472,25 +477,14 @@ with st.container():
                 f"[{p}](https://minka-sdg.org/users/{p})" for p in list_participants
             ]
             return ", ".join(linked_list)
-        except FileNotFoundError:
-            return "No hi ha dades de participants disponibles"
+        except (FileNotFoundError, pd.errors.EmptyDataError):
+            return t("ui.no_data_participants")
         except Exception as e:
-            return f"Error carregant participants: {e}"
+            return f"{t('ui.error_loading_data')}: {e}"
 
-    st.markdown("A la Biomarató 2025 de Catalunya han participat:")
-    participants_text = load_participants_list(directory, main_project)
+    st.markdown(t("thanks.intro").replace("{year}", str(config.YEAR)))
+    participants_text = load_participants_list(directory, config.MAIN_PROJ)
     st.markdown(participants_text)
 
-# Logos
-st.divider()
-with st.container():
-    col_1, col_2 = st.columns(2)
-    with col_1:
-        st.markdown("##### Organitzadors:")
-        col1, __ = st.columns([3, 1])
-        with col1:
-            st.image(f"{directory}/images/organizadores_2024_v2.png")
-
-    with col_2:
-        st.markdown("##### Amb el finançament dels projectes europeus:")
-        st.image(f"{directory}/images/logos_financiacion_biomarato_v2.png")
+# Footer with logos
+create_footer()
