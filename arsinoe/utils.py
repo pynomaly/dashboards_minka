@@ -310,7 +310,7 @@ def create_heatmap(df, center=None, zoom=9):
     if center is None:
         center = [np.mean(lats), np.mean(lons)]
 
-    m = folium.Map(location=center, tiles="cartodb positron", zoom_start=zoom)
+    m = folium.Map(location=center, tiles="OpenStreetMap", zoom_start=zoom)
     heatmap_layer = folium.plugins.HeatMap(
         locations,
         radius=10,
@@ -343,7 +343,6 @@ def create_markercluster(df, center=None, zoom=9):
     if center is None:
         center = [np.mean(lats), np.mean(lons)]
 
-    # tiles1 = "cartodb positron"
     attr = "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and GIS User Community"
     tiles2 = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
 

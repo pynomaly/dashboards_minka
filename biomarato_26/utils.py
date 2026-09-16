@@ -433,9 +433,9 @@ def create_heatmap(df):
                 map.invalidateSize();
             }}, 100);
 
-            L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-                maxZoom: 18
+            L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 19
             }}).addTo(map);
 
             // Create heatmap with same configuration as folium version

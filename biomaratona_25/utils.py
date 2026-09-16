@@ -353,13 +353,13 @@ def create_heatmap(df):
 
     if df_clean.empty:
         # Return empty map if no valid coordinates
-        return folium.Map(location=[0, 0], tiles="cartodb positron", zoom_start=2)
+        return folium.Map(location=[0, 0], tiles="OpenStreetMap", zoom_start=2)
 
     # More efficient location extraction using numpy
     locations = df_clean[["latitude", "longitude"]].values.tolist()
     center = df_clean[["latitude", "longitude"]].mean().tolist()
 
-    m = folium.Map(location=center, tiles="cartodb positron", zoom_start=5)
+    m = folium.Map(location=center, tiles="OpenStreetMap", zoom_start=5)
     HeatMap(
         locations,
         radius=10,
@@ -384,7 +384,7 @@ def create_markercluster(df):
     df_clean = df.dropna(subset=["latitude", "longitude"]).copy()
 
     if df_clean.empty:
-        return folium.Map(location=[0, 0], tiles="cartodb positron", zoom_start=2)
+        return folium.Map(location=[0, 0], tiles="OpenStreetMap", zoom_start=2)
 
     # More efficient coordinate extraction
     coords = df_clean[["latitude", "longitude"]].values

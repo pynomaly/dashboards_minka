@@ -268,7 +268,7 @@ def create_heatmap(df, center=None, zoom=10):
     if center is None:
         center = [np.mean(lats), np.mean(lons)]
 
-    m = folium.Map(location=center, tiles="cartodb positron", zoom_start=zoom)
+    m = folium.Map(location=center, tiles="OpenStreetMap", zoom_start=zoom)
     heatmap_layer = folium.plugins.HeatMap(
         locations,
         radius=10,
