@@ -141,3 +141,23 @@ with col5:
     )
 
 st.divider()
+
+# International dashboards
+col1, col2, col3, col4, col5, col6 = st.columns([1, 10, 1, 4.5, 1, 4.5])
+with col1:
+    st.image(f"{directory}/images/Biomarato_logo.png")
+with col2:
+    st.subheader("International dashboards")
+
+col1, col2, col3, col4, col5 = st.columns([10, 10, 1, 10, 10])
+
+with col1:
+    st.markdown(
+        "**[BioMARathon France Occitanie 2026](https://dashboard.minka-sdg.org/biomarathon-france)**"
+    )
+    image_with_link(
+        f"{directory}/images/minka_biomarathon_france_2026.png",
+        "https://dashboard.minka-sdg.org/biomarathon-france/",
+    )
+
+st.divider()
