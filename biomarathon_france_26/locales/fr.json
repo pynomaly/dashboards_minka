@@ -1,0 +1,126 @@
+{
+  "nav": {
+    "main": "Résultats généraux",
+    "observations": "Dernières observations",
+    "maps": "Cartes",
+    "species": "Espèces d'intérêt"
+  },
+  "header": {
+    "main_title": "Résultats {project_name}",
+    "observations_title": "Dernières observations publiées",
+    "last_species_title": "Dernières espèces enregistrées",
+    "new_species_title": "Nouvelles espèces dans la zone BioMARathon au cours des 30 derniers jours",
+    "maps_title": "Cartes",
+    "species_title": "Espèces d'intérêt",
+    "ranking_title": "Classement des participants",
+    "thanks_title": "Remerciements"
+  },
+  "metrics": {
+    "observations": "Observations",
+    "species": "Espèces",
+    "participants": "Participants",
+    "last_week": "semaine dernière",
+    "last_month": "mois dernier"
+  },
+  "charts": {
+    "observations_count": "Nombre d'observations",
+    "species_count": "Nombre d'espèces",
+    "participants_count": "Nombre de participants",
+    "observations_by_month": "Observations par mois",
+    "species_by_month": "Espèces par mois",
+    "participants_by_month": "Participants par mois",
+    "comparison_title": "Comparaison des résultats entre BioMARathons (2022-{year})"
+  },
+  "species_page": {
+    "exotic": "exotique",
+    "exotic_invasive": "exotique envahissante",
+    "protected": "protégée",
+    "endangered": "en danger",
+    "vulnerable": "vulnérable",
+    "extinct_breeder": "éteinte en tant que reproductrice",
+    "trade_regulated": "commerce réglementé",
+    "trade_regulated_short": "commerce réglementé",
+    "habitat_protected": "habitat protégé",
+    "regulation_col": "Réglementation",
+    "exotic_species": "Espèces exotiques",
+    "protected_species": "Espèces protégées",
+    "num_species": "Nombre d'espèces",
+    "species_name_col": "Nom de l'espèce",
+    "observations_count_col": "Nombre d'observations",
+    "first_observation_col": "Première observation",
+    "last_observation_col": "Dernière observation",
+    "species_summary": "Résumé des espèces :",
+    "no_observations": "Aucune observation enregistrée.",
+    "no_photos": "Aucune photo disponible",
+    "last_species_photos": "Photos des dernières espèces enregistrées"
+  },
+  "ranking": {
+    "research_grade_note": "Nombre d'observations avec grade recherche.",
+    "no_participants": "Aucun participant",
+    "participant": "participant",
+    "observations": "observations",
+    "species": "espèces"
+  },
+  "ui": {
+    "no_data_observations": "Aucune donnée d'observation disponible",
+    "no_data_species": "Aucune donnée d'espèce disponible",
+    "no_data_participants": "Aucune donnée de participant disponible",
+    "no_data_monthly_observations": "Aucune donnée mensuelle d'observations",
+    "no_data_monthly_species": "Aucune donnée mensuelle d'espèces",
+    "no_data_monthly_participants": "Aucune donnée mensuelle de participants",
+    "no_data_comparison_observations": "Aucune donnée comparative d'observations",
+    "no_data_comparison_species": "Aucune donnée comparative d'espèces",
+    "no_data_comparison_participants": "Aucune donnée comparative de participants",
+    "no_observations_yet": "Aucune observation disponible pour le moment. Les données se chargeront au début du projet.",
+    "no_species_available": "Aucune espèce disponible pour le moment.",
+    "loading_metrics": "Chargement des métriques principales...",
+    "loading_evolution": "Préparation des graphiques d'évolution...",
+    "loading_monthly": "Chargement des données mensuelles...",
+    "loading_comparison": "Chargement des comparaisons des années précédentes...",
+    "loading_ranking": "Chargement du classement des participants...",
+    "loading_participants": "Chargement de la liste des participants...",
+    "loading_observations": "Chargement des dernières observations...",
+    "loading_species_data": "Chargement des données d'espèces...",
+    "loading_species_processing": "Traitement des données d'espèces...",
+    "loading_species_analysis": "Analyse des espèces...",
+    "loading_photos": "Chargement des photos...",
+    "loading_new_species": "Chargement des nouvelles espèces...",
+    "error_loading_data": "Erreur lors du chargement des données",
+    "view_on_minka": "Voir sur MINKA",
+    "view": "Voir"
+  },
+  "thanks": {
+    "intro": "Les participants suivants ont participé au BioMARathon {year} :"
+  },
+  "footer": {
+    "organizers": "Organisateurs :",
+    "funding": "Avec le financement de projets européens :"
+  },
+  "table": {
+    "observation_date": "Date d'observation",
+    "participant": "Participant",
+    "species_name": "Nom de l'espèce",
+    "link": "Lien",
+    "image": "Image"
+  },
+  "regulations": {
+    "exocat": "EXOCAT: Base de données des espèces exotiques de Catalogne",
+    "exocat_eei": "EXOCAT & Catalogue EEI",
+    "catalogo_eei": "Catalogue EEI (Espèces Exotiques Envahissantes)",
+    "reglament_ue_1143": "Règlement UE 1143/2014",
+    "reglament_ue_2019": "Règlement UE 2019/1263",
+    "reglamento_ue_2016": "Règlement UE 2016/1141",
+    "reglamento_ue_2025": "Règlement UE 2025/1422",
+    "decret_172": "Décret 172/2022 du Catalogue de faune sauvage autochtone menacée",
+    "cataleg_flora": "Catalogue de flore menacée (Résolution ACC/3929/2023)",
+    "conveni_berna_1": "Convention de Berne (Annexe I)",
+    "conveni_berna_2": "Convention de Berne (Annexe II)",
+    "conveni_berna_3": "Convention de Berne (Annexe III)",
+    "directiva_habitats_2": "Directive Habitats 92/43/CEE (Annexe II)",
+    "directiva_habitats_4": "Directive Habitats 92/43/CEE (Annexe IV)",
+    "directiva_habitats_5": "Directive Habitats 92/43/CEE (Annexe V)",
+    "protocol_spa_2": "Protocole SPA/BD (Annexe II - Liste des espèces en danger ou menacées)",
+    "protocol_spa_3": "Protocole SPA/BD (Annexe III)",
+    "real_decreto_139": "Décret Royal 139/2011 (LESRPE/CEEA)"
+  }
+}

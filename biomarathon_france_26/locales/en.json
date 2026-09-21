@@ -1,0 +1,126 @@
+{
+  "nav": {
+    "main": "General results",
+    "observations": "Latest observations",
+    "maps": "Maps",
+    "species": "Species of interest"
+  },
+  "header": {
+    "main_title": "Results {project_name}",
+    "observations_title": "Latest published observations",
+    "last_species_title": "Latest species registered",
+    "new_species_title": "New species in the BioMARató area in the last 30 days",
+    "maps_title": "Maps",
+    "species_title": "Species of interest",
+    "ranking_title": "Participants ranking",
+    "thanks_title": "Acknowledgements"
+  },
+  "metrics": {
+    "observations": "Observations",
+    "species": "Species",
+    "participants": "Participants",
+    "last_week": "last week",
+    "last_month": "last month"
+  },
+  "charts": {
+    "observations_count": "Number of observations",
+    "species_count": "Number of species",
+    "participants_count": "Number of participants",
+    "observations_by_month": "Observations per month",
+    "species_by_month": "Species per month",
+    "participants_by_month": "Participants per month",
+    "comparison_title": "Results comparison between BioMARatons (2022-{year})"
+  },
+  "species_page": {
+    "exotic": "exotic",
+    "exotic_invasive": "invasive exotic",
+    "protected": "protected",
+    "endangered": "endangered",
+    "vulnerable": "vulnerable",
+    "extinct_breeder": "extinct as breeders",
+    "trade_regulated": "trade regulated",
+    "trade_regulated_short": "trade regulated",
+    "habitat_protected": "habitat protected",
+    "regulation_col": "Regulation",
+    "exotic_species": "Exotic species",
+    "protected_species": "Protected species",
+    "num_species": "Number of species",
+    "species_name_col": "Species name",
+    "observations_count_col": "Number of observations",
+    "first_observation_col": "First observation",
+    "last_observation_col": "Last observation",
+    "species_summary": "Species summary:",
+    "no_observations": "No observations recorded.",
+    "no_photos": "No photos available",
+    "last_species_photos": "Photos of the latest species registered"
+  },
+  "ranking": {
+    "research_grade_note": "Number of observations with research grade.",
+    "no_participants": "No participants",
+    "participant": "participant",
+    "observations": "observations",
+    "species": "species"
+  },
+  "ui": {
+    "no_data_observations": "No observation data available",
+    "no_data_species": "No species data available",
+    "no_data_participants": "No participant data available",
+    "no_data_monthly_observations": "No monthly observation data",
+    "no_data_monthly_species": "No monthly species data",
+    "no_data_monthly_participants": "No monthly participant data",
+    "no_data_comparison_observations": "No comparative observation data",
+    "no_data_comparison_species": "No comparative species data",
+    "no_data_comparison_participants": "No comparative participant data",
+    "no_observations_yet": "No observations available yet. Data will load when the project begins.",
+    "no_species_available": "No species available yet.",
+    "loading_metrics": "Loading main metrics...",
+    "loading_evolution": "Preparing evolution charts...",
+    "loading_monthly": "Loading monthly data...",
+    "loading_comparison": "Loading previous years comparisons...",
+    "loading_ranking": "Loading participant rankings...",
+    "loading_participants": "Loading participant list...",
+    "loading_observations": "Loading latest observations...",
+    "loading_species_data": "Loading species data...",
+    "loading_species_processing": "Processing species data...",
+    "loading_species_analysis": "Analyzing species...",
+    "loading_photos": "Loading photos...",
+    "loading_new_species": "Loading new species...",
+    "error_loading_data": "Error loading data",
+    "view_on_minka": "View on MINKA",
+    "view": "View"
+  },
+  "thanks": {
+    "intro": "The following have participated in the {year} Biomarató of Catalonia:"
+  },
+  "footer": {
+    "organizers": "Organizers:",
+    "funding": "With funding from European projects:"
+  },
+  "table": {
+    "observation_date": "Observation date",
+    "participant": "Participant",
+    "species_name": "Species name",
+    "link": "Link",
+    "image": "Image"
+  },
+  "regulations": {
+    "exocat": "EXOCAT: Database of exotic species in Catalonia",
+    "exocat_eei": "EXOCAT & IAS Catalogue",
+    "catalogo_eei": "IAS Catalogue (Invasive Alien Species)",
+    "reglament_ue_1143": "EU Regulation 1143/2014",
+    "reglament_ue_2019": "EU Regulation 2019/1263",
+    "reglamento_ue_2016": "EU Regulation 2016/1141",
+    "reglamento_ue_2025": "EU Regulation 2025/1422",
+    "decret_172": "Decree 172/2022 of the Catalogue of threatened native wildlife",
+    "cataleg_flora": "Threatened Flora Catalogue (Resolution ACC/3929/2023)",
+    "conveni_berna_1": "Bern Convention (Annex I)",
+    "conveni_berna_2": "Bern Convention (Annex II)",
+    "conveni_berna_3": "Bern Convention (Annex III)",
+    "directiva_habitats_2": "Habitats Directive 92/43/EEC (Annex II)",
+    "directiva_habitats_4": "Habitats Directive 92/43/EEC (Annex IV)",
+    "directiva_habitats_5": "Habitats Directive 92/43/EEC (Annex V)",
+    "protocol_spa_2": "SPA/BD Protocol (Annex II - List of endangered or threatened species)",
+    "protocol_spa_3": "SPA/BD Protocol (Annex III)",
+    "real_decreto_139": "Royal Decree 139/2011 (LESRPE/CEEA)"
+  }
+}
