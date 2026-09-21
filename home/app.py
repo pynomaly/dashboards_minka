@@ -1,7 +1,7 @@
 import base64
+import os
 
 import streamlit as st
-import os
 
 
 def image_with_link(image_path, url, width="100%"):
@@ -31,44 +31,63 @@ st.set_page_config(
     page_icon=f"{directory}/images/minka-logo.png",
 )
 
-col1, col2, col3 = st.columns(3)
+# Apply custom fonts
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+    * {
+        font-family: 'Inter', 'Trebuchet MS', Arial, sans-serif !important;
+    }
+    </style>
+""",
+    unsafe_allow_html=True,
+)
+
+
+col1, col2 = st.columns([1, 20])
+with col1:
+    st.image(f"{directory}/images/minka-logo.png")
 with col2:
-    st.title(":orange[Dashboards MINKA]")
+    st.markdown(
+        '<h1 style="color: #fa4338;">Dashboards MINKA</h1>', unsafe_allow_html=True
+    )
 st.divider()
 
 col1, col2, col3, col4 = st.columns([1, 10, 1, 10])
 with col1:
     st.image(f"{directory}/images/Biomarato_logo.png")
 with col2:
-    st.header("BioMARató")
+    st.subheader("BioMARató")
 with col3:
     st.image(f"{directory}/images/Biomarato_logo.png")
 with col4:
-    st.header("Biomaratona Portugal")
+    st.subheader("Biomaratona Portugal")
 
 # Biomarato
 col1, col2, col3, col4, col5 = st.columns([10, 10, 1, 10, 10])
 
 with col1:
-    st.subheader("[2025](https://dashboard.minka-sdg.org/biomarato25/)")
+    st.markdown("**[2025](https://dashboard.minka-sdg.org/biomarato25/)**")
     image_with_link(
         f"{directory}/images/minka_biomarato_2025.png",
         "https://dashboard.minka-sdg.org/biomarato25/",
     )
 with col2:
-    st.subheader("[2026](https://dashboard.minka-sdg.org/biomarato26)")
+    st.markdown("**[2026](https://dashboard.minka-sdg.org/biomarato26)**")
     image_with_link(
         f"{directory}/images/minka_biomarato_2026.png",
         "https://dashboard.minka-sdg.org/biomarato26/",
     )
 with col4:
-    st.subheader("[2025](https://dashboard.minka-sdg.org/biomaratona25/)")
+    st.markdown("**[2025](https://dashboard.minka-sdg.org/biomaratona25/)**")
     image_with_link(
         f"{directory}/images/minka_biomaratona_25.png",
         "https://dashboard.minka-sdg.org/biomaratona25/",
     )
 with col5:
-    st.subheader("[2026](https://dashboard.minka-sdg.org/biomaratona26/)")
+    st.markdown("**[2026](https://dashboard.minka-sdg.org/biomaratona26/)**")
     image_with_link(
         f"{directory}/images/minka_biomaratona_26.png",
         "https://dashboard.minka-sdg.org/biomaratona26/",
@@ -80,29 +99,27 @@ col1, col2, col3, col4, col5, col6 = st.columns([1, 10, 1, 4.5, 1, 4.5])
 with col1:
     st.image(f"{directory}/images/logo_biodiverciutat.png")
 with col2:
-    st.header("Biodiverciutat")
+    st.subheader("Biodiverciutat")
 with col3:
     st.image(f"{directory}/images/Logo_BioplatgesMet.png")
 with col4:
-    st.header("Bioplatgesmet")
+    st.subheader("Bioplatgesmet")
 with col5:
     st.image(f"{directory}/images/logo_arsinoe.png")
 with col6:
-    st.header("Arsinoe")
-
-# Biomaratona
+    st.subheader("Arsinoe")
 
 col1, col2, col3, col4, col5 = st.columns([10, 10, 1, 10, 10])
 
 # Biodiverciutat
 with col1:
-    st.subheader("[2025](https://dashboard.minka-sdg.org/biodiverciutat25/)")
+    st.markdown("**[2025](https://dashboard.minka-sdg.org/biodiverciutat25/)**")
     image_with_link(
         f"{directory}/images/minka_biodiverciutat_2025.png",
         "https://dashboard.minka-sdg.org/biodiverciutat25/",
     )
 with col2:
-    st.subheader("[2026](https://dashboard.minka-sdg.org/biodiverciutat26/)")
+    st.markdown("**[2026](https://dashboard.minka-sdg.org/biodiverciutat26/)**")
     image_with_link(
         f"{directory}/images/minka_biodiverciutat_2026.png",
         "https://dashboard.minka-sdg.org/biodiverciutat26/",
@@ -110,14 +127,14 @@ with col2:
 
 # Proyectos de gestión
 with col4:
-    st.subheader("[Bioplatgesmet](https://dashboard.minka-sdg.org/bioplatgesmet)")
+    st.markdown("[Bioplatgesmet](https://dashboard.minka-sdg.org/bioplatgesmet)")
     image_with_link(
         f"{directory}/images/minka_bioplatgesmet.png",
         "https://dashboard.minka-sdg.org/bioplatgesmet/",
     )
 
 with col5:
-    st.subheader("[Arsinoe](https://dashboard.minka-sdg.org/arsinoe/)")
+    st.markdown("[Arsinoe](https://dashboard.minka-sdg.org/arsinoe/)")
     image_with_link(
         f"{directory}/images/minka_arsinoe.png",
         "https://dashboard.minka-sdg.org/arsinoe/",
