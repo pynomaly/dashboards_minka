@@ -398,3 +398,13 @@ if __name__ == "__main__":
         print("Métricas diarias del proyecto generadas")
     else:
         print("No hay métricas de places para agregar")
+
+    # Descargar observaciones del proyecto 650
+    print("Descargando observaciones del proyecto 650...")
+    obs_project = get_obs(id_project=650)
+    if len(obs_project) > 0:
+        df_obs_project, _ = get_dfs(obs_project)
+        df_obs_project.to_csv(f"{directory}/data/650_obs.csv", index=False)
+        print(f"Guardadas {len(df_obs_project)} observaciones del proyecto 650")
+    else:
+        print("No hay observaciones para el proyecto 650")

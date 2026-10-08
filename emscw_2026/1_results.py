@@ -175,6 +175,18 @@ if os.path.exists(project_metrics_path):
             )
             st.plotly_chart(fig3, use_container_width=True)
 
+# Download button for project observations
+project_obs_path = f"{directory}/data/650_obs.csv"
+if os.path.exists(project_obs_path):
+    df_project_obs = pd.read_csv(project_obs_path)
+    csv_data = df_project_obs.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label=t("ui.download"),
+        data=csv_data,
+        file_name="emscw_2026_observations.csv",
+        mime="text/csv",
+    )
+
 # Footer con fondo de color
 image_footer = f"{directory}/images/footer.png"
 
