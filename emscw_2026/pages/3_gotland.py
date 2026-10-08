@@ -198,6 +198,14 @@ st.markdown(
         [data-testid="stDataFrame"], .dataframe {
             background-color: #FFFFFF !important;
         }
+        [data-testid="stDownloadButton"] button[kind="primary"] {
+            background-color: #48b8cc !important;
+            border-color: #48b8cc !important;
+        }
+        [data-testid="stDownloadButton"] button[kind="primary"]:hover {
+            background-color: #3a9fb0 !important;
+            border-color: #3a9fb0 !important;
+        }
     </style>
     """,
     unsafe_allow_html=True,
@@ -290,10 +298,11 @@ with st.container():
         df_download = load_observations(obs_path)
         csv_data = df_download.to_csv(index=False).encode("utf-8")
         st.download_button(
-            label=t("ui.download"),
+            label=t("ui.download_dataset"),
             data=csv_data,
             file_name=f"{PLACE_NAME.lower().replace(' ', '_')}_observations.csv",
             mime="text/csv",
+            type="primary",
         )
 
 # Data quality section

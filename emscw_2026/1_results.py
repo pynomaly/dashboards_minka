@@ -82,6 +82,16 @@ st.markdown(
         [data-testid="stDataFrame"], .dataframe {
             background-color: #FFFFFF !important;
         }
+
+        /* Primary download button */
+        [data-testid="stDownloadButton"] button[kind="primary"] {
+            background-color: #48b8cc !important;
+            border-color: #48b8cc !important;
+        }
+        [data-testid="stDownloadButton"] button[kind="primary"]:hover {
+            background-color: #3a9fb0 !important;
+            border-color: #3a9fb0 !important;
+        }
     </style>
     """,
     unsafe_allow_html=True,
@@ -181,10 +191,11 @@ if os.path.exists(project_obs_path):
     df_project_obs = pd.read_csv(project_obs_path)
     csv_data = df_project_obs.to_csv(index=False).encode("utf-8")
     st.download_button(
-        label=t("ui.download"),
+        label=t("ui.download_dataset"),
         data=csv_data,
         file_name="emscw_2026_observations.csv",
         mime="text/csv",
+        type="primary",
     )
 
 # Footer con fondo de color

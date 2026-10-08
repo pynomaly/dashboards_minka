@@ -44,7 +44,8 @@
     "no_data": "No data available",
     "maps": "Maps",
     "no_observation": "No observation",
-    "download": "Download"
+    "download": "Download",
+    "download_dataset": "Download observations dataset"
   },
   "municipalities": {
     "most_active": "Which regions are the most active?",
