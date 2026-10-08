@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "main": "Resultados generales",
+    "portugal": "Portugal",
+    "gotland": "Gotland",
+    "acores": "Azores",
+    "spain": "España"
+  },
+  "sidebar": {
+    "title": "European Marine Citizen Science Week",
+    "description": "Proyecto MINKA: https://observe.minka-sdg.org/projects/european-marine-citizen-science-week-2026",
+    "search_pt": "Enlace en MINKA: https://observe.minka-sdg.org/observations?d1=2026-09-14&d2=2026-09-20&place_id=825",
+    "search_es": "Enlace en MINKA: https://observe.minka-sdg.org/observations?d1=2026-09-14&d2=2026-09-20&place_id=55",
+    "search_az": "Enlace en MINKA: https://observe.minka-sdg.org/observations?d1=2026-09-14&d2=2026-09-20&place_id=885",
+    "search_got": "Enlace en MINKA: https://observe.minka-sdg.org/observations?d1=2026-09-14&d2=2026-09-20&place_id=886"
+  },
+  "header": {
+    "main_title": "Resultados",
+    "subtitle": "Semana Europea de Ciencia Ciudadana Marina",
+    "municipalities_title": "Regiones participantes",
+    "participants_title": "Participantes",
+    "species_title": "Especies",
+    "introduced_title": "Especies introducidas"
+  },
+  "metrics": {
+    "observations": "Observaciones",
+    "species": "Especies",
+    "participants": "Participantes",
+    "data_quality": "Calidad de los datos",
+    "research_grade": "Grado investigación",
+    "needs_id": "Necesita ID",
+    "casual": "Casual",
+    "casual_explanation": "* Las observaciones casuales no pueden alcanzar grado de investigación debido a la falta de algún dato relevante (fecha, ubicación, foto, etc.)"
+  },
+  "charts": {
+    "observations_per_day": "Observaciones por día",
+    "species_per_day": "Especies por día",
+    "participants_per_day": "Participantes por día",
+    "observations_count": "Número de observaciones",
+    "species_count": "Número de especies diferentes",
+    "participants_count": "Número de participantes"
+  },
+  "ui": {
+    "no_data": "Sin datos disponibles",
+    "maps": "Mapas",
+    "no_observation": "Ninguna observación",
+    "download": "Descargar"
+  },
+  "municipalities": {
+    "most_active": "¿Qué regiones son las más activas?",
+    "paint_map": "Representar en el mapa:"
+  },
+  "participants_page": {
+    "users_by_observations": "Usuarios por número de observaciones, identificaciones y especies",
+    "distribution_by_hour_day": "Distribución de participantes por hora y día",
+    "participants_per_day": "Número de participantes por día",
+    "participants_per_hour": "Número de participantes por hora del día",
+    "username": "Nombre de usuario"
+  },
+  "species_page": {
+    "by_taxonomic_rank": "Observaciones por rango taxonómico con grado investigación",
+    "no_research_obs": "Ninguna observación con grado investigación aún",
+    "click_to_expand": "Haz clic en un rango taxonómico para ver su desglose",
+    "first_observation_date": "Fecha de la primera observación",
+    "species_name": "nombre de la especie",
+    "first_observation": "primera observación",
+    "last_species_added": "Últimas especies incorporadas",
+    "marine_terrestrial": "Especies marinas y terrestres",
+    "marine_species": "Especies marinas con grado investigación",
+    "terrestrial_species": "Especies terrestres con grado investigación",
+    "num_species": "Número de especies",
+    "num_observations": "Número de observaciones",
+    "geographic_distribution": "Distribución geográfica de cada especie",
+    "observations_registered": "Número de observaciones registradas",
+    "taxon_link": "Enlace a taxón",
+    "see_species": "Ver especie",
+    "name": "Nombre",
+    "species_ranking": "Ranking de especies",
+    "most_observed": "Especies más observadas",
+    "observations_of_species": "Observaciones de esta especie",
+    "taxonomic_groups": "Distribución por grupos taxonómicos",
+    "group": "Grupo",
+    "unknown": "Desconocido"
+  },
+  "introduced_page": {
+    "title": "Especies introducidas",
+    "num_species": "Número de especies",
+    "first_observation_date": "Fecha de la primera observación",
+    "species_name": "Nombre de la especie",
+    "first_observation": "Primera observación",
+    "link_observation": "Enlace a observación",
+    "geographic_distribution": "Distribución geográfica de cada especie",
+    "observations_registered": "Número de observaciones registradas",
+    "species_viewer": "Visor de especies introducidas",
+    "no_introduced": "Ninguna especie introducida registrada",
+    "description": "Las especies introducidas, también llamadas exóticas, son organismos que han sido transportados fuera de su rango natural y han establecido poblaciones en nuevos entornos. Pueden tener un impacto negativo en los ecosistemas locales, compitiendo con las especies nativas por recursos como la alimentación, el espacio y el agua. Esto puede alterar el equilibrio ecológico y provocar cambios significativos en la biodiversidad y la dinámica de los ecosistemas."
+  }
+}
