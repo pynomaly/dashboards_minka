@@ -90,6 +90,7 @@ def load_users(path, place_id):
     users["link"] = (
         f"{config.HOME_PATH}/observations?d1={config.START_DAY}&d2={config.END_DAY}&place_id={place_id}&subview=map&user_id="
         + users["participant"]
+        + "&verifiable=any"
     )
     users.drop(columns="participant", inplace=True)
     users = users[["link", "observacions", "identificacions", "espècies"]]
@@ -339,7 +340,7 @@ with st.container():
             column_config={
                 "link": st.column_config.LinkColumn(
                     t("participants_page.username"),
-                    display_text=r"user_id=(.+)$",
+                    display_text=r"user_id=([^&]+)",
                     width="medium",
                 ),
                 "observacions": st.column_config.NumberColumn(
