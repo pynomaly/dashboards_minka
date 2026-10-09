@@ -6,7 +6,7 @@ import config
 import pandas as pd
 import streamlit as st
 
-PLACE_ID = 825
+PLACE_ID = 890
 PLACE_NAME = config.PLACES[PLACE_ID]
 
 try:
@@ -123,9 +123,11 @@ def get_species_ranking(obs_path, photos_path, place_id):
 
     # Add link to observations (with taxon_name as fragment for display)
     species_counts["link"] = species_counts.apply(
-        lambda row: f"{config.HOME_PATH}/observations?d1={config.START_DAY}&d2={config.END_DAY}&place_id={place_id}&taxon_id={int(row['taxon_id'])}#{row['taxon_name'].replace(' ', '_')}"
-        if pd.notna(row["taxon_id"]) and pd.notna(row["taxon_name"])
-        else "",
+        lambda row: (
+            f"{config.HOME_PATH}/observations?d1={config.START_DAY}&d2={config.END_DAY}&place_id={place_id}&taxon_id={int(row['taxon_id'])}#{row['taxon_name'].replace(' ', '_')}"
+            if pd.notna(row["taxon_id"]) and pd.notna(row["taxon_name"])
+            else ""
+        ),
         axis=1,
     )
 
@@ -154,11 +156,21 @@ def get_species_ranking(obs_path, photos_path, place_id):
                 )
             else:
                 images.append(
-                    {"taxon_name": taxon_name, "taxon_id": taxon_id, "image_url": None, "num_observations": row["num_observations"]}
+                    {
+                        "taxon_name": taxon_name,
+                        "taxon_id": taxon_id,
+                        "image_url": None,
+                        "num_observations": row["num_observations"],
+                    }
                 )
         else:
             images.append(
-                {"taxon_name": taxon_name, "taxon_id": taxon_id, "image_url": None, "num_observations": row["num_observations"]}
+                {
+                    "taxon_name": taxon_name,
+                    "taxon_id": taxon_id,
+                    "image_url": None,
+                    "num_observations": row["num_observations"],
+                }
             )
 
     return species_counts, images
@@ -310,7 +322,9 @@ with st.container():
 with st.container():
     obs_path = f"{directory}/data/{PLACE_ID}_obs.csv"
     if os.path.exists(obs_path):
-        research, needs_id, casual, research_pct, needs_id_pct, casual_pct = get_quality_grade_stats(obs_path)
+        research, needs_id, casual, research_pct, needs_id_pct, casual_pct = (
+            get_quality_grade_stats(obs_path)
+        )
         st.markdown(f"### {t('metrics.data_quality')}")
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -320,13 +334,16 @@ with st.container():
         with col3:
             st.metric(t("metrics.casual"), f"{casual} ({casual_pct}%)")
         # Stacked progress bar
-        st.markdown(f'''
+        st.markdown(
+            f"""
         <div style="display: flex; width: 100%; height: 20px; border-radius: 5px; overflow: hidden; background-color: #e0e0e0;">
             <div style="width: {research_pct}%; background-color: #28a745;" title="{t("metrics.research_grade")}: {research_pct}%"></div>
             <div style="width: {needs_id_pct}%; background-color: #ffc107;" title="{t("metrics.needs_id")}: {needs_id_pct}%"></div>
             <div style="width: {casual_pct}%; background-color: #dc3545;" title="{t("metrics.casual")}: {casual_pct}%"></div>
         </div>
-        ''', unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
         if casual > 0:
             st.caption(t("metrics.casual_explanation"))
 
@@ -401,9 +418,7 @@ with st.container():
                 tax_counts = get_taxonomic_distribution(df_obs_treemap)
                 if len(tax_counts) > 0:
                     fig_treemap = fig_taxonomic_treemap(
-                        tax_counts,
-                        title="",
-                        color_scheme=None
+                        tax_counts, title="", color_scheme=None
                     )
                     st.plotly_chart(fig_treemap, use_container_width=True)
 
@@ -416,9 +431,14 @@ with st.container():
                         obs_link = f"{config.HOME_PATH}/observations?d1={config.START_DAY}&d2={config.END_DAY}&place_id={PLACE_ID}&taxon_id={int(img_data['taxon_id'])}"
                         st.markdown(f"[🔗 MINKA]({obs_link})")
                     if img_data["image_url"]:
-                        st.image(img_data["image_url"], caption=f"{img_data['taxon_name']} ({img_data['num_observations']})")
+                        st.image(
+                            img_data["image_url"],
+                            caption=f"{img_data['taxon_name']} ({img_data['num_observations']})",
+                        )
                     else:
-                        st.write(f"{img_data['taxon_name']} ({img_data['num_observations']})")
+                        st.write(
+                            f"{img_data['taxon_name']} ({img_data['num_observations']})"
+                        )
         else:
             st.warning(t("ui.no_data"))
     else:

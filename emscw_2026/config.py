@@ -20,26 +20,26 @@ METRIC_TYPE = "place_id"
 
 # Places con sus IDs y nombres
 PLACES = {
-    825: "Portugal Coast",
+    890: "Portugal Coast",
     886: "Gotland",
     885: "Azores",
-    55: "Spain",
+    889: "Spain",
 }
 
 # Coordenadas de centro para los mapas de cada place
 PLACE_CENTERS = {
-    825: [39.5, -8.5],  # Portugal coast
+    890: [39.5, -8.5],  # Portugal coast
     886: [57.5, 18.5],  # Gotland
     885: [38.5, -28.0],  # Açores
-    55: [40.0, -3.7],  # Spain
+    889: [40.0, -3.7],  # Spain
 }
 
 # Zoom para cada place
 PLACE_ZOOM = {
-    825: 6,
+    890: 6,
     886: 8,
     885: 7,
-    55: 5,
+    889: 5,
 }
 
 EXCLUDE_USERS = []
