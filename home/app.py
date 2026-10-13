@@ -159,5 +159,13 @@ with col1:
         f"{directory}/images/minka_biomarathon_france_2026.png",
         "https://dashboard.minka-sdg.org/biomarathon-france/",
     )
+with col2:
+    st.markdown(
+        "**[European Marine Citizen Science Week 2026](https://dashboard.minka-sdg.org/emscw2026)**"
+    )
+    image_with_link(
+        f"{directory}/images/minka_emcsw2026.png",
+        "https://dashboard.minka-sdg.org/emscw2026",
+    )
 
 st.divider()
