@@ -308,7 +308,7 @@ def display_species_column(df_especies, df_main_project, group_name):
 
     if isinstance(table_species, pd.DataFrame) and not table_species.empty:
         st.metric(
-            f":ladybug: {t('species_page.num_species')} {group_name}",
+            f":ladybug: {t('species_page.num_species').replace('{type}', group_name.lower())}",
             len(table_species),
             f"+{len(table_species) - last_month_species} {t('metrics.last_month')}",
         )
@@ -358,9 +358,9 @@ def display_species_column_with_regulation(df_especies, df_main_project, group_n
         col1, col2 = st.columns([1, 2])
 
         with col1:
-            st.markdown(f"### {t('metrics.species')} {group_name}")
+            st.markdown(f"### {t('species_page.species_type_title').replace('{type}', group_name.capitalize())}")
             st.metric(
-                label=f":ladybug: {t('species_page.num_species')}",
+                label=f":ladybug: {t('species_page.num_species').replace('{type}', group_name.lower())}",
                 value=len(table_species),
                 delta=f"+{len(table_species) - last_month_species} {t('metrics.last_month')}",
             )
