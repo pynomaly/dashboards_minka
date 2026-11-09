@@ -159,6 +159,8 @@ with st.container():
     # Evolution lines with cached data
     main_metrics_filtered = load_main_metrics_data(directory)
 
+    st.markdown(f"##### {t('charts.evolution_note')}")
+
     # Evolution charts in three parallel columns
     col1_line, col2_line, col3_line = st.columns(3)
 
@@ -215,6 +217,9 @@ def load_monthly_data(project_id):
 with st.container():
     # Resultados mensuales with caching
     grouped = load_monthly_data(config.MAIN_PROJ)
+
+    st.markdown(f"##### {t('charts.monthly_note')}")
+
     # Monthly charts - always visible
     col1_month, col2_month, col3_month = st.columns(3)
     with col1_month:

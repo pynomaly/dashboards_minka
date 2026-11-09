@@ -29,7 +29,9 @@
     "observations_by_month": "Observations per month",
     "species_by_month": "Species per month",
     "participants_by_month": "Participants per month",
-    "comparison_title": "Results comparison between BioMARatons (2022-{year})"
+    "comparison_title": "Results comparison between BioMARatons (2022-{year})",
+    "evolution_note": "📈 Cumulative data by publication date",
+    "monthly_note": "📊 Data grouped by observation date"
   },
   "species_page": {
     "exotic": "exotic",
