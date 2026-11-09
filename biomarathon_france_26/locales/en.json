@@ -96,6 +96,12 @@
     "organizers": "Organizers:",
     "funding": "With funding from European projects:"
   },
+  "maps": {
+    "loaded_success": "Maps loaded ({count} research-grade observations)",
+    "loading": "Loading maps...",
+    "error_loading": "Unable to load maps",
+    "error_no_data": "No data found for"
+  },
   "table": {
     "observation_date": "Observation date",
     "participant": "Participant",

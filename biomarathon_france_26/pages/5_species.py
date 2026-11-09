@@ -112,7 +112,10 @@ config_modebar = {
 def load_csv(file_path):
     """Load CSV with caching and error handling"""
     try:
-        return pd.read_csv(file_path)
+        df = pd.read_csv(file_path)
+        # Remove unnamed/empty columns
+        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
+        return df
     except (FileNotFoundError, pd.errors.EmptyDataError):
         return pd.DataFrame()
 
@@ -122,13 +125,13 @@ def load_all_species_data(directory_path, main_project_id):
     """Load all required species data with caching"""
     data = {}
 
-    # Load species groups
-    data["species_exotic"] = load_csv(
-        f"{directory_path}/data/species/species_exotic.csv"
-    )
-    data["species_protected"] = load_csv(
-        f"{directory_path}/data/species/species_protected.csv"
-    )
+    # Load species groups - exotic species
+    df_exotic = load_csv(f"{directory_path}/data/species/species_exotic.csv")
+    data["species_exotic"] = df_exotic
+
+    # Load species groups - protected species
+    df_protected = load_csv(f"{directory_path}/data/species/species_protected.csv")
+    data["species_protected"] = df_protected
 
     # Load main project observations
     data["main_obs"] = load_csv(f"{directory_path}/data/{main_project_id}_df_obs.csv")
@@ -485,11 +488,15 @@ df_main_project = all_data.get("main_obs", pd.DataFrame())
 with tab_exotic:
     df_exotic_all = all_data.get("species_exotic", pd.DataFrame())
 
-    # Filter by category
-    df_exotica = df_exotic_all[df_exotic_all["categoria"] == "Exòtica"]
-    df_exotica_invasora = df_exotic_all[
-        df_exotic_all["categoria"] == "Exòtica invasora"
-    ]
+    # Filter by category - handle empty dataframe or missing column
+    if not df_exotic_all.empty and "categoria" in df_exotic_all.columns:
+        df_exotica = df_exotic_all[df_exotic_all["categoria"] == "Exòtica"]
+        df_exotica_invasora = df_exotic_all[
+            df_exotic_all["categoria"] == "Exòtica invasora"
+        ]
+    else:
+        df_exotica = pd.DataFrame()
+        df_exotica_invasora = pd.DataFrame()
 
     col1, col2, col3 = st.columns([10, 1, 10])
 
@@ -524,14 +531,17 @@ with tab_protected:
     ]
 
     # Display each category vertically
-    for category, translation_key in protected_categories:
-        df_category = df_protected_all[df_protected_all["category"] == category]
-        if not df_category.empty:
-            displayed = display_species_column_with_regulation(
-                df_category, df_main_project, t(translation_key)
-            )
-            if displayed:
-                st.divider()
+    if not df_protected_all.empty and "category" in df_protected_all.columns:
+        for category, translation_key in protected_categories:
+            df_category = df_protected_all[df_protected_all["category"] == category]
+            if not df_category.empty:
+                displayed = display_species_column_with_regulation(
+                    df_category, df_main_project, t(translation_key)
+                )
+                if displayed:
+                    st.divider()
+    else:
+        st.info(t("species_page.no_observations"))
 
     st.subheader(t("species_page.last_species_photos"))
     display_species_photos(df_main_project, df_protected_all)

@@ -89,19 +89,22 @@ def load_project_data(proj_id):
 df_map = load_project_data(proj_id)
 
 if df_map is None:
-    st.error(f"No s'han trobat dades per {config.PROJ_NAME}")
+    st.error(f"{t('maps.error_no_data')} {config.PROJ_NAME}")
     st.stop()
 
 num_points = len(df_map)
 
 
 # Enhanced caching system - maps persist across sessions
-@st.cache_resource(ttl=7200, show_spinner="Generant mapes...")  # Cache for 2 hours
+@st.cache_resource(ttl=7200, show_spinner=False)  # Cache for 2 hours
 def create_cached_maps(proj_id, data_hash):
     """Create and cache both maps to avoid recreation"""
     try:
         # Load data fresh for map creation
         df_map = pd.read_csv(f"{directory}/data/{proj_id}_df_obs.csv")
+
+        # Count observations with valid coordinates
+        num_with_coords = df_map.dropna(subset=["latitude", "longitude"]).shape[0]
 
         # Create both maps
         heatmap = create_heatmap(df_map)
@@ -112,9 +115,10 @@ def create_cached_maps(proj_id, data_hash):
             "markermap": markermap,
             "created_at": pd.Timestamp.now(),
             "num_points": len(df_map),
+            "num_mapped": num_with_coords,
         }
     except Exception as e:
-        st.error(f"Error creant mapes: {e}")
+        st.error(f"Erreur lors du chargement des cartes: {e}")
         return None
 
 
@@ -148,9 +152,10 @@ if needs_refresh:
 
     if cached_maps:
         st.session_state[map_key] = cached_maps
-        st.success(f"✅ Mapes carregats ({cached_maps['num_points']:,} observacions)")
+        msg = t('maps.loaded_success').replace('{count}', f"{cached_maps['num_mapped']:,}")
+        st.success(f"✅ {msg}")
     else:
-        st.error("No s'han pogut carregar els mapes")
+        st.error(t('maps.error_loading'))
 
 # Display the maps with enhanced UX
 if map_key in st.session_state:

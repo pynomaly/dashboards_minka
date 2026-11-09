@@ -96,6 +96,12 @@
     "organizers": "Organisateurs :",
     "funding": "Avec le financement de projets européens :"
   },
+  "maps": {
+    "loaded_success": "Cartes chargées ({count} observations de qualité recherche)",
+    "loading": "Chargement des cartes...",
+    "error_loading": "Impossible de charger les cartes",
+    "error_no_data": "Aucune donnée trouvée pour"
+  },
   "table": {
     "observation_date": "Date d'observation",
     "participant": "Participant",
