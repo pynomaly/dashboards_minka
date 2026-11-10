@@ -220,7 +220,7 @@ def show_main_metrics(start_date=None, end_date=None):
             "observations": "📊 Observations by Month",
             "species": "📊 Unique Species by Month",
             "observers": "📊 Unique Observers by Month",
-            "identifiers": "📊 Identifiers Over Time",
+            "identifiers": "📊 Top Identifiers",
         }
 
         st.write(f"### {titles.get(metric, '')}")
@@ -240,7 +240,7 @@ def show_main_metrics(start_date=None, end_date=None):
                 column=metric, begin_date=chart_begin, end_date=chart_end
             )
         elif metric == "identifiers":
-            st.info("Identifiers chart coming soon")
+            create_identifiers_chart()
 
 
 @st.cache_data(ttl=3600)
@@ -318,6 +318,54 @@ def create_observations_chart(column, begin_date: str = None, end_date: str = No
     create_metric_chart(column, begin_date, end_date)
 
 
+@st.cache_data(ttl=3600)
+def load_identifiers():
+    """Load identifiers data from CSV"""
+    return pd.read_csv(f"{directory}/data/identifiers.csv")
+
+
+def create_identifiers_chart(limit: int = 15):
+    """Create bar chart showing top identifiers"""
+    df_identifiers = load_identifiers()
+
+    if df_identifiers.empty:
+        st.info("No identifiers data available")
+        return
+
+    # Get top identifiers
+    df_top = df_identifiers.head(limit).copy()
+    df_top = df_top.sort_values("number_identifications", ascending=True)
+
+    fig = px.bar(
+        df_top,
+        x="number_identifications",
+        y="identifier_name",
+        orientation="h",
+        title="",
+        labels={
+            "number_identifications": "Identifications",
+            "identifier_name": "Identifier",
+        },
+    )
+
+    fig.update_layout(
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        template="plotly_white",
+        showlegend=False,
+        height=400,
+        yaxis=dict(tickfont=dict(size=13)),
+        hoverlabel=dict(font_size=16),
+    )
+
+    fig.update_traces(
+        marker_color=COLORS[4],
+        hovertemplate="<b>%{y}</b><br>Identifications: %{x:,}<extra></extra>",
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+
 @st.fragment
 def create_table_map(df_taxa, taxa_group, df_obs, show_title=True, begin_date=None):
     """Fragment to handle table/map interaction without full page rerun."""
@@ -340,7 +388,9 @@ def create_table_map(df_taxa, taxa_group, df_obs, show_title=True, begin_date=No
     if show_title:
         st.subheader(f"{taxa_group.capitalize()} species reported: {len(df_species)}")
     else:
-        st.caption(f"**{len(df_species)} species** with **{len(df_taxa):,} observations**")
+        st.caption(
+            f"**{len(df_species)} species** with **{len(df_taxa):,} observations**"
+        )
 
     # Crear dos columnas: tabla a la izquierda, mapa a la derecha
     col_table, col_map = st.columns([1, 1.5])
@@ -430,9 +480,9 @@ def create_table_map(df_taxa, taxa_group, df_obs, show_title=True, begin_date=No
         selection_changed = new_selection != prev_selected
 
         if new_selection:
-            selected_species = df_species[
-                df_species["Species"] == new_selection
-            ].iloc[0]
+            selected_species = df_species[df_species["Species"] == new_selection].iloc[
+                0
+            ]
 
             # Guardar en session_state con key único
             st.session_state[key_species] = selected_species["Species"]
@@ -630,7 +680,7 @@ def get_species_by_category(begin_date: str, end_date: str, species_type: str):
         cat_taxon_ids = set(
             df_csv.loc[
                 (df_csv[category_col] == category) & df_csv.taxon_id.notnull(),
-                "taxon_id"
+                "taxon_id",
             ].unique()
         )
         # Filter observations for this category
@@ -685,6 +735,9 @@ def create_species_section(species_type: str, begin_date: str, end_date: str, df
 # Main body
 
 create_header()
+st.write("")
+st.write("")
+
 
 margin_dates = create_slider(STARTING_DATE)
 
