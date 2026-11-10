@@ -10,7 +10,9 @@ COLORS = ["#F79256", "#FBD1A2", "#7DCFB6", "#00b6c4", "#5953a5"]
 PAGE_TITLE = "Dashboard OMB3"
 PAGE_ICON = "minka-logo.png"
 HEADER_LOGO = "ANERIS_logo.png"
-HEADER_TITLE = "OMB product, case Study 3: Catalan coastline"
+HEADER_TITLE = (
+    "ANERIS OMB product: [Catalan coastline](https://observe.minka-sdg.org/places/737)"
+)
 
 MAIN_PLACE = 737  # Catalunya
 
