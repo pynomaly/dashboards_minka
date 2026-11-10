@@ -16,13 +16,12 @@ taxon_mapping = {}
 def get_identifiers(place_id: int = None, d1: str = None):
     """Get identifiers from the API, optionally filtered by place_id and start date."""
     url = f"{config.API_PATH}/observations/identifiers"
-    params = []
+    params = ["verifiable=true"]
     if place_id:
         params.append(f"place_id={place_id}")
     if d1:
         params.append(f"d1={d1}")
-    if params:
-        url += "?" + "&".join(params)
+    url += "?" + "&".join(params)
 
     response = requests.get(url).json()
 
@@ -83,7 +82,7 @@ def update_species_file(filepath: str):
     for idx, row in df.iterrows():
         species_name = row["taxon_name"]
         if species_name in taxon_mapping:
-            new_id = int(taxon_mapping[species_name])
+            new_id = int(float(taxon_mapping[species_name]))
             if pd.isna(row.get("taxon_id")) or row.get("taxon_id") != new_id:
                 df.at[idx, "taxon_id"] = new_id
                 updated += 1
