@@ -143,11 +143,17 @@ with col5:
 st.divider()
 
 # International dashboards
-col1, col2, col3, col4, col5, col6 = st.columns([1, 10, 1, 4.5, 1, 4.5])
+col1, col2, col3, col4, col5, col6 = st.columns([1, 10, 1, 1, 10, 1])
 with col1:
     st.image(f"{directory}/images/Biomarato_logo.png")
 with col2:
     st.subheader("International dashboards")
+
+with col4:
+    st.image(f"{directory}/images/ANERIS_logo.png")
+with col5:
+    st.subheader("ANERIS OMB dashboards")
+
 
 col1, col2, col3, col4, col5 = st.columns([10, 10, 1, 10, 10])
 
@@ -166,6 +172,22 @@ with col2:
     image_with_link(
         f"{directory}/images/minka_emcsw2026.png",
         "https://dashboard.minka-sdg.org/emscw2026",
+    )
+
+with col4:
+    st.markdown("**[Catalan Coast OMB](https://dashboard.minka-sdg.org/omb3)**")
+    image_with_link(
+        f"{directory}/images/omb_catalunya.png",
+        "https://dashboard.minka-sdg.org/omb3",
+    )
+
+with col5:
+    st.markdown(
+        "**[Portuguese Coast OMB](https://dashboard.minka-sdg.org/omb3-portugal)**"
+    )
+    image_with_link(
+        f"{directory}/images/omb_portugal.png",
+        "https://dashboard.minka-sdg.org/omb3-portugal",
     )
 
 st.divider()
