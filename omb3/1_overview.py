@@ -225,15 +225,9 @@ def show_main_metrics(start_date=None, end_date=None):
 
         st.write(f"### {titles.get(metric, '')}")
 
-        # Calculate full date range for chart
-        chart_begin = None
-        chart_end = None
-        if start_date and end_date:
-            chart_begin = f"{start_date}-01"
-            end_month = datetime.strptime(f"{end_date}-01", "%Y-%m-%d")
-            chart_end = (
-                end_month + relativedelta(months=1) - relativedelta(days=1)
-            ).strftime("%Y-%m-%d")
+        # start_date and end_date are already in "YYYY-MM-DD" format
+        chart_begin = start_date
+        chart_end = end_date
 
         if metric in ["observations", "species", "observers"]:
             create_metric_chart(
